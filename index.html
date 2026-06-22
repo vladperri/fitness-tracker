@@ -361,22 +361,61 @@
   ];
 
   // ---------- Day plan ----------
-  // ── Gym workout placeholders ── will be filled in once you share your gym setup ──
-  var GYM_TBD = function(name){
-    return [{section:"Gym workout · to be configured", items:[
-      {n:"Tell Claude about your gym", r:"What equipment is available?", p:"squat",
-        c:"Share which machines & free weights your gym has, and Claude will wire up the full "+name+" routine here. Switch back to 🏠 Home anytime."}
-    ]}];
-  };
-  var STRENGTH_A_GYM = GYM_TBD("Strength A");
-  var STRENGTH_B_GYM = GYM_TBD("Strength B");
-  var HIIT_GYM       = GYM_TBD("HIIT");
+  // ── Gym workouts ── designed around your equipment (Smith, DBs, BBs, machines, back ext, cardio) ──
+  function gURL(id){ return "https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/"+id+".gif"; }
+  function gImg(id){ return {type:"gif", url:gURL(id)}; }
+
+  var STRENGTH_A_GYM = [
+    {section:"Main · 3 sets each · 60–90s rest", items:[
+      {n:"Smith Machine Squat",   r:"3 × 10", p:"squat",       c:"Bar across upper back, feet slightly forward, descend to thighs parallel.", img:gImg("3281")},
+      {n:"DB Bench Press",        r:"3 × 10", p:"pushup",      c:"Slight arch, lower to mid-chest, drive up explosively.",                    img:gImg("0289")},
+      {n:"Machine Seated Row",    r:"3 × 10", p:"seated",      c:"Chest against pad, pull elbows back, squeeze shoulder blades.",             img:gImg("1350")},
+      {n:"DB Romanian Deadlift",  r:"3 × 10", p:"glutebridge", c:"Hinge at hips, soft knees, feel the hamstring stretch — lower-back stays neutral.", img:gImg("1459")},
+      {n:"Leg Extension Machine", r:"3 × 12", p:"seated",      c:"Pause 1s at the top, controlled lower.",                                     img:gImg("0585")},
+      {n:"Back Extension",        r:"3 × 12", p:"superman",    c:"Pad just below hips. Go to neutral spine — don't hyperextend.",              img:gImg("0488")}
+    ]},
+    {section:"Core finisher · 2 rounds", items:[
+      {n:"Plank",                 r:"45 seconds",    p:"plank",     c:"Squeeze glutes; don't let the hips sag.",         img:gImg("3665")},
+      {n:"Mountain Climbers",     r:"30 seconds",    p:"plank",     c:"Plank position; drive knees, keep hips low.",     img:gImg("0630")},
+      {n:"DB Russian Twists",     r:"30 seconds",    p:"seated",    c:"Hold a light DB, rotate from the trunk.",          img:gImg("0687")}
+    ]}
+  ];
+
+  var STRENGTH_B_GYM = [
+    {section:"Main · 3 sets each · 60–90s rest", items:[
+      {n:"Barbell Romanian Deadlift", r:"3 × 8",  p:"glutebridge", c:"The big posterior-chain lift. Bar close to body, hinge, neutral spine.", img:gImg("0085")},
+      {n:"Barbell Bench Press",       r:"3 × 8",  p:"pushup",      c:"Tight grip, feet planted, lower to chest under control.",                 img:gImg("0025")},
+      {n:"Shoulder Press Machine",    r:"3 × 10", p:"pushup",      c:"Press straight overhead; don't flare the elbows too wide.",               img:gImg("0603")},
+      {n:"Lat Pulldown (reverse grip)", r:"3 × 10", p:"pushup",    c:"Pull to upper chest, drive elbows down, squeeze lats.",                   img:gImg("0673")},
+      {n:"Smith Front Squat",         r:"3 × 10", p:"squat",       c:"Bar on front delts, elbows up. More quad emphasis than the back squat.", img:gImg("1433")},
+      {n:"Reverse Hyperextension",    r:"3 × 12", p:"superman",    c:"Direct glute + lower-back work. Smooth, controlled tempo.",               img:gImg("0593")}
+    ]},
+    {section:"Core finisher · 2 rounds", items:[
+      {n:"Hanging Leg Raise",      r:"8–12 reps",    p:"lyingback", c:"Hang from a bar (or TRX), lift legs to ~horizontal. Bent knees if needed.", img:gImg("0472")},
+      {n:"DB Russian Twists",      r:"30 seconds",   p:"seated",    c:"Lean back, rotate from the trunk, light DB.",                                img:gImg("0687")},
+      {n:"V-Sit Hold",             r:"30 seconds",   p:"lyingback", c:"Balanced on your sit-bones, arms forward, legs lifted. Breathe.",          img:gImg("3420")}
+    ]}
+  ];
+
+  var HIIT_GYM = [
+    {section:"Cardio HIIT · 5 rounds · 30s all-out / 90s easy", items:[
+      {n:"Pick your machine: Treadmill / Bike / Elliptical", r:"5 × 30s sprint + 90s recovery", p:"jump",
+        c:"On treadmill — sprint pace (or fast incline walk). On bike — full resistance. On elliptical — max stride. Recovery: same machine, very easy.",
+        img:gImg("3666")}
+    ]},
+    {section:"Strength finisher · 1 round", items:[
+      {n:"DB Goblet Squat",          r:"15 reps",  p:"squat",     c:"Hold one DB at chest, full range, drive through heels.", img:gImg("1760")},
+      {n:"DB Bench Press",           r:"12 reps",  p:"pushup",    c:"Moderate weight, smooth tempo.",                            img:gImg("0289")},
+      {n:"Machine Seated Row",       r:"12 reps",  p:"seated",    c:"Squeeze shoulder blades at the back.",                     img:gImg("1350")},
+      {n:"Hanging Leg Raise",        r:"10 reps",  p:"lyingback", c:"Slow descent — core stays engaged the whole time.",        img:gImg("0472")}
+    ]}
+  ];
 
   var DAYS = {
     1:{title:"Strength A · foundation", emoji:"💪", tasks:[
         {id:"workout", modes:{
-          home:{ex:STRENGTH_A,     label:"Strength A workout · ~40 min", exTitle:"Strength A · home", exSub:"Foundation circuit · ~40 min"},
-          gym: {ex:STRENGTH_A_GYM, label:"Strength A · gym (TBD)",       exTitle:"Strength A · gym",  exSub:"Configure with Claude"}
+          home:{ex:STRENGTH_A,     label:"Strength A workout · ~40 min",    exTitle:"Strength A · home", exSub:"Foundation circuit · ~40 min"},
+          gym: {ex:STRENGTH_A_GYM, label:"Strength A · gym · ~45 min",       exTitle:"Strength A · gym",  exSub:"Foundation lifts · ~45 min"}
         }},
         {id:"steps",    label:"8–10k steps"}]},
     2:{title:"Walk + Mobility", emoji:"🚶", tasks:[
@@ -385,7 +424,7 @@
     3:{title:"HIIT · fat-burner", emoji:"🔥", tasks:[
         {id:"workout", modes:{
           home:{ex:HIIT,     label:"HIIT workout · ~25 min", exTitle:"Fat-Burner · home", exSub:"~25 min · high intensity"},
-          gym: {ex:HIIT_GYM, label:"HIIT · gym (TBD)",       exTitle:"Fat-Burner · gym",  exSub:"Configure with Claude"}
+          gym: {ex:HIIT_GYM, label:"HIIT · gym · ~25 min",   exTitle:"Fat-Burner · gym",  exSub:"Cardio intervals + strength finisher"}
         }},
         {id:"steps",    label:"8–10k steps"}]},
     4:{title:"Walk + Mobility", emoji:"🚶", tasks:[
@@ -394,7 +433,7 @@
     5:{title:"Strength B · power", emoji:"💪", tasks:[
         {id:"workout", modes:{
           home:{ex:STRENGTH_B,     label:"Strength B workout · ~40 min", exTitle:"Strength B · home", exSub:"Power circuit · ~40 min"},
-          gym: {ex:STRENGTH_B_GYM, label:"Strength B · gym (TBD)",       exTitle:"Strength B · gym",  exSub:"Configure with Claude"}
+          gym: {ex:STRENGTH_B_GYM, label:"Strength B · gym · ~45 min",   exTitle:"Strength B · gym",  exSub:"Power lifts · ~45 min"}
         }},
         {id:"steps",    label:"8–10k steps"}]},
     6:{title:"Long Walk + Mobility", emoji:"🚶", tasks:[
