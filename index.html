@@ -156,6 +156,12 @@
   .demo-btn:active{transform:scale(.96)}
   .demo-btn svg{width:11px;height:11px;fill:currentColor}
   .sheet-foot{font-size:11.5px;color:var(--muted);margin-top:16px;text-align:center;line-height:1.5;padding:0 10px}
+  .mode-toggle{display:flex;gap:3px;padding:3px;background:rgba(23,22,15,.06);border-radius:14px;margin-bottom:10px;margin-left:12px;margin-right:12px}
+  .mode-btn{flex:1;padding:9px 10px;border-radius:11px;border:0;background:transparent;font-family:'Hanken Grotesk',sans-serif;font-size:13.5px;font-weight:700;color:var(--muted);cursor:pointer;transition:.18s;display:flex;align-items:center;justify-content:center;gap:6px}
+  .mode-btn:active{transform:scale(.97)}
+  .mode-btn.sel{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(23,22,15,.06),0 2px 8px rgba(23,22,15,.04)}
+  .gym{color:var(--hiit) !important}
+
   .auth-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px;padding:10px 4px}
   .auth-status{font-size:13px;color:var(--muted);font-weight:600;flex:1;line-height:1.3}
   .auth-btn{padding:8px 16px;border-radius:99px;border:1.5px solid var(--accent);color:var(--accent);background:#fff;font-family:'Hanken Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.15s}
@@ -355,21 +361,41 @@
   ];
 
   // ---------- Day plan ----------
+  // ── Gym workout placeholders ── will be filled in once you share your gym setup ──
+  var GYM_TBD = function(name){
+    return [{section:"Gym workout · to be configured", items:[
+      {n:"Tell Claude about your gym", r:"What equipment is available?", p:"squat",
+        c:"Share which machines & free weights your gym has, and Claude will wire up the full "+name+" routine here. Switch back to 🏠 Home anytime."}
+    ]}];
+  };
+  var STRENGTH_A_GYM = GYM_TBD("Strength A");
+  var STRENGTH_B_GYM = GYM_TBD("Strength B");
+  var HIIT_GYM       = GYM_TBD("HIIT");
+
   var DAYS = {
     1:{title:"Strength A · foundation", emoji:"💪", tasks:[
-        {id:"workout",  label:"Strength A workout · ~40 min", ex:STRENGTH_A, exTitle:"Strength A", exSub:"Foundation circuit · ~40 min"},
+        {id:"workout", modes:{
+          home:{ex:STRENGTH_A,     label:"Strength A workout · ~40 min", exTitle:"Strength A · home", exSub:"Foundation circuit · ~40 min"},
+          gym: {ex:STRENGTH_A_GYM, label:"Strength A · gym (TBD)",       exTitle:"Strength A · gym",  exSub:"Configure with Claude"}
+        }},
         {id:"steps",    label:"8–10k steps"}]},
     2:{title:"Walk + Mobility", emoji:"🚶", tasks:[
         {id:"walk",     label:"Brisk walk 30–45 min · 8–10k steps"},
         {id:"mobility", label:"Mobility · 5–10 min", ex:MOBILITY, exTitle:"Mobility routine", exSub:"5–10 min · daily flexibility"}]},
     3:{title:"HIIT · fat-burner", emoji:"🔥", tasks:[
-        {id:"workout",  label:"HIIT workout · ~25 min", ex:HIIT, exTitle:"Fat-Burner", exSub:"~25 min · high intensity"},
+        {id:"workout", modes:{
+          home:{ex:HIIT,     label:"HIIT workout · ~25 min", exTitle:"Fat-Burner · home", exSub:"~25 min · high intensity"},
+          gym: {ex:HIIT_GYM, label:"HIIT · gym (TBD)",       exTitle:"Fat-Burner · gym",  exSub:"Configure with Claude"}
+        }},
         {id:"steps",    label:"8–10k steps"}]},
     4:{title:"Walk + Mobility", emoji:"🚶", tasks:[
         {id:"walk",     label:"Brisk walk 30–45 min · 8–10k steps"},
         {id:"mobility", label:"Mobility · 5–10 min", ex:MOBILITY, exTitle:"Mobility routine", exSub:"5–10 min · daily flexibility"}]},
     5:{title:"Strength B · power", emoji:"💪", tasks:[
-        {id:"workout",  label:"Strength B workout · ~40 min", ex:STRENGTH_B, exTitle:"Strength B", exSub:"Power circuit · ~40 min"},
+        {id:"workout", modes:{
+          home:{ex:STRENGTH_B,     label:"Strength B workout · ~40 min", exTitle:"Strength B · home", exSub:"Power circuit · ~40 min"},
+          gym: {ex:STRENGTH_B_GYM, label:"Strength B · gym (TBD)",       exTitle:"Strength B · gym",  exSub:"Configure with Claude"}
+        }},
         {id:"steps",    label:"8–10k steps"}]},
     6:{title:"Long Walk + Mobility", emoji:"🚶", tasks:[
         {id:"walk",     label:"Easy walk 45–60 min · 8–10k steps"},
@@ -491,7 +517,8 @@
 
   function entry(){
     var d = state.selectedDate;
-    if(!state.entries[d]) state.entries[d] = {activity:{}, meals:{}, water:0};
+    if(!state.entries[d]) state.entries[d] = {activity:{}, meals:{}, water:0, modes:{}};
+    if(!state.entries[d].modes) state.entries[d].modes = {};
     return state.entries[d];
   }
   function save(){ saveRaw(JSON.stringify(state)); pushToCloud(); }
@@ -545,17 +572,42 @@
     document.getElementById("moveIco").textContent = day.emoji || "🏃";
     var at = document.getElementById("activityTasks");
     var html="", e = entry();
+    var modesMap = e.modes || {};
     day.tasks.forEach(function(t){
+      // Mode toggle for switchable tasks (workout days)
+      if(t.modes){
+        var cur = modesMap[t.id] || "home";
+        html += '<div class="mode-toggle">';
+        html +=   '<button class="mode-btn'+(cur==="home"?" sel":"")+'" data-task="'+t.id+'" data-mode="home">🏠 Home</button>';
+        html +=   '<button class="mode-btn'+(cur==="gym"?" sel":"")+'" data-task="'+t.id+'" data-mode="gym">🏋️ Gym</button>';
+        html += '</div>';
+      }
+      var taskData = t.modes ? t.modes[modesMap[t.id] || "home"] : t;
       var done = !!e.activity[t.id];
-      var hasEx = !!t.ex;
+      var hasEx = !!taskData.ex;
+      var labelCls = (t.modes && (modesMap[t.id]||"home")==="gym") ? ' class="label gym"' : ' class="label"';
       html+='<div class="task'+(done?' done':'')+(hasEx?' has-detail':'')+'" data-task="'+t.id+'">'+CHECK+
-            '<span class="label">'+t.label+'</span>'+
+            '<span'+labelCls+'>'+taskData.label+'</span>'+
             (hasEx?'<span class="chev">›</span>':'')+'</div>';
     });
     at.innerHTML = html;
+
+    // Mode-toggle click handlers
+    at.querySelectorAll(".mode-btn").forEach(function(btn){
+      btn.addEventListener("click", function(ev){
+        ev.stopPropagation();
+        var en = entry();
+        en.modes = en.modes || {};
+        en.modes[btn.getAttribute("data-task")] = btn.getAttribute("data-mode");
+        save(); renderActivity(); updateProgress();
+      });
+    });
+
     at.querySelectorAll(".task").forEach(function(el){
       var id=el.getAttribute("data-task");
       var task=null; for(var i=0;i<day.tasks.length;i++){ if(day.tasks[i].id===id){task=day.tasks[i];break;} }
+      var en2 = entry();
+      var taskData = (task && task.modes) ? task.modes[(en2.modes||{})[id] || "home"] : task;
       var checkEl = el.querySelector(".check");
       checkEl.addEventListener("click",function(ev){
         ev.stopPropagation();
@@ -565,8 +617,8 @@
         save(); updateProgress();
       });
       el.addEventListener("click",function(){
-        if(task && task.ex){
-          openModal(task.exTitle, task.exSub, task.ex);
+        if(taskData && taskData.ex){
+          openModal(taskData.exTitle, taskData.exSub, taskData.ex);
         } else {
           var en = entry();
           en.activity[id] = !en.activity[id];
