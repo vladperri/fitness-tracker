@@ -398,16 +398,21 @@
   ];
 
   var HIIT_GYM = [
-    {section:"Cardio HIIT · 5 rounds · 30s all-out / 90s easy", items:[
-      {n:"Pick your machine: Treadmill / Bike / Elliptical", r:"5 × 30s sprint + 90s recovery", p:"jump",
+    {section:"Block 1 · Cardio HIIT · 6 rounds · 30s all-out / 90s easy · ~12 min", items:[
+      {n:"Pick your machine: Treadmill / Bike / Elliptical", r:"6 × 30s sprint + 90s recovery", p:"jump",
         c:"On treadmill — sprint pace (or fast incline walk). On bike — full resistance. On elliptical — max stride. Recovery: same machine, very easy.",
         img:gImg("3666")}
     ]},
-    {section:"Strength finisher · 1 round", items:[
-      {n:"DB Romanian Deadlift",     r:"12 reps",  p:"glutebridge", c:"Posterior-chain finisher — no quad emphasis.",     img:gImg("1459")},
-      {n:"DB Bench Press",           r:"12 reps",  p:"pushup",      c:"Moderate weight, smooth tempo.",                    img:gImg("0289")},
-      {n:"Machine Seated Row",       r:"12 reps",  p:"seated",      c:"Squeeze shoulder blades at the back.",             img:gImg("1350")},
-      {n:"Hanging Leg Raise",        r:"10 reps",  p:"lyingback",   c:"Slow descent — core stays engaged the whole time.", img:gImg("0472")}
+    {section:"Block 2 · Strength circuit · 2 rounds · 45s rest between exercises · ~18 min", items:[
+      {n:"DB Romanian Deadlift",     r:"12 reps",  p:"glutebridge", c:"Posterior-chain finisher — hinge at hips, no quad emphasis.",     img:gImg("1459")},
+      {n:"DB Bench Press",           r:"12 reps",  p:"pushup",      c:"Moderate weight, smooth tempo.",                                    img:gImg("0289")},
+      {n:"Machine Seated Row",       r:"12 reps",  p:"seated",      c:"Squeeze shoulder blades at the back.",                              img:gImg("1350")},
+      {n:"DB Seated Shoulder Press", r:"12 reps",  p:"pushup",      c:"Press straight overhead, neutral wrist, controlled lower.",         img:gImg("0405")},
+      {n:"DB Lateral Raise",         r:"15 reps",  p:"seated",      c:"Light DBs. Raise to shoulder height, slight bend in elbow.",        img:gImg("0334")},
+      {n:"Hanging Leg Raise",        r:"10 reps",  p:"lyingback",   c:"Slow descent — core stays engaged the whole time.",                 img:gImg("0472")}
+    ]},
+    {section:"Block 3 · Cool-down cycling · 15 min steady · fat-burning zone", items:[
+      {n:"Indoor Cycling",           r:"15 min steady", p:"jump",   c:"Moderate resistance, 70–90 RPM, stay seated. Breathing harder than walking pace but able to talk in short sentences. After HIIT + strength, your body burns fat directly during this block.", img:gImg("2138")}
     ]}
   ];
 
@@ -424,7 +429,7 @@
     3:{title:"HIIT · fat-burner", emoji:"🔥", tasks:[
         {id:"workout", modes:{
           home:{ex:HIIT,     label:"HIIT workout · ~25 min", exTitle:"Fat-Burner · home", exSub:"~25 min · high intensity"},
-          gym: {ex:HIIT_GYM, label:"HIIT · gym · ~25 min",   exTitle:"Fat-Burner · gym",  exSub:"Cardio intervals + strength finisher"}
+          gym: {ex:HIIT_GYM, label:"HIIT · gym · ~45 min",   exTitle:"Fat-Burner · gym",  exSub:"Cardio HIIT + strength circuit + cycling cool-down"}
         }},
         {id:"steps",    label:"8–10k steps"}]},
     4:{title:"Walk + Mobility", emoji:"🚶", tasks:[
