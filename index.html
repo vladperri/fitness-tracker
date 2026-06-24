@@ -151,6 +151,7 @@
   .ex-num{font-family:'Bricolage Grotesque';font-size:11px;font-weight:800;color:var(--accent);background:var(--accent-soft);padding:2px 7px;border-radius:6px;letter-spacing:.04em}
   .ex-name{font-family:'Bricolage Grotesque';font-size:15.5px;font-weight:700;line-height:1.2}
   .ex-meta{font-size:13px;color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums;margin-bottom:5px}
+  .ex-weight{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:8px;margin-bottom:7px;letter-spacing:.01em}
   .ex-cue{font-size:12.5px;color:var(--muted);line-height:1.45;margin-bottom:8px}
   .demo-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:99px;border:1.5px solid var(--accent);color:var(--accent);font-size:12px;font-weight:700;text-decoration:none;transition:.16s}
   .demo-btn:active{transform:scale(.96)}
@@ -367,32 +368,32 @@
 
   var STRENGTH_A_GYM = [
     {section:"Main · 3 sets each · 60–90s rest", items:[
-      {n:"Barbell Glute Bridge",  r:"3 × 12", p:"glutebridge", c:"Bar across hips, drive through heels, squeeze glutes hard at the top — minimal quad load.", img:gImg("1409")},
-      {n:"DB Bench Press",        r:"3 × 10", p:"pushup",      c:"Slight arch, lower to mid-chest, drive up explosively.",                            img:gImg("0289")},
-      {n:"Machine Seated Row",    r:"3 × 10", p:"seated",      c:"Chest against pad, pull elbows back, squeeze shoulder blades.",                     img:gImg("1350")},
-      {n:"DB Romanian Deadlift",  r:"3 × 10", p:"glutebridge", c:"Hinge at hips, soft knees, feel the hamstring stretch — neutral spine.",            img:gImg("1459")},
-      {n:"DB Bicep Curl",         r:"3 × 12", p:"seated",      c:"Alternating, no swing — let the biceps do the work.",                                img:gImg("0285")},
-      {n:"Back Extension",        r:"3 × 12", p:"superman",    c:"Pad just below hips. Go to neutral spine — don't hyperextend.",                      img:gImg("0488")}
+      {n:"Barbell Glute Bridge",  r:"3 × 12", p:"glutebridge", w:"Start: empty bar (20 kg) · +2 kg each side", c:"Bar across hips, drive through heels, squeeze glutes hard at the top — minimal quad load.", img:gImg("1409")},
+      {n:"DB Bench Press",        r:"3 × 10", p:"pushup", w:"Start: 10–12 kg each DB · +2 kg each",      c:"Slight arch, lower to mid-chest, drive up explosively.",                            img:gImg("0289")},
+      {n:"Machine Seated Row",    r:"3 × 10", p:"seated", w:"Start: 25–30 kg · +5 kg/step",      c:"Chest against pad, pull elbows back, squeeze shoulder blades.",                     img:gImg("1350")},
+      {n:"DB Romanian Deadlift",  r:"3 × 10", p:"glutebridge", w:"Start: 10–12 kg each DB · +1–2 kg each", c:"Hinge at hips, soft knees, feel the hamstring stretch — neutral spine.",            img:gImg("1459")},
+      {n:"DB Bicep Curl",         r:"3 × 12", p:"seated", w:"Start: 6–8 kg each DB · +1 kg each",      c:"Alternating, no swing — let the biceps do the work.",                                img:gImg("0285")},
+      {n:"Back Extension",        r:"3 × 12", p:"superman", w:"Bodyweight first · hold 5 kg plate when easy",    c:"Pad just below hips. Go to neutral spine — don't hyperextend.",                      img:gImg("0488")}
     ]},
     {section:"Core finisher · 2 rounds", items:[
       {n:"Plank",                 r:"45 seconds",    p:"plank",     c:"Squeeze glutes; don't let the hips sag.",            img:gImg("3665")},
       {n:"Mountain Climbers",     r:"30 seconds",    p:"plank",     c:"Plank position; drive knees, keep hips low.",        img:gImg("0630")},
-      {n:"DB Russian Twists",     r:"30 seconds",    p:"seated",    c:"Hold a light DB, rotate from the trunk.",             img:gImg("0687")}
+      {n:"DB Russian Twists",     r:"30 seconds",    p:"seated", w:"Hold 5 kg DB · +1 kg/step",    c:"Hold a light DB, rotate from the trunk.",             img:gImg("0687")}
     ]}
   ];
 
   var STRENGTH_B_GYM = [
     {section:"Main · 3 sets each · 60–90s rest", items:[
-      {n:"Barbell Romanian Deadlift", r:"3 × 8",  p:"glutebridge", c:"The big posterior-chain lift. Bar close to body, hinge, neutral spine.", img:gImg("0085")},
-      {n:"Barbell Bench Press",       r:"3 × 8",  p:"pushup",      c:"Tight grip, feet planted, lower to chest under control.",                 img:gImg("0025")},
-      {n:"Shoulder Press Machine",    r:"3 × 10", p:"pushup",      c:"Press straight overhead; don't flare the elbows too wide.",               img:gImg("2318")},
-      {n:"Lat Pulldown (reverse grip)", r:"3 × 10", p:"pushup",    c:"Pull to upper chest, drive elbows down, squeeze lats.",                   img:gImg("0673")},
-      {n:"DB Hammer Curl",            r:"3 × 12", p:"seated",      c:"Neutral grip, alternate sides — hits brachialis for thicker upper arms.", img:gImg("1648")},
-      {n:"Cable Pull-Through",        r:"3 × 12", p:"glutebridge",    c:"Rope attached low on the cable row station. Face away, rope between legs, hinge forward, then thrust hips forward squeezing glutes hard. Direct glute + lower-back work, zero quad load.", img:gImg("0196")}
+      {n:"Barbell Romanian Deadlift", r:"3 × 8",  p:"glutebridge", w:"Start: bar + 5 kg each side (30 kg) · +1–2 kg each side", c:"The big posterior-chain lift. Bar close to body, hinge, neutral spine.", img:gImg("0085")},
+      {n:"Barbell Bench Press",       r:"3 × 8",  p:"pushup", w:"Start: bar + 5 kg each side (30 kg) · +1–2 kg each side",     c:"Tight grip, feet planted, lower to chest under control.",                 img:gImg("0025")},
+      {n:"Shoulder Press Machine",    r:"3 × 10", p:"pushup", w:"Start: 20–25 kg · +5 kg/step",      c:"Press straight overhead; don't flare the elbows too wide.",               img:gImg("2318")},
+      {n:"Lat Pulldown (reverse grip)", r:"3 × 10", p:"pushup", w:"Start: 25–30 kg · +5 kg/step",    c:"Pull to upper chest, drive elbows down, squeeze lats.",                   img:gImg("0673")},
+      {n:"DB Hammer Curl",            r:"3 × 12", p:"seated", w:"Start: 6–8 kg each DB · +1 kg each",      c:"Neutral grip, alternate sides — hits brachialis for thicker upper arms.", img:gImg("1648")},
+      {n:"Cable Pull-Through",        r:"3 × 12", p:"glutebridge", w:"Start: 15–20 kg · +5 kg/step",    c:"Rope attached low on the cable row station. Face away, rope between legs, hinge forward, then thrust hips forward squeezing glutes hard. Direct glute + lower-back work, zero quad load.", img:gImg("0196")}
     ]},
     {section:"Core finisher · 2 rounds", items:[
       {n:"Hanging Leg Raise",      r:"8–12 reps",    p:"lyingback", c:"Hang from a bar (or TRX), lift legs to ~horizontal. Bent knees if needed.", img:gImg("0472")},
-      {n:"DB Russian Twists",      r:"30 seconds",   p:"seated",    c:"Lean back, rotate from the trunk, light DB.",                                img:gImg("0687")},
+      {n:"DB Russian Twists",      r:"30 seconds",   p:"seated", w:"Hold 5 kg DB · +1 kg/step",   c:"Lean back, rotate from the trunk, light DB.",                                img:gImg("0687")},
       {n:"V-Sit Hold",             r:"30 seconds",   p:"lyingback", c:"Balanced on your sit-bones, arms forward, legs lifted. Breathe.",          img:gImg("3420")}
     ]}
   ];
@@ -404,11 +405,11 @@
         img:gImg("3666")}
     ]},
     {section:"Block 2 · Strength circuit · 2 rounds · 45s rest between exercises · ~18 min", items:[
-      {n:"DB Romanian Deadlift",     r:"12 reps",  p:"glutebridge", c:"Posterior-chain finisher — hinge at hips, no quad emphasis.",     img:gImg("1459")},
-      {n:"DB Bench Press",           r:"12 reps",  p:"pushup",      c:"Moderate weight, smooth tempo.",                                    img:gImg("0289")},
-      {n:"Machine Seated Row",       r:"12 reps",  p:"seated",      c:"Squeeze shoulder blades at the back.",                              img:gImg("1350")},
-      {n:"Shoulder Press Machine",   r:"12 reps",  p:"pushup",      c:"Press straight overhead, full extension at the top.",         img:gImg("2318")},
-      {n:"DB Lateral Raise",         r:"15 reps",  p:"seated",      c:"Light DBs. Raise to shoulder height, slight bend in elbow.",        img:gImg("0334")},
+      {n:"DB Romanian Deadlift",     r:"12 reps",  p:"glutebridge", w:"Light circuit: 6–8 kg each DB", c:"Posterior-chain finisher — hinge at hips, no quad emphasis.",     img:gImg("1459")},
+      {n:"DB Bench Press",           r:"12 reps",  p:"pushup", w:"Moderate circuit: 8–10 kg each DB",      c:"Moderate weight, smooth tempo.",                                    img:gImg("0289")},
+      {n:"Machine Seated Row",       r:"12 reps",  p:"seated", w:"Moderate circuit: 20–25 kg",      c:"Squeeze shoulder blades at the back.",                              img:gImg("1350")},
+      {n:"Shoulder Press Machine",   r:"12 reps",  p:"pushup", w:"Moderate circuit: 15–20 kg",      c:"Press straight overhead, full extension at the top.",         img:gImg("2318")},
+      {n:"DB Lateral Raise",         r:"15 reps",  p:"seated", w:"Very light: 3–4 kg each DB",      c:"Light DBs. Raise to shoulder height, slight bend in elbow.",        img:gImg("0334")},
       {n:"Hanging Leg Raise",        r:"10 reps",  p:"lyingback",   c:"Slow descent — core stays engaged the whole time.",                 img:gImg("0472")}
     ]},
     {section:"Block 3 · Cool-down cycling · 15 min steady · fat-burning zone", items:[
@@ -807,6 +808,7 @@
         h +=   '<div class="ex-info">';
         h +=     '<div class="ex-row"><span class="ex-num">'+(i+1<10?"0":"")+(i+1)+'</span><span class="ex-name">'+e.n+'</span></div>';
         h +=     '<div class="ex-meta">'+e.r+'</div>';
+        if(e.w){ h += '<div class="ex-weight">🏋️ '+e.w+'</div>'; }
         h +=     '<div class="ex-cue">'+e.c+'</div>';
         h +=     '<a class="demo-btn" target="_blank" rel="noopener noreferrer" href="'+yt+'">'+PLAY+' Watch demo</a>';
         h +=   '</div>';
