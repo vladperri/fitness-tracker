@@ -135,6 +135,13 @@
   .auth-status{font-size:13px;color:var(--muted);font-weight:600;flex:1;line-height:1.3}
   .auth-btn{padding:8px 16px;border-radius:99px;border:1.5px solid var(--accent);color:var(--accent-deep);background:#fff;font-family:'Hanken Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
 
+  .cycle-bar{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+  .cyc-nav{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);background:#fff;color:var(--accent-deep);font-size:17px;font-weight:700;cursor:pointer;flex:none;line-height:1}
+  .cyc-nav:disabled{opacity:.3}
+  .cyc-dots{flex:1;display:flex;justify-content:center;gap:6px}
+  .cyc-dot{width:8px;height:8px;border-radius:50%;background:rgba(46,31,36,.15);transition:.2s}
+  .cyc-dot.on{background:var(--accent);transform:scale(1.35)}
+  .cyc-hint{font-size:11.5px;color:var(--muted);text-align:center;margin-bottom:10px;font-weight:600}
   .modal{position:fixed;inset:0;z-index:100;display:none}
   .modal.open{display:block}
   .mbg{position:absolute;inset:0;background:rgba(46,31,36,.5);opacity:0;transition:opacity .25s}
@@ -199,10 +206,10 @@
     <div class="sec-title">Харчування · обери що з'їла<b>Прийоми їжі</b></div>
   </div>
   <div class="macro-row">
-    <div class="macro"><div class="mv">2000</div><div class="ml">ккал</div></div>
+    <div class="macro"><div class="mv">1850</div><div class="ml">ккал</div></div>
     <div class="macro"><div class="mv">115 г</div><div class="ml">білок</div></div>
     <div class="macro"><div class="mv">60 г</div><div class="ml">жири</div></div>
-    <div class="macro"><div class="mv">250 г</div><div class="ml">вугл.</div></div>
+    <div class="macro"><div class="mv">212 г</div><div class="ml">вугл.</div></div>
   </div>
   <div id="meals"></div>
 </section>
@@ -364,28 +371,12 @@
     ]}
   ];
 
-  var DAYS = {
-    1:{title:"Сідниці A · важкий", emoji:"🍑", tasks:[
-        {id:"workout", label:"Тренування · 1:30–2 год", ex:GLUTES_A, exTitle:"Сідниці A", exSub:"Важкий день · таз-домінантні рухи"},
-        {id:"steps", label:"10 000 кроків"}]},
-    2:{title:"Верх · жимовий", emoji:"💪", tasks:[
-        {id:"workout", label:"Тренування · 1:15–1:30 год", ex:UPPER_PUSH, exTitle:"Верх · жим", exSub:"Груди · плечі · трицепс"},
-        {id:"steps", label:"10 000 кроків"}]},
-    3:{title:"Відновлення", emoji:"🚶", tasks:[
-        {id:"walk", label:"Ходьба 30–40 хв"},
-        {id:"steps", label:"10 000 кроків"}]},
-    4:{title:"Сідниці B · об'ємний", emoji:"🍑", tasks:[
-        {id:"workout", label:"Тренування · 1:30–2 год", ex:GLUTES_B, exTitle:"Сідниці B", exSub:"Об'ємний день · вищі повтори"},
-        {id:"steps", label:"10 000 кроків"}]},
-    5:{title:"Верх · тяговий + кор", emoji:"💪", tasks:[
-        {id:"workout", label:"Тренування · 1:15–1:30 год", ex:UPPER_PULL, exTitle:"Верх · тяга", exSub:"Спина · задня дельта · біцепс"},
-        {id:"steps", label:"10 000 кроків"}]},
-    6:{title:"Довга ходьба", emoji:"🚶", tasks:[
-        {id:"walk", label:"Ходьба 45–60 хв"},
-        {id:"steps", label:"10 000 кроків"}]},
-    0:{title:"Відпочинок", emoji:"😴", tasks:[
-        {id:"walk", label:"Легка ходьба (за бажанням)"}]}
-  };
+  var ROTATION = [
+    {title:"Сідниці A · важкий",     emoji:"🍑", dur:"1:30–2 год",    ex:GLUTES_A,   exTitle:"Сідниці A",  exSub:"Важкий день · таз-домінантні рухи"},
+    {title:"Верх · жимовий",         emoji:"💪", dur:"1:15–1:30 год", ex:UPPER_PUSH, exTitle:"Верх · жим", exSub:"Груди · плечі · трицепс"},
+    {title:"Сідниці B · об'ємний",   emoji:"🍑", dur:"1:30–2 год",    ex:GLUTES_B,   exTitle:"Сідниці B",  exSub:"Об'ємний день · вищі повтори"},
+    {title:"Верх · тяговий + кор",   emoji:"💪", dur:"1:15–1:30 год", ex:UPPER_PULL, exTitle:"Верх · тяга",exSub:"Спина · задня дельта · біцепс"}
+  ];
 
   var MEALS = [
     {key:"breakfast", em:"☀️", name:"Сніданок", opts:[
@@ -454,8 +445,9 @@
   var KEY="valeriaTracker_v1", mem=null;
   function loadRaw(){ try{ return localStorage.getItem(KEY); }catch(e){ return mem; } }
   function saveRaw(s){ try{ localStorage.setItem(KEY,s); }catch(e){ mem=s; } }
-  var state=(function(){ var r=loadRaw(); if(r){ try{ return JSON.parse(r); }catch(e){} } return {entries:{}}; })();
+  var state=(function(){ var r=loadRaw(); if(r){ try{ return JSON.parse(r); }catch(e){} } return {entries:{},cycle:0}; })();
   if(!state.entries) state.entries={};
+  if(typeof state.cycle!=="number") state.cycle=0;
   state.selectedDate=todayStr();
   function entry(){
     var d=state.selectedDate;
@@ -490,29 +482,58 @@
     });
   }
   function renderActivity(){
-    var sel=parseD(state.selectedDate), day=DAYS[sel.getDay()];
-    document.getElementById("activityTitle").textContent=day.title;
-    document.getElementById("moveIco").textContent=day.emoji||"💪";
-    var at=document.getElementById("activityTasks"), html="", e=entry();
-    day.tasks.forEach(function(t){
-      var done=!!e.activity[t.id], hasEx=!!t.ex;
-      html+='<div class="task'+(done?' done':'')+(hasEx?' has-detail':'')+'" data-task="'+t.id+'">'+CHECK+
-        '<span class="label">'+t.label+'</span>'+(hasEx?'<span class="chev">›</span>':'')+'</div>';
-    });
-    at.innerHTML=html;
+    var en = entry();
+    var done = (en.wIdx != null);
+    var idx  = done ? en.wIdx : state.cycle;
+    var w    = ROTATION[idx];
+
+    document.getElementById("activityTitle").textContent = w.title;
+    document.getElementById("moveIco").textContent = w.emoji;
+
+    var html = "";
+    if(!done){
+      html += '<div class="cycle-bar">';
+      html +=   '<button class="cyc-nav" id="cycPrev">‹</button>';
+      html +=   '<div class="cyc-dots">';
+      for(var k=0;k<ROTATION.length;k++){ html += '<span class="cyc-dot'+(k===idx?' on':'')+'"></span>'; }
+      html +=   '</div>';
+      html +=   '<button class="cyc-nav" id="cycNext">›</button>';
+      html += '</div>';
+      html += '<div class="cyc-hint">Наступне за циклом · можна змінити стрілками</div>';
+    }
+
+    html += '<div class="task'+(done?" done":"")+' has-detail" data-task="workout">'+CHECK+
+            '<span class="label">'+w.title+' · '+w.dur+'</span><span class="chev">›</span></div>';
+    html += '<div class="task'+(en.activity.steps?" done":"")+'" data-task="steps">'+CHECK+
+            '<span class="label">10 000 кроків</span></div>';
+
+    var at = document.getElementById("activityTasks");
+    at.innerHTML = html;
+
+    var pv = document.getElementById("cycPrev"), nx = document.getElementById("cycNext");
+    if(pv) pv.addEventListener("click", function(){ state.cycle=(state.cycle+ROTATION.length-1)%ROTATION.length; save(); renderActivity(); });
+    if(nx) nx.addEventListener("click", function(){ state.cycle=(state.cycle+1)%ROTATION.length; save(); renderActivity(); });
+
     at.querySelectorAll(".task").forEach(function(el){
-      var id=el.getAttribute("data-task"), task=null;
-      for(var i=0;i<day.tasks.length;i++){ if(day.tasks[i].id===id){ task=day.tasks[i]; break; } }
-      el.querySelector(".check").addEventListener("click",function(ev){
-        ev.stopPropagation(); var en=entry(); en.activity[id]=!en.activity[id];
-        el.classList.toggle("done",en.activity[id]); save(); updateProgress();
+      var id = el.getAttribute("data-task");
+      el.querySelector(".check").addEventListener("click", function(ev){
+        ev.stopPropagation();
+        var n = entry();
+        if(id === "workout"){
+          if(n.wIdx != null){ state.cycle = n.wIdx; delete n.wIdx; }
+          else { n.wIdx = state.cycle; state.cycle = (state.cycle+1)%ROTATION.length; }
+        } else {
+          n.activity[id] = !n.activity[id];
+        }
+        save(); renderActivity(); updateProgress();
       });
-      el.addEventListener("click",function(){
-        if(task&&task.ex){ openModal(task.exTitle,task.exSub,task.ex); }
-        else { var en=entry(); en.activity[id]=!en.activity[id]; el.classList.toggle("done",en.activity[id]); save(); updateProgress(); }
+      el.addEventListener("click", function(){
+        if(id === "workout"){ openModal(w.exTitle, w.exSub, w.ex); }
+        else { var n=entry(); n.activity[id]=!n.activity[id]; save(); renderActivity(); updateProgress(); }
       });
     });
   }
+
   function renderMeals(){
     var mc=document.getElementById("meals"), mh="", e=entry();
     MEALS.forEach(function(m){
@@ -559,9 +580,9 @@
     var en=entry(); en.water=Math.max(0,en.water-GLASS); save(); renderWater(); updateProgress();
   });
   function updateProgress(){
-    var sel=parseD(state.selectedDate), day=DAYS[sel.getDay()], e=entry(), done=0;
-    var tot=day.tasks.length+MEALS.length+1;
-    day.tasks.forEach(function(t){ if(e.activity[t.id]) done++; });
+    var e=entry(), done=0, tot=2+MEALS.length+1;
+    if(e.wIdx != null) done++;
+    if(e.activity.steps) done++;
     MEALS.forEach(function(m){ if(e.meals[m.key]!=null) done++; });
     if(e.water>=GOAL) done++;
     var pct=Math.round(done/tot*100);
@@ -575,6 +596,8 @@
   document.getElementById("nextWk").addEventListener("click",function(){ weekStart=addDays(weekStart,7); renderCalendar(); });
   document.getElementById("resetBtn").addEventListener("click",function(){
     if(confirm("Скинути всі відмітки за "+state.selectedDate+"?")){
+      var prev=state.entries[state.selectedDate];
+      if(prev && prev.wIdx!=null) state.cycle=prev.wIdx;
       state.entries[state.selectedDate]={activity:{},meals:{},water:0}; save(); renderAll();
     }
   });
