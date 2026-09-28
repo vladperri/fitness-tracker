@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#D4788F">
+<meta name="color-scheme" content="light">
+<title>Трекер · Валерія</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="favicon.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Трекер">
+<meta property="og:title" content="Трекер тренувань">
+<meta property="og:description" content="Сідниці · форма · щоденний трекер">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FDF2F4; --card:#FFFFFF; --ink:#2E1F24; --muted:#8A757C;
+    --line:rgba(46,31,36,.09);
+    --accent:#D4788F; --accent-deep:#B85570; --accent-soft:#FBE4EA;
+    --water:#7FB3D5; --water-soft:#E8F2F9;
+    --shadow:0 1px 2px rgba(46,31,36,.04), 0 8px 24px rgba(46,31,36,.06);
+    --radius:20px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html{color-scheme:light;background-color:#FDF2F4 !important}
+  html,body{background-color:#FDF2F4 !important;color:#2E1F24 !important;font-family:'Hanken Grotesk',sans-serif;-webkit-font-smoothing:antialiased}
+  @media (prefers-color-scheme: dark){
+    html,body{background-color:#FDF2F4 !important;color:#2E1F24 !important}
+    section{background:#FFFFFF !important;color:#2E1F24 !important}
+    .opt{background:#fff !important;color:#2E1F24 !important}
+    .glass{background:#fff !important}
+  }
+  body{max-width:520px;margin:0 auto;padding:0 16px calc(40px + env(safe-area-inset-bottom));
+    background-image:radial-gradient(circle at 1px 1px, rgba(46,31,36,.04) 1px, transparent 0);background-size:22px 22px;}
+  body.noscroll{overflow:hidden;height:100vh}
+  h1,h2,h3,h4{font-family:'Bricolage Grotesque',sans-serif;letter-spacing:-.02em}
+
+  header{padding:26px 4px 14px;position:sticky;top:0;z-index:20;background:linear-gradient(180deg,#FDF2F4 78%,rgba(253,242,244,0))}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+  .date{display:flex;align-items:baseline;gap:10px;margin-top:2px}
+  .date .day{font-size:32px;font-weight:800;line-height:1;font-family:'Bricolage Grotesque'}
+  .date .sub{font-size:15px;color:var(--muted);font-weight:600}
+
+  .cal{display:flex;align-items:center;gap:2px;margin-top:14px}
+  .cal-nav{width:28px;height:46px;border-radius:8px;border:0;background:transparent;color:var(--muted);font-size:22px;cursor:pointer;line-height:1}
+  .cal-days{flex:1;display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+  .cal-day{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 0 9px;border-radius:11px;cursor:pointer;border:0;background:transparent;transition:.16s}
+  .cal-day:active{transform:scale(.94)}
+  .cal-day .lbl{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin-bottom:3px}
+  .cal-day .num{font-family:'Bricolage Grotesque';font-size:15px;font-weight:700;color:var(--ink);line-height:1}
+  .cal-day .tdot{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--accent);opacity:0}
+  .cal-day.today .tdot{opacity:1}
+  .cal-day.sel{background:var(--accent)}
+  .cal-day.sel .lbl{color:rgba(255,255,255,.8)}
+  .cal-day.sel .num{color:#fff}
+  .cal-day.sel.today .tdot{background:#fff}
+
+  .progress-wrap{margin-top:14px;display:flex;align-items:center;gap:12px}
+  .bar{flex:1;height:8px;border-radius:99px;background:rgba(46,31,36,.08);overflow:hidden}
+  .bar > i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent-deep));transition:width .5s cubic-bezier(.2,.8,.2,1)}
+  .pct{font-size:13px;font-weight:700;color:var(--muted);min-width:46px;text-align:right;font-variant-numeric:tabular-nums}
+
+  section{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-top:16px;
+    opacity:0;transform:translateY(10px);animation:rise .5s cubic-bezier(.2,.8,.2,1) forwards}
+  section:nth-of-type(1){animation-delay:.05s}
+  section:nth-of-type(2){animation-delay:.12s}
+  section:nth-of-type(3){animation-delay:.19s}
+  @keyframes rise{to{opacity:1;transform:none}}
+
+  .sec-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .sec-ico{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:17px;flex:none;background:var(--accent-soft)}
+  .ico-water{background:var(--water-soft)}
+  .sec-title{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);line-height:1.1}
+  .sec-title b{display:block;font-family:'Bricolage Grotesque';font-size:19px;letter-spacing:-.01em;text-transform:none;color:var(--ink);font-weight:700;margin-top:2px}
+
+  .task{display:flex;align-items:center;gap:13px;padding:12px;border-radius:14px;cursor:pointer;transition:background .2s;user-select:none}
+  .task:active{background:rgba(46,31,36,.03)}
+  .task + .task{margin-top:2px}
+  .check{width:25px;height:25px;border-radius:8px;border:2px solid rgba(46,31,36,.18);flex:none;display:grid;place-items:center;transition:.22s;background:#fff}
+  .check svg{width:14px;height:14px;stroke:#fff;stroke-width:3.4;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:22;stroke-dashoffset:22;transition:stroke-dashoffset .26s ease .04s}
+  .task.done .check{background:var(--accent);border-color:var(--accent)}
+  .task.done .check svg{stroke-dashoffset:0}
+  .task .label{font-size:15.5px;font-weight:600;flex:1;line-height:1.25}
+  .task.done .label{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(46,31,36,.25)}
+  .chev{font-size:22px;color:var(--muted);line-height:1;font-weight:300;margin-left:4px}
+  .task.has-detail .chev{color:var(--accent);font-weight:500}
+
+  .meal{padding:6px 0}
+  .meal + .meal{border-top:1px solid var(--line);margin-top:8px;padding-top:12px}
+  .meal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+  .meal-name{font-family:'Bricolage Grotesque';font-size:16px;font-weight:700}
+  .meal-name .em{font-size:14px;margin-right:6px}
+  .badge{font-size:11px;font-weight:800;letter-spacing:.04em;color:var(--accent-deep);background:var(--accent-soft);padding:4px 9px;border-radius:99px;opacity:0;transform:scale(.8);transition:.2s}
+  .meal.picked .badge{opacity:1;transform:none}
+  .opt{display:flex;align-items:center;gap:11px;padding:11px 12px;border:1.5px solid var(--line);border-radius:13px;cursor:pointer;transition:.18s;margin-top:7px;background:#fff}
+  .opt:active{transform:scale(.99)}
+  .opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+  .opt .dot{width:18px;height:18px;border-radius:50%;border:2px solid rgba(46,31,36,.2);flex:none;transition:.18s;position:relative}
+  .opt.sel .dot{border-color:var(--accent);background:var(--accent)}
+  .opt.sel .dot::after{content:"";position:absolute;inset:4px;background:#fff;border-radius:50%}
+  .opt .o-name{flex:1;font-size:14.5px;font-weight:600;line-height:1.2}
+  .opt .o-macros{font-size:11.5px;font-weight:700;color:var(--muted);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+
+  .macro-row{display:flex;gap:8px;margin-bottom:14px}
+  .macro{flex:1;background:var(--accent-soft);border-radius:13px;padding:10px;text-align:center}
+  .macro .mv{font-family:'Bricolage Grotesque';font-size:17px;font-weight:800;color:var(--accent-deep);line-height:1}
+  .macro .ml{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
+
+  .water-top{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px}
+  .water-amt{font-family:'Bricolage Grotesque';font-size:38px;font-weight:800;line-height:.9;color:var(--water)}
+  .water-amt small{font-size:17px;color:var(--muted);font-weight:700}
+  .water-goal{font-size:13px;font-weight:700;color:var(--muted);text-align:right}
+  .water-goal b{display:block;color:var(--ink);font-size:15px}
+  .glasses{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin:4px 0 16px}
+  .glass{aspect-ratio:3/4;border-radius:9px 9px 11px 11px;border:2px solid var(--water-soft);background:#fff;position:relative;overflow:hidden;cursor:pointer;transition:transform .12s}
+  .glass:active{transform:scale(.92)}
+  .glass::after{content:"";position:absolute;left:0;right:0;bottom:0;height:0;background:linear-gradient(180deg,#A5CDE5,var(--water));transition:height .3s cubic-bezier(.2,.8,.2,1)}
+  .glass.full{border-color:var(--water)}
+  .glass.full::after{height:100%}
+  .water-btns{display:flex;gap:10px}
+  .wbtn{flex:1;padding:14px;border-radius:14px;border:0;font-family:'Bricolage Grotesque';font-size:15px;font-weight:700;cursor:pointer;transition:.16s}
+  .wbtn:active{transform:scale(.97)}
+  .wbtn.add{background:var(--water);color:#fff}
+  .wbtn.sub{background:var(--water-soft);color:var(--water)}
+
+  footer{text-align:center;margin-top:26px;padding-bottom:8px}
+  .reset{background:none;border:0;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:8px}
+  .note{font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.5;opacity:.85}
+  .celebrate{color:var(--accent-deep);font-weight:800}
+  .auth-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px;padding:10px 4px}
+  .auth-status{font-size:13px;color:var(--muted);font-weight:600;flex:1;line-height:1.3}
+  .auth-btn{padding:8px 16px;border-radius:99px;border:1.5px solid var(--accent);color:var(--accent-deep);background:#fff;font-family:'Hanken Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+
+  .modal{position:fixed;inset:0;z-index:100;display:none}
+  .modal.open{display:block}
+  .mbg{position:absolute;inset:0;background:rgba(46,31,36,.5);opacity:0;transition:opacity .25s}
+  .modal.open .mbg{opacity:1}
+  .sheet{position:absolute;left:0;right:0;bottom:0;background:var(--bg);border-radius:26px 26px 0 0;
+    max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    padding:22px 16px calc(34px + env(safe-area-inset-bottom));
+    transform:translateY(100%);transition:transform .35s cubic-bezier(.2,.8,.2,1);
+    box-shadow:0 -10px 30px rgba(0,0,0,.18)}
+  .modal.open .sheet{transform:none}
+  .grabber{width:42px;height:5px;border-radius:99px;background:rgba(46,31,36,.18);margin:-8px auto 14px}
+  .sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+  .sheet-title{font-family:'Bricolage Grotesque';font-size:24px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+  .sheet-sub{font-size:13px;color:var(--muted);font-weight:600;margin-top:3px}
+  .close-btn{width:38px;height:38px;border-radius:50%;border:0;background:rgba(46,31,36,.07);font-size:16px;font-weight:700;cursor:pointer;color:var(--ink);flex:none}
+  .ex-section{font-family:'Bricolage Grotesque';font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-deep);padding:14px 4px 4px;margin-top:8px;border-bottom:1px solid var(--accent-soft);margin-bottom:4px;line-height:1.4}
+  .ex-section:first-child{margin-top:0;padding-top:2px}
+  .ex-card{display:flex;gap:12px;padding:13px;border-radius:18px;background:var(--card);border:1px solid var(--line);margin-top:10px;align-items:flex-start}
+  .ex-img{width:88px;height:88px;border-radius:14px;background:var(--accent-soft);flex:none;display:grid;place-items:center;color:var(--accent-deep);padding:6px;overflow:hidden;position:relative}
+  .ex-img svg{width:100%;height:100%}
+  .ex-img .ex-pic{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#fff;border-radius:14px;opacity:0;transition:opacity .25s}
+  .ex-img .ex-pic.ready{opacity:1}
+  .ex-img .ex-pose-fb{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:6px}
+  .ex-info{flex:1;min-width:0}
+  .ex-row{display:flex;align-items:center;gap:8px;margin-bottom:3px;flex-wrap:wrap}
+  .ex-num{font-family:'Bricolage Grotesque';font-size:11px;font-weight:800;color:var(--accent-deep);background:var(--accent-soft);padding:2px 7px;border-radius:6px}
+  .ex-name{font-family:'Bricolage Grotesque';font-size:15.5px;font-weight:700;line-height:1.2}
+  .ex-meta{font-size:13px;color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums;margin-bottom:5px}
+  .ex-weight{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:8px;margin-bottom:7px}
+  .ex-cue{font-size:12.5px;color:var(--muted);line-height:1.45;margin-bottom:8px}
+  .demo-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:99px;border:1.5px solid var(--accent);color:var(--accent-deep);font-size:12px;font-weight:700;text-decoration:none}
+  .demo-btn svg{width:11px;height:11px;fill:currentColor}
+  .sheet-foot{font-size:11.5px;color:var(--muted);margin-top:16px;text-align:center;line-height:1.5;padding:0 10px}
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow" id="eyebrow">Сьогодні</div>
+  <div class="date"><span class="day" id="dayName">—</span><span class="sub" id="dateSub"></span></div>
+  <div class="cal">
+    <button class="cal-nav" id="prevWk">‹</button>
+    <div class="cal-days" id="calDays"></div>
+    <button class="cal-nav" id="nextWk">›</button>
+  </div>
+  <div class="progress-wrap">
+    <div class="bar"><i id="progBar"></i></div>
+    <div class="pct" id="progPct">0%</div>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head">
+    <div class="sec-ico" id="moveIco">💪</div>
+    <div class="sec-title">Рух<b id="activityTitle">—</b></div>
+  </div>
+  <div id="activityTasks"></div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <div class="sec-ico">🍽️</div>
+    <div class="sec-title">Харчування · обери що з'їла<b>Прийоми їжі</b></div>
+  </div>
+  <div class="macro-row">
+    <div class="macro"><div class="mv">2000</div><div class="ml">ккал</div></div>
+    <div class="macro"><div class="mv">115 г</div><div class="ml">білок</div></div>
+    <div class="macro"><div class="mv">60 г</div><div class="ml">жири</div></div>
+    <div class="macro"><div class="mv">250 г</div><div class="ml">вугл.</div></div>
+  </div>
+  <div id="meals"></div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <div class="sec-ico ico-water">💧</div>
+    <div class="sec-title">Гідратація<b>Вода</b></div>
+  </div>
+  <div class="water-top">
+    <div class="water-amt" id="waterAmt">0.0<small> л</small></div>
+    <div class="water-goal">ціль<b id="waterGoal">2.5 л</b></div>
+  </div>
+  <div class="glasses" id="glasses"></div>
+  <div class="water-btns">
+    <button class="wbtn sub" id="waterSub">− склянка</button>
+    <button class="wbtn add" id="waterAdd">+ склянка · 250 мл</button>
+  </div>
+</section>
+
+<footer>
+  <button class="reset" id="resetBtn">Скинути цей день</button>
+  <div id="authBar" class="auth-bar"></div>
+  <div class="note">Зберігається на пристрої · синхронізується з хмарою після входу.<br>Додай на головний екран для швидкого доступу.</div>
+</footer>
+
+<div class="modal" id="modal" aria-hidden="true">
+  <div class="mbg" id="mbg"></div>
+  <div class="sheet" role="dialog">
+    <div class="grabber"></div>
+    <div class="sheet-head">
+      <div>
+        <div class="sheet-title" id="sheetTitle">Тренування</div>
+        <div class="sheet-sub" id="sheetSub"></div>
+      </div>
+      <button class="close-btn" id="closeBtn">✕</button>
+    </div>
+    <div id="exList"></div>
+    <p class="sheet-foot">Натисни «Дивитись демо» для відео на YouTube.<br>Стеж за технікою — зупинись, якщо щось болить.</p>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+(function(){
+  "use strict";
+  var GLASS = 250, GOAL = 2500;
+  var STROKE = 'fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"';
+  var POSES = {
+    squat:       '<svg viewBox="0 0 60 60" '+STROKE+'><circle cx="30" cy="10" r="4" fill="currentColor" stroke="none"/><path d="M30 14 V28"/><path d="M30 20 L22 28 M30 20 L38 28"/><path d="M30 28 L23 38 L23 50 M30 28 L37 38 L37 50"/><line x1="14" y1="54" x2="46" y2="54" opacity=".4"/></svg>',
+    lunge:       '<svg viewBox="0 0 60 60" '+STROKE+'><circle cx="26" cy="10" r="4" fill="currentColor" stroke="none"/><path d="M26 14 V30"/><path d="M26 20 L19 26 M26 20 L33 28"/><path d="M26 30 L20 42 L14 50"/><path d="M26 30 L40 38 L46 50"/><line x1="6" y1="54" x2="54" y2="54" opacity=".4"/></svg>',
+    pushup:      '<svg viewBox="0 0 60 36" '+STROKE+'><circle cx="46" cy="10" r="4" fill="currentColor" stroke="none"/><path d="M42 13 L10 18"/><path d="M42 14 L44 24"/><path d="M10 18 L6 24"/><line x1="2" y1="26" x2="58" y2="26" opacity=".4"/></svg>',
+    plank:       '<svg viewBox="0 0 60 32" '+STROKE+'><circle cx="46" cy="10" r="4" fill="currentColor" stroke="none"/><path d="M42 12 L12 14"/><path d="M42 14 L38 22 L46 22"/><path d="M12 14 L6 22"/><line x1="2" y1="24" x2="58" y2="24" opacity=".4"/></svg>',
+    sideplank:   '<svg viewBox="0 0 60 48" '+STROKE+'><circle cx="46" cy="10" r="4" fill="currentColor" stroke="none"/><path d="M42 12 L14 36"/><path d="M42 13 L40 26"/><path d="M14 36 V42"/><line x1="2" y1="44" x2="58" y2="44" opacity=".4"/></svg>',
+    glutebridge: '<svg viewBox="0 0 60 36" '+STROKE+'><circle cx="10" cy="22" r="4" fill="currentColor" stroke="none"/><path d="M14 22 L26 18 L36 24 L48 24"/><path d="M26 18 L26 26 M36 24 L36 28"/><line x1="2" y1="30" x2="58" y2="30" opacity=".4"/></svg>',
+    seated:      '<svg viewBox="0 0 60 48" '+STROKE+'><circle cx="22" cy="10" r="4" fill="currentColor" stroke="none"/><path d="M22 14 L28 28"/><path d="M28 28 L40 34 L52 30"/><path d="M22 16 L14 24"/><path d="M22 16 L32 22"/><line x1="2" y1="40" x2="58" y2="40" opacity=".4"/></svg>',
+    lyingback:   '<svg viewBox="0 0 60 36" '+STROKE+'><circle cx="10" cy="22" r="4" fill="currentColor" stroke="none"/><path d="M14 22 L40 22"/><path d="M14 22 L18 12"/><path d="M40 22 L36 12"/><path d="M36 12 L40 4"/><line x1="2" y1="28" x2="58" y2="28" opacity=".4"/></svg>',
+    jump:        '<svg viewBox="0 0 60 60" '+STROKE+'><circle cx="30" cy="10" r="4" fill="currentColor" stroke="none"/><path d="M30 14 V26"/><path d="M30 18 L22 12 M30 18 L38 12"/><path d="M30 26 L24 36 L24 48 M30 26 L36 36 L36 48"/><line x1="14" y1="52" x2="46" y2="52" opacity=".4"/></svg>',
+    fold:        '<svg viewBox="0 0 60 60" '+STROKE+'><path d="M30 50 V20"/><path d="M30 20 L24 32 M30 20 L36 32"/><circle cx="24" cy="36" r="4" fill="currentColor" stroke="none"/><line x1="14" y1="54" x2="46" y2="54" opacity=".4"/></svg>'
+  };
+
+  function gURL(id){ return "https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/"+id+".gif"; }
+  function gImg(id){ return {type:"gif", url:gURL(id)}; }
+
+  // ── ДЕНЬ 1 · Сідниці A (важкий) ──
+  var GLUTES_A = [
+    {section:"Основна частина · 90–120с відпочинок", items:[
+      {n:"Hip Thrust зі штангою", r:"4 × 8–10", p:"glutebridge", w:"Підбери: останні 2 повтори важкі",
+        c:"Головна вправа на сідниці. Лопатки на лаві, штанга на складці таза через валик. Вгорі повне розгинання, пауза 1с, стисни сідниці. Підборіддя притиснуте — не закидай голову.", img:gImg("3562")},
+      {n:"Румунська тяга", r:"4 × 8–10", p:"glutebridge", w:"Старт: порожній гриф 20 кг",
+        c:"Таз назад, спина нейтральна, штанга ковзає близько до ніг. Опускай до відчуття розтягнення під сідницею — не нижче.", img:gImg("0085")},
+      {n:"Болгарський випад", r:"3 × 10 кожна нога", p:"lunge", w:"Старт: 6–8 кг кожна гантель",
+        c:"Задня нога на лаві. Нахили корпус вперед ~30° — так навантаження йде в сідницю. Вертикальний корпус = квадрицепс, нам це не треба.", img:gImg("2368")},
+      {n:"Згинання ніг сидячи", r:"3 × 12", p:"seated", w:"Старт: 15–20 кг",
+        c:"Валик над п'ятами. Стискай повністю, повертай повільно — саме повільний негатив ростить задню поверхню.", img:gImg("0599")},
+      {n:"Кікбек на блоці", r:"3 × 15 кожна нога", p:"glutebridge", w:"Старт: 5–7.5 кг",
+        c:"Манжет на щиколотку, стій обличчям до блоку. Відводь пряму ногу назад, стисни сідницю вгорі на секунду. Корпус нерухомий, поперек не вигинай.", img:gImg("0228")},
+      {n:"Відведення стегна сидячи", r:"3 × 20", p:"seated", w:"Старт: 20–25 кг",
+        c:"Середня сіднична — вона дає округлість збоку. Розводь коліна, пауза назовні, повільно назад.", img:gImg("0597")}
+    ]},
+    {section:"Кор · 1 коло", items:[
+      {n:"Планка", r:"3 × 45 с", p:"plank", c:"Тіло в одну лінію, сідниці стисни, таз не провисає.", img:gImg("3665")}
+    ]},
+    {section:"Кардіо", items:[
+      {n:"Сходи", r:"12–15 хв", p:"jump", c:"Помірний темп. Навантажує сідниці, але не ростить квадрицепс так, як біг у гору.", img:gImg("2138")}
+    ]}
+  ];
+
+  // ── ДЕНЬ 2 · Верх, жимовий акцент ──
+  var UPPER_PUSH = [
+    {section:"Основна частина · 60–90с відпочинок", items:[
+      {n:"Жим гантелей на похилій", r:"3 × 10", p:"pushup", w:"Старт: 7–9 кг кожна",
+        c:"Лава під кутом 30°. Опускай до верху грудей, вичавлюй вгору.", img:gImg("0314")},
+      {n:"Жим гантелей сидячи", r:"3 × 10", p:"pushup", w:"Старт: 5–7 кг кожна",
+        c:"Спина щільно до спинки. Жми суворо вгору, не вперед.", img:gImg("0405")},
+      {n:"Тяга верхнього блоку", r:"3 × 10", p:"pushup", w:"Старт: 20–25 кг",
+        c:"Тягни до верху грудей, веди ліктями вниз. Не відкидайся назад корпусом.", img:gImg("2330")},
+      {n:"Тяга горизонтального блоку", r:"3 × 12", p:"seated", w:"Старт: 20–25 кг",
+        c:"Груди підняті, тягни лікті назад, зводь лопатки в кінці.", img:gImg("1350")},
+      {n:"Махи гантелями в сторони", r:"3 × 15", p:"seated", w:"Старт: 3–4 кг кожна",
+        c:"Ширина плечей візуально звужує талію. Легка вага, підіймай до рівня плечей, не вище.", img:gImg("0334")},
+      {n:"Розгинання на блоці", r:"3 × 12", p:"pushup", w:"Старт: 10–15 кг",
+        c:"Лікті притиснуті до боків, повне розгинання внизу.", img:gImg("0200")},
+      {n:"Згинання гантелей", r:"3 × 12", p:"seated", w:"Старт: 5–6 кг кожна",
+        c:"Без розхитування корпусом, контролюй опускання.", img:gImg("0285")}
+    ]},
+    {section:"Кардіо", items:[
+      {n:"Ходьба або сходи", r:"15–20 хв", p:"jump", c:"Спокійний темп, розмовний.", img:gImg("2138")}
+    ]}
+  ];
+
+  // ── ДЕНЬ 3 · Сідниці B (об'ємний) ──
+  var GLUTES_B = [
+    {section:"Основна частина · вищі повтори · 60–90с", items:[
+      {n:"Hip Thrust", r:"4 × 12–15", p:"glutebridge", w:"Легше, ніж у понеділок",
+        c:"Той самий рух, але більше повторів. Фокус на відчутті сідниці, а не на вазі.", img:gImg("3562")},
+      {n:"Тяга сумо", r:"3 × 12", p:"squat", w:"Старт: гиря/гантель 12–16 кг",
+        c:"Широка постановка, носки розвернуті. Включає внутрішню поверхню й сідниці, майже не чіпає передню поверхню стегна.", img:gImg("0117")},
+      {n:"Зворотний випад", r:"3 × 12 кожна нога", p:"lunge", w:"Старт: 5–7 кг кожна гантель",
+        c:"Крок назад, корпус трохи вперед. Вага на передній нозі, відштовхуйся п'ятою.", img:gImg("0381")},
+      {n:"Згинання ніг лежачи", r:"3 × 12", p:"lyingback", w:"Старт: 15–20 кг",
+        c:"Інший кут, ніж сидячи. Таз притиснутий до лави, не відривай.", img:gImg("0586")},
+      {n:"Pull-Through на блоці", r:"3 × 15", p:"glutebridge", w:"Старт: 15–20 кг",
+        c:"Канат між ніг, стій спиною до блоку. Таз назад, потім потужно вперед, стискаючи сідниці.", img:gImg("0196")},
+      {n:"Відведення стегна", r:"3 × 15", p:"seated", w:"Старт: 20–25 кг",
+        c:"Другий раз за тиждень — середня сіднична любить частоту.", img:gImg("0597")}
+    ]},
+    {section:"Кор · 1 коло", items:[
+      {n:"Підйом ніг лежачи", r:"3 × 15", p:"lyingback", c:"Поперек притиснутий до лави. Опускай повільно, не кидай ноги.", img:gImg("0620")}
+    ]},
+    {section:"Кардіо", items:[
+      {n:"Сходи", r:"12–15 хв", p:"jump", c:"Помірний темп.", img:gImg("2138")}
+    ]}
+  ];
+
+  // ── ДЕНЬ 4 · Верх, тяговий акцент + кор ──
+  var UPPER_PULL = [
+    {section:"Основна частина · 60–90с відпочинок", items:[
+      {n:"Тяга верхнього вузьким хватом", r:"3 × 10", p:"pushup", w:"Старт: 20–25 кг",
+        c:"V-рукоятка. Тягни до верху грудей, лікті вниз.", img:gImg("2616")},
+      {n:"Тяга з упором у груди", r:"3 × 12", p:"seated", w:"Старт: 10 кг/бік",
+        c:"Груди в подушку — виключає читінг корпусом, працює лише спина.", img:gImg("0581")},
+      {n:"Задня дельта (метелик назад)", r:"3 × 15", p:"seated", w:"Старт: 10–15 кг",
+        c:"Веди ліктями назад, без інерції. Задня дельта тримає поставу.", img:gImg("0602")},
+      {n:"Жим гантелей лежачи", r:"3 × 12", p:"pushup", w:"Старт: 7–9 кг кожна",
+        c:"Лопатки зведені, опускай до середини грудей.", img:gImg("0289")},
+      {n:"Махи в сторони", r:"3 × 15", p:"seated", w:"Старт: 3–4 кг кожна",
+        c:"Другий раз за тиждень. Техніка важливіша за вагу.", img:gImg("0334")},
+      {n:"Молотки", r:"3 × 12", p:"seated", w:"Старт: 5–6 кг кожна",
+        c:"Нейтральний хват, долоні одна до одної.", img:gImg("1648")}
+    ]},
+    {section:"Кор · 2 кола", items:[
+      {n:"Бічна планка", r:"3 × 30 с кожен бік", p:"sideplank", c:"Тіло в одну лінію, таз не провисає. Працюють косі без навантаження на поперек.", img:gImg("1775")}
+    ]},
+    {section:"Кардіо", items:[
+      {n:"Ходьба", r:"15–20 хв", p:"jump", c:"Спокійний темп.", img:gImg("2138")}
+    ]}
+  ];
+
+  var DAYS = {
+    1:{title:"Сідниці A · важкий", emoji:"🍑", tasks:[
+        {id:"workout", label:"Тренування · 1:30–2 год", ex:GLUTES_A, exTitle:"Сідниці A", exSub:"Важкий день · таз-домінантні рухи"},
+        {id:"steps", label:"10 000 кроків"}]},
+    2:{title:"Верх · жимовий", emoji:"💪", tasks:[
+        {id:"workout", label:"Тренування · 1:15–1:30 год", ex:UPPER_PUSH, exTitle:"Верх · жим", exSub:"Груди · плечі · трицепс"},
+        {id:"steps", label:"10 000 кроків"}]},
+    3:{title:"Відновлення", emoji:"🚶", tasks:[
+        {id:"walk", label:"Ходьба 30–40 хв"},
+        {id:"steps", label:"10 000 кроків"}]},
+    4:{title:"Сідниці B · об'ємний", emoji:"🍑", tasks:[
+        {id:"workout", label:"Тренування · 1:30–2 год", ex:GLUTES_B, exTitle:"Сідниці B", exSub:"Об'ємний день · вищі повтори"},
+        {id:"steps", label:"10 000 кроків"}]},
+    5:{title:"Верх · тяговий + кор", emoji:"💪", tasks:[
+        {id:"workout", label:"Тренування · 1:15–1:30 год", ex:UPPER_PULL, exTitle:"Верх · тяга", exSub:"Спина · задня дельта · біцепс"},
+        {id:"steps", label:"10 000 кроків"}]},
+    6:{title:"Довга ходьба", emoji:"🚶", tasks:[
+        {id:"walk", label:"Ходьба 45–60 хв"},
+        {id:"steps", label:"10 000 кроків"}]},
+    0:{title:"Відпочинок", emoji:"😴", tasks:[
+        {id:"walk", label:"Легка ходьба (за бажанням)"}]}
+  };
+
+  var MEALS = [
+    {key:"breakfast", em:"☀️", name:"Сніданок", opts:[
+      ["Вівсянка + сир + ягоди","560 ккал · 38 г Б"],
+      ["Омлет 3 яйця + сир + тост","550 ккал · 35 г Б"],
+      ["Сирники + сметана","520 ккал · 40 г Б"],
+      ["Грецький йогурт + гранола + горіхи","540 ккал · 35 г Б"]]},
+    {key:"lunch", em:"🥗", name:"Обід", opts:[
+      ["Курка + рис + овочі","700 ккал · 45 г Б"],
+      ["Лосось + картопля + салат","720 ккал · 40 г Б"],
+      ["Індичка + гречка + овочі","680 ккал · 44 г Б"],
+      ["Паста + курка + овочі","720 ккал · 40 г Б"]]},
+    {key:"dinner", em:"🌙", name:"Вечеря", opts:[
+      ["Риба + овочі гриль","580 ккал · 40 г Б"],
+      ["Курка + салат + авокадо","620 ккал · 42 г Б"],
+      ["Омлет + овочі + хліб","580 ккал · 35 г Б"],
+      ["Сир + фрукти + горіхи","560 ккал · 38 г Б"]]},
+    {key:"snack", em:"🍎", name:"Перекус", opts:[
+      ["Протеїн + банан","180 ккал · 25 г Б"],
+      ["Грецький йогурт + ягоди","150 ккал · 14 г Б"],
+      ["Сир 5%","120 ккал · 18 г Б"],
+      ["Горіхи + яблуко","180 ккал · 5 г Б"]]}
+  ];
+
+  var FB_CONFIG = {
+    apiKey:"AIzaSyBtG3NAe-Eu9m2OuKLYt63zJjCBzMq9VF4",
+    authDomain:"fitness-tracker-7ef81.firebaseapp.com",
+    projectId:"fitness-tracker-7ef81",
+    storageBucket:"fitness-tracker-7ef81.firebasestorage.app",
+    messagingSenderId:"975830615739",
+    appId:"1:975830615739:web:16a311c1bbfc2428bc8b9e"
+  };
+  var fbAuth=null, fbDb=null, fbUser=null;
+  try{ firebase.initializeApp(FB_CONFIG); fbAuth=firebase.auth(); fbDb=firebase.firestore(); }catch(e){}
+  function cloudDoc(){ return (fbDb&&fbUser)?fbDb.collection("users").doc(fbUser.uid):null; }
+  function pushToCloud(){ var d=cloudDoc(); if(d) d.set({entries:state.entries},{merge:true}).catch(function(){}); }
+  function syncFromCloud(){
+    var d=cloudDoc(); if(!d) return;
+    d.get().then(function(s){
+      var cl = s.exists?(s.data().entries||{}):{};
+      state.entries = Object.assign({}, cl, state.entries);
+      saveRaw(JSON.stringify(state)); renderAll();
+      if(!s.exists) pushToCloud();
+    }).catch(function(){});
+  }
+  function updateAuthUI(){
+    var bar=document.getElementById("authBar"); if(!bar) return;
+    if(!fbAuth){ bar.style.display="none"; return; }
+    if(fbUser){
+      bar.innerHTML='<span class="auth-status">☁️ Синхронізовано · '+fbUser.email+'</span><button class="auth-btn" id="signOutBtn">Вийти</button>';
+      document.getElementById("signOutBtn").onclick=function(){ fbAuth.signOut(); };
+    } else {
+      bar.innerHTML='<span class="auth-status">☁️ Увійди для синхронізації</span><button class="auth-btn" id="signInBtn">Увійти через Google</button>';
+      document.getElementById("signInBtn").onclick=function(){ fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); };
+    }
+  }
+  if(fbAuth) fbAuth.onAuthStateChanged(function(u){ fbUser=u; updateAuthUI(); if(u) syncFromCloud(); });
+
+  function pad(n){ return n<10?"0"+n:""+n; }
+  function fmt(d){ return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+  function todayStr(){ return fmt(new Date()); }
+  function parseD(s){ var p=s.split("-"); return new Date(+p[0],+p[1]-1,+p[2]); }
+  function mondayOf(d){ var x=new Date(d); x.setHours(0,0,0,0); var off=(x.getDay()+6)%7; x.setDate(x.getDate()-off); return x; }
+  function addDays(d,n){ var x=new Date(d); x.setDate(x.getDate()+n); return x; }
+
+  var KEY="valeriaTracker_v1", mem=null;
+  function loadRaw(){ try{ return localStorage.getItem(KEY); }catch(e){ return mem; } }
+  function saveRaw(s){ try{ localStorage.setItem(KEY,s); }catch(e){ mem=s; } }
+  var state=(function(){ var r=loadRaw(); if(r){ try{ return JSON.parse(r); }catch(e){} } return {entries:{}}; })();
+  if(!state.entries) state.entries={};
+  state.selectedDate=todayStr();
+  function entry(){
+    var d=state.selectedDate;
+    if(!state.entries[d]) state.entries[d]={activity:{},meals:{},water:0};
+    return state.entries[d];
+  }
+  function save(){ saveRaw(JSON.stringify(state)); pushToCloud(); }
+
+  var dNames=["Неділя","Понеділок","Вівторок","Середа","Четвер","П'ятниця","Субота"];
+  var mNames=["січ","лют","бер","кві","тра","чер","лип","сер","вер","жов","лис","гру"];
+  var dLetters=["Пн","Вт","Ср","Чт","Пт","Сб","Нд"];
+  var weekStart=mondayOf(new Date());
+  var CHECK='<span class="check"><svg viewBox="0 0 18 18"><polyline points="3,9.5 7.5,14 15,4.5"/></svg></span>';
+  document.getElementById("waterGoal").textContent=(GOAL/1000).toFixed(1)+" л";
+
+  function renderHeader(){
+    var sel=parseD(state.selectedDate), isToday=state.selectedDate===todayStr(), h=new Date().getHours();
+    document.getElementById("eyebrow").textContent = isToday?(h<12?"Доброго ранку":h<18?"Доброго дня":"Доброго вечора"):"План на";
+    document.getElementById("dayName").textContent = dNames[sel.getDay()];
+    document.getElementById("dateSub").textContent = sel.getDate()+" "+mNames[sel.getMonth()];
+  }
+  function renderCalendar(){
+    var days=document.getElementById("calDays"), html="";
+    for(var i=0;i<7;i++){
+      var d=addDays(weekStart,i), ds=fmt(d);
+      var cls="cal-day"+(ds===todayStr()?" today":"")+(ds===state.selectedDate?" sel":"");
+      html+='<button class="'+cls+'" data-d="'+ds+'"><span class="lbl">'+dLetters[i]+'</span><span class="num">'+d.getDate()+'</span><span class="tdot"></span></button>';
+    }
+    days.innerHTML=html;
+    days.querySelectorAll(".cal-day").forEach(function(b){
+      b.addEventListener("click",function(){ state.selectedDate=b.getAttribute("data-d"); save(); renderAll(); });
+    });
+  }
+  function renderActivity(){
+    var sel=parseD(state.selectedDate), day=DAYS[sel.getDay()];
+    document.getElementById("activityTitle").textContent=day.title;
+    document.getElementById("moveIco").textContent=day.emoji||"💪";
+    var at=document.getElementById("activityTasks"), html="", e=entry();
+    day.tasks.forEach(function(t){
+      var done=!!e.activity[t.id], hasEx=!!t.ex;
+      html+='<div class="task'+(done?' done':'')+(hasEx?' has-detail':'')+'" data-task="'+t.id+'">'+CHECK+
+        '<span class="label">'+t.label+'</span>'+(hasEx?'<span class="chev">›</span>':'')+'</div>';
+    });
+    at.innerHTML=html;
+    at.querySelectorAll(".task").forEach(function(el){
+      var id=el.getAttribute("data-task"), task=null;
+      for(var i=0;i<day.tasks.length;i++){ if(day.tasks[i].id===id){ task=day.tasks[i]; break; } }
+      el.querySelector(".check").addEventListener("click",function(ev){
+        ev.stopPropagation(); var en=entry(); en.activity[id]=!en.activity[id];
+        el.classList.toggle("done",en.activity[id]); save(); updateProgress();
+      });
+      el.addEventListener("click",function(){
+        if(task&&task.ex){ openModal(task.exTitle,task.exSub,task.ex); }
+        else { var en=entry(); en.activity[id]=!en.activity[id]; el.classList.toggle("done",en.activity[id]); save(); updateProgress(); }
+      });
+    });
+  }
+  function renderMeals(){
+    var mc=document.getElementById("meals"), mh="", e=entry();
+    MEALS.forEach(function(m){
+      var sel=e.meals[m.key];
+      mh+='<div class="meal'+(sel!=null?' picked':'')+'" data-meal="'+m.key+'">';
+      mh+='<div class="meal-head"><div class="meal-name"><span class="em">'+m.em+'</span>'+m.name+'</div><div class="badge">✓ відмічено</div></div>';
+      m.opts.forEach(function(o,i){
+        mh+='<div class="opt'+(sel===i?' sel':'')+'" data-i="'+i+'"><span class="dot"></span><span class="o-name">'+o[0]+'</span><span class="o-macros">'+o[1]+'</span></div>';
+      });
+      mh+='</div>';
+    });
+    mc.innerHTML=mh;
+    mc.querySelectorAll(".meal").forEach(function(mEl){
+      var key=mEl.getAttribute("data-meal");
+      mEl.querySelectorAll(".opt").forEach(function(oEl){
+        oEl.addEventListener("click",function(){
+          var i=parseInt(oEl.getAttribute("data-i"),10), en=entry();
+          if(en.meals[key]===i){ delete en.meals[key]; } else { en.meals[key]=i; }
+          var cur=en.meals[key];
+          mEl.classList.toggle("picked",cur!=null);
+          mEl.querySelectorAll(".opt").forEach(function(x){ x.classList.toggle("sel",parseInt(x.getAttribute("data-i"),10)===cur); });
+          save(); updateProgress();
+        });
+      });
+    });
+  }
+  function renderWater(){
+    var g=document.getElementById("glasses"), e=entry(), total=GOAL/GLASS, filled=Math.round(e.water/GLASS), h="";
+    for(var i=1;i<=total;i++){ h+='<div class="glass'+(i<=filled?' full':'')+'" data-n="'+i+'"></div>'; }
+    g.innerHTML=h;
+    document.getElementById("waterAmt").innerHTML=(e.water/1000).toFixed(2).replace(/0$/,'')+'<small> л</small>';
+    g.querySelectorAll(".glass").forEach(function(el){
+      el.addEventListener("click",function(){
+        var n=parseInt(el.getAttribute("data-n"),10), en=entry(), f=Math.round(en.water/GLASS);
+        en.water=(n===f?n-1:n)*GLASS; if(en.water<0) en.water=0;
+        save(); renderWater(); updateProgress();
+      });
+    });
+  }
+  document.getElementById("waterAdd").addEventListener("click",function(){
+    var en=entry(); if(en.water<GOAL+GLASS*4){ en.water+=GLASS; save(); renderWater(); updateProgress(); }
+  });
+  document.getElementById("waterSub").addEventListener("click",function(){
+    var en=entry(); en.water=Math.max(0,en.water-GLASS); save(); renderWater(); updateProgress();
+  });
+  function updateProgress(){
+    var sel=parseD(state.selectedDate), day=DAYS[sel.getDay()], e=entry(), done=0;
+    var tot=day.tasks.length+MEALS.length+1;
+    day.tasks.forEach(function(t){ if(e.activity[t.id]) done++; });
+    MEALS.forEach(function(m){ if(e.meals[m.key]!=null) done++; });
+    if(e.water>=GOAL) done++;
+    var pct=Math.round(done/tot*100);
+    document.getElementById("progBar").style.width=pct+"%";
+    var p=document.getElementById("progPct");
+    if(pct>=100){ p.innerHTML='<span class="celebrate">Готово! 🎉</span>'; } else { p.textContent=pct+"%"; }
+  }
+  function renderAll(){ renderHeader(); renderCalendar(); renderActivity(); renderMeals(); renderWater(); updateProgress(); updateAuthUI(); }
+
+  document.getElementById("prevWk").addEventListener("click",function(){ weekStart=addDays(weekStart,-7); renderCalendar(); });
+  document.getElementById("nextWk").addEventListener("click",function(){ weekStart=addDays(weekStart,7); renderCalendar(); });
+  document.getElementById("resetBtn").addEventListener("click",function(){
+    if(confirm("Скинути всі відмітки за "+state.selectedDate+"?")){
+      state.entries[state.selectedDate]={activity:{},meals:{},water:0}; save(); renderAll();
+    }
+  });
+
+  var modal=document.getElementById("modal");
+  var PLAY='<svg viewBox="0 0 14 14"><polygon points="2,1 12,7 2,13"/></svg>';
+  function openModal(title,sub,sections){
+    document.getElementById("sheetTitle").textContent=title;
+    document.getElementById("sheetSub").textContent=sub||"";
+    var h="";
+    sections.forEach(function(sec){
+      if(sec.section){ h+='<div class="ex-section">'+sec.section+'</div>'; }
+      sec.items.forEach(function(e,i){
+        var pose=POSES[e.p]||POSES.squat;
+        var yt="https://www.youtube.com/results?search_query="+encodeURIComponent(e.n+" вправа техніка");
+        var img;
+        if(e.img){
+          img='<div class="ex-pose-fb">'+pose+'</div><img class="ex-pic" src="'+e.img.url+'" alt="" onload="this.classList.add(\'ready\')" onerror="this.remove()">';
+        } else { img=pose; }
+        h+='<div class="ex-card"><div class="ex-img">'+img+'</div><div class="ex-info">';
+        h+='<div class="ex-row"><span class="ex-num">'+(i+1<10?"0":"")+(i+1)+'</span><span class="ex-name">'+e.n+'</span></div>';
+        h+='<div class="ex-meta">'+e.r+'</div>';
+        if(e.w){ h+='<div class="ex-weight">🏋️ '+e.w+'</div>'; }
+        h+='<div class="ex-cue">'+e.c+'</div>';
+        h+='<a class="demo-btn" target="_blank" rel="noopener noreferrer" href="'+yt+'">'+PLAY+' Дивитись демо</a>';
+        h+='</div></div>';
+      });
+    });
+    document.getElementById("exList").innerHTML=h;
+    modal.classList.add("open"); modal.setAttribute("aria-hidden","false");
+    document.body.classList.add("noscroll");
+  }
+  function closeModal(){ modal.classList.remove("open"); modal.setAttribute("aria-hidden","true"); document.body.classList.remove("noscroll"); }
+  document.getElementById("closeBtn").addEventListener("click",closeModal);
+  document.getElementById("mbg").addEventListener("click",closeModal);
+  document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&modal.classList.contains("open")) closeModal(); });
+
+  renderAll();
+})();
+</script>
+</body>
+</html>
