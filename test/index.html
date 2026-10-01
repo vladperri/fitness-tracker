@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Діагностика v2</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,system-ui,sans-serif;background:#F2F2F5;color:#111;padding:18px;max-width:460px;margin:0 auto;line-height:1.45}
+  h1{font-size:20px;margin-bottom:4px}
+  .sub{font-size:13px;color:#666;margin-bottom:16px}
+  .box{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;border:1px solid rgba(0,0,0,.07)}
+  .box h2{font-size:15px;margin-bottom:12px}
+  .media{display:block;width:160px;height:160px;border-radius:12px;background:#ddd;object-fit:cover;margin:0 auto 14px}
+  .btns{display:flex;gap:10px}
+  .btn{flex:1;padding:14px;border-radius:12px;border:2px solid #ccc;background:#fff;font-size:15px;font-weight:700;font-family:inherit}
+  .btn.y{border-color:#1B7F3B;color:#1B7F3B}
+  .btn.n{border-color:#C21F1F;color:#C21F1F}
+  .r{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #eee;font-size:13.5px}
+  .r:last-child{border:0}
+  .r .k{color:#555}
+  .r .v{font-weight:700;text-align:right;word-break:break-all}
+  .ok{color:#1B7F3B}.bad{color:#C21F1F}
+  .final{border-radius:16px;padding:16px;margin-top:14px;font-size:15px;font-weight:600;line-height:1.5;display:none}
+  .f1{background:#FDE7E7;color:#8B1414}
+  .f2{background:#FFF3DC;color:#7A5300}
+  .f3{background:#E2F6E8;color:#14612F}
+</style>
+</head>
+<body>
+  <h1>Діагностика v2</h1>
+  <div class="sub">Попередня версія визначала GIF неправильно. Тут — очима, це надійніше.</div>
+
+  <div class="box">
+    <h2>1 · Чи рухається ця картинка?</h2>
+    <img class="media" src="../diag.gif" alt="">
+    <div class="btns">
+      <button class="btn y" onclick="ans(true)">Рухається</button>
+      <button class="btn n" onclick="ans(false)">Стоїть</button>
+    </div>
+  </div>
+
+  <div class="box">
+    <h2>2 · Відео MP4 (вимірюється автоматично)</h2>
+    <video class="media" id="v" src="../diag.mp4" autoplay loop muted playsinline></video>
+    <div id="vd"></div>
+  </div>
+
+  <div class="box">
+    <h2>3 · Система</h2>
+    <div id="sys"></div>
+  </div>
+
+  <div id="final" class="final"></div>
+
+<script>
+function R(k,v,c){ return '<div class="r"><span class="k">'+k+'</span><span class="v '+(c||'')+'">'+v+'</span></div>'; }
+
+// система
+var rm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+var sys = R('Reduce Motion', rm?'УВІМКНЕНО':'вимкнено', rm?'bad':'ok');
+sys += R('iOS', (navigator.userAgent.match(/OS ([\d_]+)/)||[,'?'])[1].replace(/_/g,'.'));
+sys += R('Браузер', /CriOS/.test(navigator.userAgent)?'Chrome (WebKit)':'Safari');
+sys += R('Пам\'ять', (navigator.deviceMemory||'?')+' ГБ');
+document.getElementById('sys').innerHTML = sys;
+
+// відео
+var v=document.getElementById('v'), vOK=null;
+function vreport(){
+  var e=v.error;
+  var h = R('Статус', vOK===null?'перевіряю…':(vOK?'ГРАЄ':'НЕ ГРАЄ'), vOK?'ok':(vOK===false?'bad':''));
+  h += R('readyState', v.readyState+'/4');
+  h += R('paused', String(v.paused));
+  h += R('currentTime', v.currentTime.toFixed(2));
+  h += R('тривалість', (v.duration||0).toFixed(2));
+  if(e) h += R('помилка', 'код '+e.code+(e.code===4?' (формат не підтримується)':''), 'bad');
+  document.getElementById('vd').innerHTML=h;
+}
+vreport();
+v.addEventListener('error', function(){ vOK=false; vreport(); verdict(); });
+setTimeout(function(){
+  var t1=v.currentTime;
+  setTimeout(function(){
+    if(vOK===null){ vOK = v.currentTime>t1; }
+    vreport(); verdict();
+  }, 1000);
+}, 800);
+
+// перевірка, чи файли взагалі доступні
+fetch('../diag.mp4',{method:'HEAD'}).then(function(r){
+  document.getElementById('sys').innerHTML += R('diag.mp4', r.status, r.ok?'ok':'bad');
+}).catch(function(){
+  document.getElementById('sys').innerHTML += R('diag.mp4','недоступний','bad');
+});
+
+var gifOK=null;
+function ans(x){ gifOK=x; verdict(); }
+function verdict(){
+  if(gifOK===null || vOK===null) return;
+  var f=document.getElementById('final'); f.style.display='block';
+  if(gifOK){
+    f.className='final f3';
+    f.innerHTML='✅ GIF рухається. Значить система в порядку, а проблема в самому додатку — надішли скрін.';
+  } else if(vOK){
+    f.className='final f2';
+    f.innerHTML='⚠️ GIF стоїть, але <b>відео грає</b>.<br>Це ліміт пам\'яті iOS на анімовані зображення. Перехід на MP4 уже зроблено в додатку — він має вирішити проблему.';
+  } else {
+    f.className='final f1';
+    f.innerHTML='🔴 Не рухається ні GIF, ні відео.<br>Надішли скрін — цифри вище (readyState, помилка, Reduce Motion) покажуть причину.';
+  }
+}
+</script>
+</body>
+</html>
