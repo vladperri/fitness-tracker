@@ -162,6 +162,12 @@
   .ex-card{display:flex;gap:12px;padding:13px;border-radius:18px;background:var(--card);border:1px solid var(--line);margin-top:10px;align-items:flex-start}
   .ex-img{width:88px;height:88px;border-radius:14px;background:var(--accent-soft);flex:none;display:grid;place-items:center;color:var(--accent-deep);padding:6px;overflow:hidden;position:relative}
   .ex-img svg{width:100%;height:100%}
+
+  .ex-img .ex-sprite{position:absolute;inset:0;border-radius:14px;background-repeat:no-repeat;
+    background-size:1200% 100%;background-position:0 0;background-color:#fff;
+    animation:exrun 1.3s steps(12) infinite;opacity:0;transition:opacity .2s}
+  .ex-img .ex-sprite.ready{opacity:1}
+  @keyframes exrun{from{background-position:0 0}to{background-position:-1200% 0}}
   .ex-img .ex-pic{object-fit:cover;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#fff;border-radius:14px;opacity:0;transition:opacity .25s}
   .ex-img .ex-pic.ready{opacity:1}
   .ex-img .ex-pose-fb{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:6px}
@@ -383,7 +389,7 @@
   // ---------- Day plan ----------
   // ── Gym workouts ── designed around your equipment (Smith, DBs, BBs, machines, back ext, cardio) ──
   function gURL(id){ return "vid/"+id+".mp4"; }
-  function gImg(id){ return {type:"gif", url:gURL(id), gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/"+id+".gif"}; }
+  function gImg(id){ return {type:"gif", sprite:"sprite/"+id+".jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/"+id+".gif"}; }
 
   var STRENGTH_A_GYM = [
     {section:"PUSH · груди · плечі · трицепс · 3–4 підходи · 90с відпочинок", items:[
@@ -824,7 +830,7 @@
         var imgContent;
         if(e.img && e.img.type === "gif"){
           imgContent = '<div class="ex-pose-fb">'+pose+'</div>' +
-                       '<video class="ex-pic" src="'+e.img.url+'" data-gif="'+(e.img.gif||'')+'" autoplay loop muted playsinline preload="auto" oncanplay="this.classList.add(\'ready\')" onerror="var g=this.dataset.gif; if(g){var i=document.createElement(\'img\');i.className=\'ex-pic ready\';i.src=g;this.replaceWith(i);} else {this.remove();}"></video>';
+                       '<div class="ex-sprite" style="background-image:url(\''+e.img.sprite+'\')" onload=""></div>';
         } else if(e.img && e.img.type === "frames"){
           imgContent = '<div class="ex-pose-fb">'+pose+'</div>' +
                        '<img class="ex-pic ex-frame" src="'+e.img.base+'/0.jpg" data-base="'+e.img.base+'" alt="" onload="this.classList.add(\'ready\')" onerror="this.remove()">';
