@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="uk"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light"><title>Тест 3</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,system-ui,sans-serif;background:#F2F2F5;color:#111;padding:16px;max-width:460px;margin:0 auto;line-height:1.45}
+h1{font-size:19px;margin-bottom:12px}
+.box{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;border:1px solid rgba(0,0,0,.07)}
+.box h2{font-size:15px;margin-bottom:10px}
+video{width:150px;height:150px;border-radius:12px;background:#ddd;display:block;margin:0 auto 12px}
+button{width:100%;padding:15px;border-radius:12px;border:0;background:#0A84FF;color:#fff;font-size:16px;font-weight:700;font-family:inherit}
+.r{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee;font-size:13.5px}
+.r:last-child{border:0}.r .v{font-weight:700}
+.ok{color:#1B7F3B}.bad{color:#C21F1F}
+/* CSS-анімація — базова перевірка */
+.spin{width:60px;height:60px;border-radius:12px;background:#0A84FF;margin:0 auto 10px;animation:sp 1.2s linear infinite}
+@keyframes sp{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.pulse{width:60px;height:60px;border-radius:50%;background:#30D158;margin:0 auto;animation:pl 1s ease-in-out infinite alternate}
+@keyframes pl{from{transform:scale(.5)}to{transform:scale(1)}}
+.hint{font-size:12.5px;color:#666;margin-top:8px}
+</style></head><body>
+<h1>Тест 3 · вирішальний</h1>
+
+<div class="box">
+  <h2>А · Чи крутиться цей квадрат і пульсує коло?</h2>
+  <div class="spin"></div>
+  <div class="pulse"></div>
+  <div class="hint">Це чиста CSS-анімація. Якщо вона теж стоїть — система глушить усе.</div>
+</div>
+
+<div class="box">
+  <h2>Б · Натисни кнопку — відео має заграти</h2>
+  <video id="v" src="../diag.mp4" loop muted playsinline controls></video>
+  <button onclick="go()">▶︎ Запустити відео вручну</button>
+  <div id="st" style="margin-top:10px"></div>
+  <div class="hint">Якщо від дотику грає, а само — ні, значить заблоковано автозапуск.</div>
+</div>
+
+<script>
+function R(k,v,c){return '<div class="r"><span>'+k+'</span><span class="v '+(c||'')+'">'+v+'</span></div>';}
+var v=document.getElementById('v'), st=document.getElementById('st');
+function upd(tag){
+  st.innerHTML = R('дія',tag) + R('readyState', v.readyState+'/4', v.readyState>0?'ok':'bad')
+    + R('paused', String(v.paused), v.paused?'bad':'ok')
+    + R('currentTime', v.currentTime.toFixed(2), v.currentTime>0?'ok':'bad')
+    + R('тривалість', (v.duration||0).toFixed(2))
+    + (v.error? R('помилка','код '+v.error.code,'bad') : '');
+}
+upd('до натискання');
+function go(){
+  v.load();
+  var p=v.play();
+  if(p&&p.catch) p.catch(function(e){ upd('ВІДХИЛЕНО: '+e.name); });
+  setTimeout(function(){ upd('через 1.5с після натискання'); },1500);
+}
+v.addEventListener('loadedmetadata',function(){ upd('метадані завантажено'); });
+v.addEventListener('playing',function(){ upd('ГРАЄ ✓'); });
+</script>
+</body></html>
