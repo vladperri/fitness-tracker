@@ -1,29 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#16794A">
 <meta name="color-scheme" content="light">
 <title>Fitness Tracker</title>
-
-<!-- Favicon (flame) -->
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" href="favicon.svg">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Fitness">
-
-<!-- Open Graph (link previews in Telegram, iMessage, etc.) -->
-<meta property="og:type" content="website">
 <meta property="og:title" content="Fitness Tracker">
-<meta property="og:description" content="Push · Pull · Legs — щоденний трекер тренувань, харчування та води.">
-<meta property="og:image" content="https://vladperri.github.io/fitness-tracker/og.png">
-<meta property="og:url" content="https://vladperri.github.io/fitness-tracker/">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Fitness Tracker">
-<meta name="twitter:description" content="Push · Pull · Legs — щоденний трекер тренувань, харчування та води.">
-<meta name="twitter:image" content="https://vladperri.github.io/fitness-tracker/og.png">
+<meta property="og:description" content="Push · Pull · Legs — щоденний трекер">
+<meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -32,7 +21,6 @@
     --bg:#F1ECE2; --card:#FFFFFF; --ink:#17160F; --muted:#75736A;
     --line:rgba(23,22,15,.09);
     --accent:#16794A; --accent-deep:#0F5A37; --accent-soft:#E6F1EA;
-    --hiit:#C4561A; --hiit-soft:#FBEADE;
     --water:#2B83C4; --water-soft:#E2EFF8;
     --shadow:0 1px 2px rgba(23,22,15,.04), 0 8px 24px rgba(23,22,15,.06);
     --radius:20px;
@@ -49,26 +37,25 @@
   body{max-width:520px;margin:0 auto;padding:0 16px calc(40px + env(safe-area-inset-bottom));
     background-image:radial-gradient(circle at 1px 1px, rgba(23,22,15,.04) 1px, transparent 0);background-size:22px 22px;}
   body.noscroll{overflow:hidden;height:100vh}
-  h1,h2,h3,h4,.display{font-family:'Bricolage Grotesque',sans-serif;letter-spacing:-.02em}
+  h1,h2,h3,h4{font-family:'Bricolage Grotesque',sans-serif;letter-spacing:-.02em}
 
-  header{padding:26px 4px 14px;position:sticky;top:0;z-index:20;background:linear-gradient(180deg,var(--bg) 78%,rgba(241,236,226,0))}
+  header{padding:26px 4px 14px;position:sticky;top:0;z-index:20;background:linear-gradient(180deg,#F1ECE2 78%,rgba(253,242,244,0))}
   .eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
   .date{display:flex;align-items:baseline;gap:10px;margin-top:2px}
-  .date .day{font-size:32px;font-weight:800;line-height:1}
+  .date .day{font-size:32px;font-weight:800;line-height:1;font-family:'Bricolage Grotesque'}
   .date .sub{font-size:15px;color:var(--muted);font-weight:600}
 
   .cal{display:flex;align-items:center;gap:2px;margin-top:14px}
-  .cal-nav{width:28px;height:46px;border-radius:8px;border:0;background:transparent;color:var(--muted);font-size:22px;cursor:pointer;line-height:1;font-family:'Bricolage Grotesque'}
-  .cal-nav:active{transform:scale(.9)}
+  .cal-nav{width:28px;height:46px;border-radius:8px;border:0;background:transparent;color:var(--muted);font-size:22px;cursor:pointer;line-height:1}
   .cal-days{flex:1;display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
   .cal-day{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 0 9px;border-radius:11px;cursor:pointer;border:0;background:transparent;transition:.16s}
   .cal-day:active{transform:scale(.94)}
   .cal-day .lbl{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin-bottom:3px}
   .cal-day .num{font-family:'Bricolage Grotesque';font-size:15px;font-weight:700;color:var(--ink);line-height:1}
-  .cal-day .tdot{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--accent);opacity:0;transition:.2s}
+  .cal-day .tdot{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--accent);opacity:0}
   .cal-day.today .tdot{opacity:1}
   .cal-day.sel{background:var(--accent)}
-  .cal-day.sel .lbl{color:rgba(255,255,255,.78)}
+  .cal-day.sel .lbl{color:rgba(255,255,255,.8)}
   .cal-day.sel .num{color:#fff}
   .cal-day.sel.today .tdot{background:#fff}
 
@@ -85,8 +72,8 @@
   @keyframes rise{to{opacity:1;transform:none}}
 
   .sec-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-  .sec-ico{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:17px;flex:none}
-  .ico-move{background:var(--accent-soft)}.ico-fuel{background:#F6ECDD}.ico-water{background:var(--water-soft)}.ico-hiit{background:var(--hiit-soft)}
+  .sec-ico{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:17px;flex:none;background:var(--accent-soft)}
+  .ico-water{background:var(--water-soft)}
   .sec-title{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);line-height:1.1}
   .sec-title b{display:block;font-family:'Bricolage Grotesque';font-size:19px;letter-spacing:-.01em;text-transform:none;color:var(--ink);font-weight:700;margin-top:2px}
 
@@ -97,7 +84,7 @@
   .check svg{width:14px;height:14px;stroke:#fff;stroke-width:3.4;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:22;stroke-dashoffset:22;transition:stroke-dashoffset .26s ease .04s}
   .task.done .check{background:var(--accent);border-color:var(--accent)}
   .task.done .check svg{stroke-dashoffset:0}
-  .task .label{font-size:15.5px;font-weight:600;flex:1;line-height:1.25;transition:.2s}
+  .task .label{font-size:15.5px;font-weight:600;flex:1;line-height:1.25}
   .task.done .label{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(23,22,15,.25)}
   .chev{font-size:22px;color:var(--muted);line-height:1;font-weight:300;margin-left:4px}
   .task.has-detail .chev{color:var(--accent);font-weight:500}
@@ -107,7 +94,7 @@
   .meal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
   .meal-name{font-family:'Bricolage Grotesque';font-size:16px;font-weight:700}
   .meal-name .em{font-size:14px;margin-right:6px}
-  .badge{font-size:11px;font-weight:800;letter-spacing:.04em;color:var(--accent);background:var(--accent-soft);padding:4px 9px;border-radius:99px;opacity:0;transform:scale(.8);transition:.2s}
+  .badge{font-size:11px;font-weight:800;letter-spacing:.04em;color:var(--accent-deep);background:var(--accent-soft);padding:4px 9px;border-radius:99px;opacity:0;transform:scale(.8);transition:.2s}
   .meal.picked .badge{opacity:1;transform:none}
   .opt{display:flex;align-items:center;gap:11px;padding:11px 12px;border:1.5px solid var(--line);border-radius:13px;cursor:pointer;transition:.18s;margin-top:7px;background:#fff}
   .opt:active{transform:scale(.99)}
@@ -118,6 +105,11 @@
   .opt .o-name{flex:1;font-size:14.5px;font-weight:600;line-height:1.2}
   .opt .o-macros{font-size:11.5px;font-weight:700;color:var(--muted);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
 
+  .macro-row{display:flex;gap:8px;margin-bottom:14px}
+  .macro{flex:1;background:var(--accent-soft);border-radius:13px;padding:10px;text-align:center}
+  .macro .mv{font-family:'Bricolage Grotesque';font-size:17px;font-weight:800;color:var(--accent-deep);line-height:1}
+  .macro .ml{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
+
   .water-top{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px}
   .water-amt{font-family:'Bricolage Grotesque';font-size:38px;font-weight:800;line-height:.9;color:var(--water)}
   .water-amt small{font-size:17px;color:var(--muted);font-weight:700}
@@ -126,11 +118,11 @@
   .glasses{display:grid;grid-template-columns:repeat(6,1fr);gap:9px;margin:4px 0 16px}
   .glass{aspect-ratio:3/4;border-radius:9px 9px 11px 11px;border:2px solid var(--water-soft);background:#fff;position:relative;overflow:hidden;cursor:pointer;transition:transform .12s}
   .glass:active{transform:scale(.92)}
-  .glass::after{content:"";position:absolute;left:0;right:0;bottom:0;height:0;background:linear-gradient(180deg,#4FA3DD,var(--water));transition:height .3s cubic-bezier(.2,.8,.2,1)}
+  .glass::after{content:"";position:absolute;left:0;right:0;bottom:0;height:0;background:linear-gradient(180deg,#A5CDE5,var(--water));transition:height .3s cubic-bezier(.2,.8,.2,1)}
   .glass.full{border-color:var(--water)}
   .glass.full::after{height:100%}
   .water-btns{display:flex;gap:10px}
-  .wbtn{flex:1;padding:14px;border-radius:14px;border:0;font-family:'Bricolage Grotesque';font-size:15px;font-weight:700;cursor:pointer;transition:.16s;display:flex;align-items:center;justify-content:center;gap:7px}
+  .wbtn{flex:1;padding:14px;border-radius:14px;border:0;font-family:'Bricolage Grotesque';font-size:15px;font-weight:700;cursor:pointer;transition:.16s}
   .wbtn:active{transform:scale(.97)}
   .wbtn.add{background:var(--water);color:#fff}
   .wbtn.sub{background:var(--water-soft);color:var(--water)}
@@ -138,9 +130,18 @@
   footer{text-align:center;margin-top:26px;padding-bottom:8px}
   .reset{background:none;border:0;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:8px}
   .note{font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.5;opacity:.85}
-  .celebrate{color:var(--accent);font-weight:800}
+  .celebrate{color:var(--accent-deep);font-weight:800}
+  .auth-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px;padding:10px 4px}
+  .auth-status{font-size:13px;color:var(--muted);font-weight:600;flex:1;line-height:1.3}
+  .auth-btn{padding:8px 16px;border-radius:99px;border:1.5px solid var(--accent);color:var(--accent-deep);background:#fff;font-family:'Hanken Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
 
-  /* Modal */
+  .cycle-bar{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+  .cyc-nav{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);background:#fff;color:var(--accent-deep);font-size:17px;font-weight:700;cursor:pointer;flex:none;line-height:1}
+  .cyc-nav:disabled{opacity:.3}
+  .cyc-dots{flex:1;display:flex;justify-content:center;gap:6px}
+  .cyc-dot{width:8px;height:8px;border-radius:50%;background:rgba(23,22,15,.15);transition:.2s}
+  .cyc-dot.on{background:var(--accent);transform:scale(1.35)}
+  .cyc-hint{font-size:11.5px;color:var(--muted);text-align:center;margin-bottom:10px;font-weight:600}
   .modal{position:fixed;inset:0;z-index:100;display:none}
   .modal.open{display:block}
   .mbg{position:absolute;inset:0;background:rgba(23,22,15,.5);opacity:0;transition:opacity .25s}
@@ -156,8 +157,7 @@
   .sheet-title{font-family:'Bricolage Grotesque';font-size:24px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
   .sheet-sub{font-size:13px;color:var(--muted);font-weight:600;margin-top:3px}
   .close-btn{width:38px;height:38px;border-radius:50%;border:0;background:rgba(23,22,15,.07);font-size:16px;font-weight:700;cursor:pointer;color:var(--ink);flex:none}
-  .close-btn:active{transform:scale(.94)}
-  .ex-section{font-family:'Bricolage Grotesque';font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);padding:14px 4px 4px;margin-top:8px;border-bottom:1px solid var(--accent-soft);margin-bottom:4px;line-height:1.4}
+  .ex-section{font-family:'Bricolage Grotesque';font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-deep);padding:14px 4px 4px;margin-top:8px;border-bottom:1px solid var(--accent-soft);margin-bottom:4px;line-height:1.4}
   .ex-section:first-child{margin-top:0;padding-top:2px}
   .ex-card{display:flex;gap:12px;padding:13px;border-radius:18px;background:var(--card);border:1px solid var(--line);margin-top:10px;align-items:flex-start}
   .ex-img{width:88px;height:88px;border-radius:14px;background:var(--accent-soft);flex:none;display:grid;place-items:center;color:var(--accent-deep);padding:6px;overflow:hidden;position:relative}
@@ -172,35 +172,24 @@
   .ex-img .ex-pose-fb{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:6px}
   .ex-info{flex:1;min-width:0}
   .ex-row{display:flex;align-items:center;gap:8px;margin-bottom:3px;flex-wrap:wrap}
-  .ex-num{font-family:'Bricolage Grotesque';font-size:11px;font-weight:800;color:var(--accent);background:var(--accent-soft);padding:2px 7px;border-radius:6px;letter-spacing:.04em}
+  .ex-num{font-family:'Bricolage Grotesque';font-size:11px;font-weight:800;color:var(--accent-deep);background:var(--accent-soft);padding:2px 7px;border-radius:6px}
   .ex-name{font-family:'Bricolage Grotesque';font-size:15.5px;font-weight:700;line-height:1.2}
   .ex-meta{font-size:13px;color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums;margin-bottom:5px}
-  .ex-weight{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:8px;margin-bottom:7px;letter-spacing:.01em}
+  .ex-weight{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:8px;margin-bottom:7px}
   .ex-cue{font-size:12.5px;color:var(--muted);line-height:1.45;margin-bottom:8px}
-  .demo-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:99px;border:1.5px solid var(--accent);color:var(--accent);font-size:12px;font-weight:700;text-decoration:none;transition:.16s}
-  .demo-btn:active{transform:scale(.96)}
+  .demo-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:99px;border:1.5px solid var(--accent);color:var(--accent-deep);font-size:12px;font-weight:700;text-decoration:none}
   .demo-btn svg{width:11px;height:11px;fill:currentColor}
   .sheet-foot{font-size:11.5px;color:var(--muted);margin-top:16px;text-align:center;line-height:1.5;padding:0 10px}
-  .mode-toggle{display:flex;gap:3px;padding:3px;background:rgba(23,22,15,.06);border-radius:14px;margin-bottom:10px;margin-left:12px;margin-right:12px}
-  .mode-btn{flex:1;padding:9px 10px;border-radius:11px;border:0;background:transparent;font-family:'Hanken Grotesk',sans-serif;font-size:13.5px;font-weight:700;color:var(--muted);cursor:pointer;transition:.18s;display:flex;align-items:center;justify-content:center;gap:6px}
-  .mode-btn:active{transform:scale(.97)}
-  .mode-btn.sel{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(23,22,15,.06),0 2px 8px rgba(23,22,15,.04)}
-  .gym{color:var(--hiit) !important}
-
-  .auth-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px;padding:10px 4px}
-  .auth-status{font-size:13px;color:var(--muted);font-weight:600;flex:1;line-height:1.3}
-  .auth-btn{padding:8px 16px;border-radius:99px;border:1.5px solid var(--accent);color:var(--accent);background:#fff;font-family:'Hanken Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.15s}
-  .auth-btn:active{transform:scale(.96)}
 </style>
 </head>
 <body>
 <header>
-  <div class="eyebrow" id="eyebrow">Today</div>
+  <div class="eyebrow" id="eyebrow">Сьогодні</div>
   <div class="date"><span class="day" id="dayName">—</span><span class="sub" id="dateSub"></span></div>
   <div class="cal">
-    <button class="cal-nav" id="prevWk" aria-label="Previous week">‹</button>
+    <button class="cal-nav" id="prevWk">‹</button>
     <div class="cal-days" id="calDays"></div>
-    <button class="cal-nav" id="nextWk" aria-label="Next week">›</button>
+    <button class="cal-nav" id="nextWk">›</button>
   </div>
   <div class="progress-wrap">
     <div class="bar"><i id="progBar"></i></div>
@@ -210,16 +199,22 @@
 
 <section>
   <div class="sec-head">
-    <div class="sec-ico" id="moveIco">🏃</div>
-    <div class="sec-title">Movement<b id="activityTitle">—</b></div>
+    <div class="sec-ico" id="moveIco">💪</div>
+    <div class="sec-title">Рух<b id="activityTitle">—</b></div>
   </div>
   <div id="activityTasks"></div>
 </section>
 
 <section>
   <div class="sec-head">
-    <div class="sec-ico ico-fuel">🍽️</div>
-    <div class="sec-title">Fuel · tap what you ate<b>Meals</b></div>
+    <div class="sec-ico">🍽️</div>
+    <div class="sec-title">Харчування · обери що з'їла<b>Прийоми їжі</b></div>
+  </div>
+  <div class="macro-row">
+    <div class="macro"><div class="mv">2200</div><div class="ml">ккал</div></div>
+    <div class="macro"><div class="mv">180 г</div><div class="ml">білок</div></div>
+    <div class="macro"><div class="mv">70 г</div><div class="ml">жири</div></div>
+    <div class="macro"><div class="mv">230 г</div><div class="ml">вугл.</div></div>
   </div>
   <div id="meals"></div>
 </section>
@@ -227,52 +222,48 @@
 <section>
   <div class="sec-head">
     <div class="sec-ico ico-water">💧</div>
-    <div class="sec-title">Hydration<b>Water</b></div>
+    <div class="sec-title">Гідратація<b>Вода</b></div>
   </div>
   <div class="water-top">
-    <div class="water-amt" id="waterAmt">0.0<small> L</small></div>
-    <div class="water-goal">goal<b id="waterGoal">3.0 L</b></div>
+    <div class="water-amt" id="waterAmt">0.0<small> л</small></div>
+    <div class="water-goal">ціль<b id="waterGoal">3.0 л</b></div>
   </div>
   <div class="glasses" id="glasses"></div>
   <div class="water-btns">
-    <button class="wbtn sub" id="waterSub">− glass</button>
-    <button class="wbtn add" id="waterAdd">+ glass · 250&nbsp;ml</button>
+    <button class="wbtn sub" id="waterSub">− склянка</button>
+    <button class="wbtn add" id="waterAdd">+ склянка · 250 мл</button>
   </div>
 </section>
 
 <footer>
-  <button class="reset" id="resetBtn">Reset this day</button>
+  <button class="reset" id="resetBtn">Скинути цей день</button>
   <div id="authBar" class="auth-bar"></div>
-  <div class="note">Saves on this device · logs sync to cloud when signed in.<br>Add to your home screen for one-tap access.</div>
+  <div class="note">Зберігається на пристрої · синхронізується з хмарою після входу.<br>Додай на головний екран для швидкого доступу.</div>
 </footer>
 
 <div class="modal" id="modal" aria-hidden="true">
   <div class="mbg" id="mbg"></div>
-  <div class="sheet" role="dialog" aria-label="Workout details">
+  <div class="sheet" role="dialog">
     <div class="grabber"></div>
     <div class="sheet-head">
       <div>
-        <div class="sheet-title" id="sheetTitle">Workout</div>
+        <div class="sheet-title" id="sheetTitle">Тренування</div>
         <div class="sheet-sub" id="sheetSub"></div>
       </div>
-      <button class="close-btn" id="closeBtn" aria-label="Close">✕</button>
+      <button class="close-btn" id="closeBtn">✕</button>
     </div>
     <div id="exList"></div>
-    <p class="sheet-foot">Tap <b>Watch demo</b> on any exercise to see a video on YouTube.<br>Keep good form — stop the moment something hurts.</p>
+    <p class="sheet-foot">Натисни «Дивитись демо» для відео на YouTube.<br>Стеж за технікою — зупинись, якщо щось болить.</p>
   </div>
 </div>
 
-<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
 (function(){
   "use strict";
-
   var GLASS = 250, GOAL = 3000;
-
-  // ---------- Pose illustrations ----------
   var STROKE = 'fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"';
   var POSES = {
     squat:       '<svg viewBox="0 0 60 60" '+STROKE+'><circle cx="30" cy="10" r="4" fill="currentColor" stroke="none"/><path d="M30 14 V28"/><path d="M30 20 L22 28 M30 20 L38 28"/><path d="M30 28 L23 38 L23 50 M30 28 L37 38 L37 50"/><line x1="14" y1="54" x2="46" y2="54" opacity=".4"/></svg>',
@@ -281,116 +272,28 @@
     plank:       '<svg viewBox="0 0 60 32" '+STROKE+'><circle cx="46" cy="10" r="4" fill="currentColor" stroke="none"/><path d="M42 12 L12 14"/><path d="M42 14 L38 22 L46 22"/><path d="M12 14 L6 22"/><line x1="2" y1="24" x2="58" y2="24" opacity=".4"/></svg>',
     sideplank:   '<svg viewBox="0 0 60 48" '+STROKE+'><circle cx="46" cy="10" r="4" fill="currentColor" stroke="none"/><path d="M42 12 L14 36"/><path d="M42 13 L40 26"/><path d="M14 36 V42"/><line x1="2" y1="44" x2="58" y2="44" opacity=".4"/></svg>',
     glutebridge: '<svg viewBox="0 0 60 36" '+STROKE+'><circle cx="10" cy="22" r="4" fill="currentColor" stroke="none"/><path d="M14 22 L26 18 L36 24 L48 24"/><path d="M26 18 L26 26 M36 24 L36 28"/><line x1="2" y1="30" x2="58" y2="30" opacity=".4"/></svg>',
-    birddog:     '<svg viewBox="0 0 60 40" '+STROKE+'><circle cx="18" cy="16" r="4" fill="currentColor" stroke="none"/><path d="M22 18 L42 18"/><path d="M22 18 L20 28"/><path d="M42 18 L44 28"/><path d="M14 17 L6 10"/><path d="M44 19 L54 24"/><line x1="2" y1="32" x2="58" y2="32" opacity=".4"/></svg>',
-    superman:    '<svg viewBox="0 0 60 36" '+STROKE+'><circle cx="14" cy="18" r="4" fill="currentColor" stroke="none"/><path d="M18 18 L46 22"/><path d="M14 15 L4 8"/><path d="M48 22 L56 16"/><line x1="2" y1="28" x2="58" y2="28" opacity=".4"/></svg>',
-    lyingback:   '<svg viewBox="0 0 60 36" '+STROKE+'><circle cx="10" cy="22" r="4" fill="currentColor" stroke="none"/><path d="M14 22 L40 22"/><path d="M14 22 L18 12"/><path d="M40 22 L36 12"/><path d="M36 12 L40 4"/><line x1="2" y1="28" x2="58" y2="28" opacity=".4"/></svg>',
     seated:      '<svg viewBox="0 0 60 48" '+STROKE+'><circle cx="22" cy="10" r="4" fill="currentColor" stroke="none"/><path d="M22 14 L28 28"/><path d="M28 28 L40 34 L52 30"/><path d="M22 16 L14 24"/><path d="M22 16 L32 22"/><line x1="2" y1="40" x2="58" y2="40" opacity=".4"/></svg>',
+    lyingback:   '<svg viewBox="0 0 60 36" '+STROKE+'><circle cx="10" cy="22" r="4" fill="currentColor" stroke="none"/><path d="M14 22 L40 22"/><path d="M14 22 L18 12"/><path d="M40 22 L36 12"/><path d="M36 12 L40 4"/><line x1="2" y1="28" x2="58" y2="28" opacity=".4"/></svg>',
     jump:        '<svg viewBox="0 0 60 60" '+STROKE+'><circle cx="30" cy="10" r="4" fill="currentColor" stroke="none"/><path d="M30 14 V26"/><path d="M30 18 L22 12 M30 18 L38 12"/><path d="M30 26 L24 36 L24 48 M30 26 L36 36 L36 48"/><line x1="14" y1="52" x2="46" y2="52" opacity=".4"/></svg>',
-    catcow:      '<svg viewBox="0 0 60 40" '+STROKE+'><circle cx="14" cy="18" r="4" fill="currentColor" stroke="none"/><path d="M18 18 Q30 10 46 18"/><path d="M18 18 V28"/><path d="M46 18 V28"/><line x1="2" y1="32" x2="58" y2="32" opacity=".4"/></svg>',
     fold:        '<svg viewBox="0 0 60 60" '+STROKE+'><path d="M30 50 V20"/><path d="M30 20 L24 32 M30 20 L36 32"/><circle cx="24" cy="36" r="4" fill="currentColor" stroke="none"/><line x1="14" y1="54" x2="46" y2="54" opacity=".4"/></svg>'
   };
 
-  // ---------- Exercise library (sections + items) ----------
-  var STRENGTH_A = [
-    {section:"Main · 3 rounds · 40s work / 20s rest · 90s between", items:[
-      {n:"Bodyweight Squats",   r:"40 seconds",  p:"squat",       c:"Sit back, knees over toes, chest up.",
-        img:{type:"gif", sprite:"sprite/1685.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/1685.gif"}},
-      {n:"Push-ups",            r:"40 seconds",  p:"pushup",      c:"Body in one line. Use incline / knees / full — pick the version you control.",
-        img:{type:"gif", sprite:"sprite/0662.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0662.gif"}},
-      {n:"Reverse Lunges",      r:"40 sec (alternating)", p:"lunge",  c:"Step back, lower until both knees ~90°.",
-        img:{type:"gif", sprite:"sprite/3470.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/3470.gif"}},
-      {n:"Glute Bridges",       r:"40 seconds",  p:"glutebridge", c:"Drive through heels; squeeze glutes at the top.",
-        img:{type:"gif", sprite:"sprite/3013.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/3013.gif"}},
-      {n:"Forearm Plank",       r:"40 seconds",  p:"plank",       c:"Squeeze glutes; don't let the hips sag. (GIF shows high plank — same body line, just from the elbows.)",
-        img:{type:"gif", sprite:"sprite/3665.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/3665.gif"}},
-      {n:"Mountain Climbers",   r:"40 seconds",  p:"plank",       c:"Plank position; drive knees, keep hips low.",
-        img:{type:"gif", sprite:"sprite/0630.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0630.gif"}}
-    ]},
-    {section:"Core finisher · 1 round", items:[
-      {n:"Side Plank",          r:"30s each side", p:"sideplank", c:"Stack feet; straight diagonal line.",
-        img:{type:"gif", sprite:"sprite/1775.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/1775.gif"}},
-      {n:"Bird Dog",            r:"8 reps each side", p:"birddog", c:"Slow; opposite arm + leg; hips level.",
-        img:{type:"gif", gif:"https://media.giphy.com/media/dZ8TmzFGtr1UP9mZWI/giphy.gif"}},
-      {n:"Dead Bug",            r:"10 reps each side", p:"lyingback", c:"Press low back down; opposite arm/leg lowers.",
-        img:{type:"gif", sprite:"sprite/0276.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0276.gif"}}
-    ]}
-  ];
-
-  var STRENGTH_B = [
-    {section:"Main · 3 rounds · 40s work / 20s rest · 90s between", items:[
-      {n:"Jump Squats",                 r:"40 seconds",  p:"jump",        c:"Explode up, land soft. Pulse squats if no jumping.",
-        img:{type:"gif", sprite:"sprite/0514.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0514.gif"}},
-      {n:"Pike Push-ups",               r:"40 seconds",  p:"pushup",      c:"Hips high; lower the top of head toward the floor. (GIF shows the handstand version — same movement, feet stay on the floor instead of up.)",
-        img:{type:"gif", sprite:"sprite/0471.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0471.gif"}},
-      {n:"Bulgarian Split Squat",       r:"40s each side", p:"lunge",     c:"Back foot on chair; weight on the front leg.",
-        img:{type:"gif", sprite:"sprite/2368.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/2368.gif"}},
-      {n:"Single-Leg Glute Bridge",     r:"30s each side", p:"glutebridge", c:"One leg up; drive through planted heel.",
-        img:{type:"gif", sprite:"sprite/3645.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/3645.gif"}},
-      {n:"Up-Down Plank",               r:"40 seconds",  p:"plank",       c:"Plank → push-up position and back; alternate the lead arm.",
-        img:{type:"gif", gif:"https://media.giphy.com/media/SCNuXEjypn8SvHsjlE/giphy.gif"}},
-      {n:"Slow Burpees",                r:"40 seconds",  p:"jump",        c:"Squat, plank, hop in, stand. Skip the jump if needed.",
-        img:{type:"gif", sprite:"sprite/1160.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/1160.gif"}}
-    ]},
-    {section:"Core finisher · 1 round", items:[
-      {n:"Russian Twists",   r:"45 seconds",  p:"seated",    c:"Lean back, rotate from the trunk.",
-        img:{type:"gif", sprite:"sprite/0687.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0687.gif"}},
-      {n:"Hollow Hold",      r:"30 seconds",  p:"lyingback", c:"Lower back pressed down; shallow banana.",
-        img:{type:"gif", gif:"https://media.giphy.com/media/x2EYADIP4VK0K6e86G/giphy.gif"}},
-      {n:"Bicycle Crunches", r:"45 seconds",  p:"lyingback", c:"Opposite elbow to knee; slow and controlled.",
-        img:{type:"gif", sprite:"sprite/0972.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0972.gif"}},
-      {n:"Superman",         r:"30 seconds",  p:"superman",  c:"Lift arms, chest and legs; don't crank the neck.",
-        img:{type:"gif", gif:"https://media.giphy.com/media/xT0BKJCBQAjY4LiuOc/giphy.gif"}}
-    ]}
-  ];
-
-  var HIIT = [
-    {section:"Main · 5 rounds · 30s all-out / 30s rest", items:[
-      {n:"Burpees",          r:"30 seconds",  p:"jump",  c:"Squat, plank, hop in, jump. Step instead of jump to scale down.",
-        img:{type:"gif", sprite:"sprite/1160.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/1160.gif"}},
-      {n:"Mountain Climbers (fast)", r:"30 seconds", p:"plank", c:"Plank position; drive knees fast, hips stay low.",
-        img:{type:"gif", sprite:"sprite/0630.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0630.gif"}},
-      {n:"Jumping Lunges",   r:"30 seconds",  p:"lunge", c:"Alternate legs mid-air. Reverse lunges if no jumping.",
-        img:{type:"gif", sprite:"sprite/3582.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/3582.gif"}},
-      {n:"Push-ups",         r:"30 seconds",  p:"pushup", c:"Maintain the body line even when tired.",
-        img:{type:"gif", sprite:"sprite/0662.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0662.gif"}},
-      {n:"Squat Jumps",      r:"30 seconds",  p:"jump",   c:"Squat, explode up, land soft.",
-        img:{type:"gif", sprite:"sprite/0514.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0514.gif"}}
-    ]},
-    {section:"Optional core finisher · 3 rounds", items:[
-      {n:"Side Plank Hip Dip", r:"30s each side", p:"sideplank", c:"Lower hip toward the floor; lift back up.",
-        img:{type:"gif", sprite:"sprite/1775.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/1775.gif"}},
-      {n:"Hollow Hold",        r:"30 seconds",    p:"lyingback", c:"Press low back down; shallow banana.",
-        img:{type:"gif", gif:"https://media.giphy.com/media/x2EYADIP4VK0K6e86G/giphy.gif"}},
-      {n:"Bird Dog",           r:"10 reps each side", p:"birddog", c:"Slow and controlled; hips level.",
-        img:{type:"gif", gif:"https://media.giphy.com/media/dZ8TmzFGtr1UP9mZWI/giphy.gif"}}
-    ]}
-  ];
-
-  var MOBILITY = [
-    {section:"Daily routine · 5–10 min", items:[
-      {n:"Cat-Cow",                r:"60 seconds",      p:"catcow",      c:"Arch and round through full range; sync with breath.",
-        img:{type:"gif", gif:"https://media1.tenor.com/m/LPwFzdwK9AEAAAAd/cat-cow-stretch.gif"}},
-      {n:"Hip Flexor Stretch",     r:"30s each side",   p:"lunge",       c:"Front knee 90°; tuck the pelvis.",
-        img:{type:"gif", sprite:"sprite/1585.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/1585.gif"}},
-      {n:"Glute Bridge (slow)",    r:"10 slow reps",    p:"glutebridge", c:"Pause and squeeze at the top.",
-        img:{type:"gif", sprite:"sprite/3013.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/3013.gif"}},
-      {n:"Bird Dog",               r:"10 each side",    p:"birddog",     c:"Slow; hips level; full extension.",
-        img:{type:"gif", gif:"https://media.giphy.com/media/dZ8TmzFGtr1UP9mZWI/giphy.gif"}},
-      {n:"Side Plank (low)",       r:"20s each side",   p:"sideplank",   c:"Bottom knee down is fine if needed.",
-        img:{type:"gif", sprite:"sprite/1775.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/1775.gif"}},
-      {n:"Forward Fold",           r:"30 seconds",      p:"fold",        c:"Hinge from the hips, soft knees.",
-        img:{type:"gif", sprite:"sprite/3212.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/3212.gif"}},
-      {n:"Thoracic Rotation",      r:"30s each side",   p:"lyingback",   c:"On your back (or side), knees bent; let the spine rotate.",
-        img:{type:"gif", sprite:"sprite/3639.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/3639.gif"}}
-    ]}
-  ];
-
-  // ---------- Day plan ----------
-  // ── Gym workouts ── designed around your equipment (Smith, DBs, BBs, machines, back ext, cardio) ──
-  function gURL(id){ return "vid/"+id+".mp4"; }
+  function gURL(id){ return "../vid/"+id+".mp4"; }
   function gImg(id){ return {type:"gif", sprite:"sprite/"+id+".jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/"+id+".gif"}; }
 
-  var STRENGTH_A_GYM = [
+  // ── ДЕНЬ 1 · Сідниці A (важкий) ──
+
+
+  // ── ДЕНЬ 2 · Верх, жимовий акцент ──
+
+
+  // ── ДЕНЬ 3 · Сідниці B (об'ємний) ──
+
+
+  // ── ДЕНЬ 4 · Верх, тяговий акцент + кор ──
+
+
+  var PUSH = [
     {section:"PUSH · груди · плечі · трицепс · 3–4 підходи · 90с відпочинок", items:[
       {n:"Incline DB Bench Press", r:"4 × 8–10", p:"pushup", w:"Старт: 15 кг кожна · +2 кг коли легко", c:"Верх грудей — найважливіша зона для об'єму. Лава під кутом 30°, опускай до верху грудей, вибухай вгору.", img:gImg("0314")},
       {n:"Barbell Bench Press",    r:"4 × 8–10", p:"pushup", w:"Старт: 40 кг · +2.5 кг/бік", c:"Другий жимовий рух — класика для маси грудей. Лопатки зведені, ноги в підлогу, опускай до середини грудей під контролем.", img:gImg("0025")},
@@ -410,27 +313,7 @@
     ]}
   ];
 
-  var STRENGTH_B_GYM = [
-    {section:"LEGS + CORE · задній ланцюг · мінімум квадрицепса · 3–4 підходи · 90с", items:[
-      {n:"Barbell Romanian Deadlift", r:"4 × 8", p:"glutebridge", w:"Старт: 40 кг · +2.5 кг/бік", c:"Головна вправа на задню поверхню. Штанга близько до ніг, тазом назад, нейтральна спина.", img:gImg("0085")},
-      {n:"Seated Leg Curl",        r:"4 × 10–12", p:"seated", w:"Старт: 30 кг · +5 кг/крок", c:"Пряма ізоляція біцепса стегна. Валик над п'ятами, стискай повністю, повільний негатив.", img:gImg("0599")},
-      {n:"Cable Kickback",         r:"3 × 15 кожна нога", p:"glutebridge", w:"Старт: 10 кг · +2.5 кг/крок", c:"Ізоляція сідниці. Манжет на щиколотку, стій обличчям до блоку, відводь пряму ногу назад, стискай сідницю вгорі. Опорна нога трохи зігнута.", img:gImg("0228")}
-    ]},
-    {section:"ПЛЕЧІ · ширина / V-силует · 3–4 підходи · 90с", items:[
-      {n:"DB Seated Shoulder Press", r:"4 × 8–10", p:"pushup", w:"Старт: 12 кг кожна · +2 кг", c:"Сидячи на лаві, жми гантелі суворо вгору. Повний локаут вгорі, контрольований негатив.", img:gImg("0405")},
-      {n:"DB Lateral Raise",       r:"4 × 12–15", p:"seated", w:"Старт: 6 кг кожна · +1 кг", c:"Ширина плечей = V-силует, візуально зменшує ноги. Легка вага, підіймай до рівня плечей, лікоть трохи зігнутий, без інерції.", img:gImg("0334")}
-    ]},
-    {section:"Прес · щодня · 2 кола", items:[
-      {n:"Push-Through Ab",   r:"15 повторів",   p:"lyingback", c:"🔺 Верхній прес. Скручування з простяганням рук за коліна.", img:gImg("0507")},
-      {n:"Hanging Leg Raise", r:"12 повторів",   p:"lyingback", c:"🔻 Нижній прес. Вис на перекладині, підіймай ноги до горизонталі.", img:gImg("0472")},
-      {n:"Side Plank", r:"30с кожен бік", p:"sideplank", c:"🔄 Косі + кор. Бічна планка — спина в нейтралі, нуль навантаження на поперек. Тіло в одну лінію, таз не провисає.", img:gImg("1775")}
-    ]},
-    {section:"Кардіо · 10 хв", items:[
-      {n:"Indoor Cycling", r:"10 хв рівномірно", p:"jump", c:"Помірний опір, 70–90 RPM. Легке коло після ніг — прокрутити кров, а не палити багато калорій.", img:gImg("2138")}
-    ]}
-  ];
-
-  var HIIT_GYM = [
+  var PULL = [
     {section:"PULL · спина · біцепс · задня дельта · 3–4 підходи · 90с відпочинок", items:[
       {n:"Lat Pulldown (close grip)", r:"4 × 8–10", p:"pushup", w:"Старт: 30 кг · +5 кг/крок", c:"V-рукоятка, вузький хват — руки близько разом. Тягни до верху грудей, лікті вниз, акцент на низ широчайших і товщину спини.", img:gImg("2616")},
       {n:"Machine Seated Row",     r:"4 × 8–10", p:"seated", w:"Старт: 35 кг · +5 кг/крок", c:"Товщина спини. Груди в подушку, тягни лікті назад, зводь лопатки.", img:gImg("1350")},
@@ -450,37 +333,31 @@
     ]}
   ];
 
-  var DAYS = {
-    1:{title:"Push · груди/плечі/трицепс", emoji:"💪", tasks:[
-        {id:"workout", modes:{
-          home:{ex:STRENGTH_A,     label:"Strength A workout · ~40 min",    exTitle:"Strength A · home", exSub:"Foundation circuit · ~40 min"},
-          gym: {ex:STRENGTH_A_GYM, label:"Push · gym · ~50 min",       exTitle:"Push day · gym",  exSub:"Груди · плечі · трицепс · прес"}
-        }},
-        {id:"steps",    label:"8–10k steps"}]},
-    2:{title:"Walk + Mobility", emoji:"🚶", tasks:[
-        {id:"walk",     label:"Brisk walk 30–45 min · 8–10k steps"},
-        {id:"mobility", label:"Mobility · 5–10 min", ex:MOBILITY, exTitle:"Mobility routine", exSub:"5–10 min · daily flexibility"}]},
-    3:{title:"Pull · спина/біцепс", emoji:"🔙", tasks:[
-        {id:"workout", modes:{
-          home:{ex:HIIT,     label:"HIIT workout · ~25 min", exTitle:"Fat-Burner · home", exSub:"~25 min · high intensity"},
-          gym: {ex:HIIT_GYM, label:"Pull · gym · ~50 min",   exTitle:"Pull day · gym",  exSub:"Спина · біцепс · задня дельта · прес"}
-        }},
-        {id:"steps",    label:"8–10k steps"}]},
-    4:{title:"Walk + Mobility", emoji:"🚶", tasks:[
-        {id:"walk",     label:"Brisk walk 30–45 min · 8–10k steps"},
-        {id:"mobility", label:"Mobility · 5–10 min", ex:MOBILITY, exTitle:"Mobility routine", exSub:"5–10 min · daily flexibility"}]},
-    5:{title:"Legs + Shoulders · ноги/плечі", emoji:"🦵", tasks:[
-        {id:"workout", modes:{
-          home:{ex:STRENGTH_B,     label:"Strength B workout · ~40 min", exTitle:"Strength B · home", exSub:"Power circuit · ~40 min"},
-          gym: {ex:STRENGTH_B_GYM, label:"Legs + Shoulders · gym · ~55 min",   exTitle:"Legs + Shoulders · gym",  exSub:"Задній ланцюг · сідниці · плечі · прес"}
-        }},
-        {id:"steps",    label:"8–10k steps"}]},
-    6:{title:"Long Walk + Mobility", emoji:"🚶", tasks:[
-        {id:"walk",     label:"Easy walk 45–60 min · 8–10k steps"},
-        {id:"mobility", label:"Mobility · 5–10 min", ex:MOBILITY, exTitle:"Mobility routine", exSub:"5–10 min · daily flexibility"}]},
-    0:{title:"Rest & recover", emoji:"😴", tasks:[
-        {id:"mobility", label:"Light mobility (optional)", ex:MOBILITY, exTitle:"Mobility routine", exSub:"5–10 min · daily flexibility"}]}
-  };
+  var LEGS = [
+    {section:"LEGS + CORE · задній ланцюг · мінімум квадрицепса · 3–4 підходи · 90с", items:[
+      {n:"Barbell Romanian Deadlift", r:"4 × 8", p:"glutebridge", w:"Старт: 40 кг · +2.5 кг/бік", c:"Головна вправа на задню поверхню. Штанга близько до ніг, тазом назад, нейтральна спина.", img:gImg("0085")},
+      {n:"Seated Leg Curl",        r:"4 × 10–12", p:"seated", w:"Старт: 30 кг · +5 кг/крок", c:"Пряма ізоляція біцепса стегна. Валик над п'ятами, стискай повністю, повільний негатив.", img:gImg("0599")},
+      {n:"Cable Kickback",         r:"3 × 15 кожна нога", p:"glutebridge", w:"Старт: 10 кг · +2.5 кг/крок", c:"Ізоляція сідниці. Манжет на щиколотку, стій обличчям до блоку, відводь пряму ногу назад, стискай сідницю вгорі. Опорна нога трохи зігнута.", img:gImg("0228")}
+    ]},
+    {section:"ПЛЕЧІ · ширина / V-силует · 3–4 підходи · 90с", items:[
+      {n:"DB Seated Shoulder Press", r:"4 × 8–10", p:"pushup", w:"Старт: 12 кг кожна · +2 кг", c:"Сидячи на лаві, жми гантелі суворо вгору. Повний локаут вгорі, контрольований негатив.", img:gImg("0405")},
+      {n:"DB Lateral Raise",       r:"4 × 12–15", p:"seated", w:"Старт: 6 кг кожна · +1 кг", c:"Ширина плечей = V-силует, візуально зменшує ноги. Легка вага, підіймай до рівня плечей, лікоть трохи зігнутий, без інерції.", img:gImg("0334")}
+    ]},
+    {section:"Прес · щодня · 2 кола", items:[
+      {n:"Push-Through Ab",   r:"15 повторів",   p:"lyingback", c:"🔺 Верхній прес. Скручування з простяганням рук за коліна.", img:gImg("0507")},
+      {n:"Hanging Leg Raise", r:"12 повторів",   p:"lyingback", c:"🔻 Нижній прес. Вис на перекладині, підіймай ноги до горизонталі.", img:gImg("0472")},
+      {n:"Side Plank", r:"30с кожен бік", p:"sideplank", c:"🔄 Косі + кор. Бічна планка — спина в нейтралі, нуль навантаження на поперек. Тіло в одну лінію, таз не провисає.", img:gImg("1775")}
+    ]},
+    {section:"Кардіо · 10 хв", items:[
+      {n:"Indoor Cycling", r:"10 хв рівномірно", p:"jump", c:"Помірний опір, 70–90 RPM. Легке коло після ніг — прокрутити кров, а не палити багато калорій.", img:gImg("2138")}
+    ]}
+  ];
+
+  var ROTATION = [
+    {title:"Push · груди/плечі/трицепс", emoji:"💪", dur:"~50 хв", ex:PUSH, exTitle:"Push day",  exSub:"Груди · плечі · трицепс · прес"},
+    {title:"Pull · спина/біцепс",        emoji:"🔙", dur:"~50 хв", ex:PULL, exTitle:"Pull day",  exSub:"Спина · біцепс · задня дельта · прес"},
+    {title:"Legs + Shoulders",           emoji:"🦵", dur:"~55 хв", ex:LEGS, exTitle:"Legs + Shoulders", exSub:"Задній ланцюг · сідниці · плечі · прес"}
+  ];
 
   var MEALS = [
     {key:"breakfast", em:"☀️", name:"Breakfast", opts:[
@@ -506,7 +383,40 @@
       ["Hard cheese + veg sticks","140 kcal · 8g P"]]}
   ];
 
-  // ---------- Date helpers ----------
+  var FB_CONFIG = {
+    apiKey:"AIzaSyBtG3NAe-Eu9m2OuKLYt63zJjCBzMq9VF4",
+    authDomain:"fitness-tracker-7ef81.firebaseapp.com",
+    projectId:"fitness-tracker-7ef81",
+    storageBucket:"fitness-tracker-7ef81.firebasestorage.app",
+    messagingSenderId:"975830615739",
+    appId:"1:975830615739:web:16a311c1bbfc2428bc8b9e"
+  };
+  var fbAuth=null, fbDb=null, fbUser=null;
+  try{ firebase.initializeApp(FB_CONFIG); fbAuth=firebase.auth(); fbDb=firebase.firestore(); }catch(e){}
+  function cloudDoc(){ return (fbDb&&fbUser)?fbDb.collection("users").doc(fbUser.uid):null; }
+  function pushToCloud(){ var d=cloudDoc(); if(d) d.set({entries:state.entries},{merge:true}).catch(function(){}); }
+  function syncFromCloud(){
+    var d=cloudDoc(); if(!d) return;
+    d.get().then(function(s){
+      var cl = s.exists?(s.data().entries||{}):{};
+      state.entries = Object.assign({}, cl, state.entries);
+      saveRaw(JSON.stringify(state)); renderAll();
+      if(!s.exists) pushToCloud();
+    }).catch(function(){});
+  }
+  function updateAuthUI(){
+    var bar=document.getElementById("authBar"); if(!bar) return;
+    if(!fbAuth){ bar.style.display="none"; return; }
+    if(fbUser){
+      bar.innerHTML='<span class="auth-status">☁️ Синхронізовано · '+fbUser.email+'</span><button class="auth-btn" id="signOutBtn">Вийти</button>';
+      document.getElementById("signOutBtn").onclick=function(){ fbAuth.signOut(); };
+    } else {
+      bar.innerHTML='<span class="auth-status">☁️ Увійди для синхронізації</span><button class="auth-btn" id="signInBtn">Увійти через Google</button>';
+      document.getElementById("signInBtn").onclick=function(){ fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); };
+    }
+  }
+  if(fbAuth) fbAuth.onAuthStateChanged(function(u){ fbUser=u; updateAuthUI(); if(u) syncFromCloud(); });
+
   function pad(n){ return n<10?"0"+n:""+n; }
   function fmt(d){ return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
   function todayStr(){ return fmt(new Date()); }
@@ -514,340 +424,193 @@
   function mondayOf(d){ var x=new Date(d); x.setHours(0,0,0,0); var off=(x.getDay()+6)%7; x.setDate(x.getDate()-off); return x; }
   function addDays(d,n){ var x=new Date(d); x.setDate(x.getDate()+n); return x; }
 
-  // ---------- State ----------
-  // ── Firebase config ── paste YOUR values from Firebase console → Project settings ──
-  var FB_CONFIG = {
-    apiKey:            "AIzaSyBtG3NAe-Eu9m2OuKLYt63zJjCBzMq9VF4",
-    authDomain:        "fitness-tracker-7ef81.firebaseapp.com",
-    projectId:         "fitness-tracker-7ef81",
-    storageBucket:     "fitness-tracker-7ef81.firebasestorage.app",
-    messagingSenderId: "975830615739",
-    appId:             "1:975830615739:web:16a311c1bbfc2428bc8b9e"
-  };
-  // ─────────────────────────────────────────────────────────────────────────────────
-
-  var fbAuth = null, fbDb = null, fbUser = null;
-  try {
-    var fbApp = firebase.initializeApp(FB_CONFIG);
-    fbAuth = firebase.auth();
-    fbDb   = firebase.firestore();
-  } catch(e) { /* Firebase not configured yet */ }
-
-  function cloudDoc(){ return (fbDb && fbUser) ? fbDb.collection("users").doc(fbUser.uid) : null; }
-
-  function pushToCloud(){
-    var doc = cloudDoc(); if(!doc) return;
-    doc.set({ entries: state.entries }, { merge: true }).catch(function(){});
-  }
-
-  function syncFromCloud(){
-    var doc = cloudDoc(); if(!doc) return;
-    doc.get().then(function(snap){
-      var cloudEntries = snap.exists ? (snap.data().entries || {}) : {};
-      // merge: cloud fills in dates not present locally; local wins for today
-      var merged = Object.assign({}, cloudEntries, state.entries);
-      state.entries = merged;
-      saveRaw(JSON.stringify(state));
-      renderAll();
-      if(!snap.exists) pushToCloud(); // first login — push local data up
-    }).catch(function(){});
-  }
-
-  function updateAuthUI(){
-    var bar = document.getElementById("authBar"); if(!bar) return;
-    if(!fbAuth){ bar.style.display = "none"; return; }
-    if(fbUser){
-      bar.innerHTML = '<span class="auth-status">☁️ Synced · '+fbUser.email+'</span>' +
-                      '<button class="auth-btn" id="signOutBtn">Sign out</button>';
-      document.getElementById("signOutBtn").onclick = function(){ fbAuth.signOut(); };
-    } else {
-      bar.innerHTML = '<span class="auth-status">☁️ Sign in to sync across devices</span>' +
-                      '<button class="auth-btn" id="signInBtn">Sign in with Google</button>';
-      document.getElementById("signInBtn").onclick = function(){
-        fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-      };
-    }
-  }
-
-  if(fbAuth){
-    fbAuth.onAuthStateChanged(function(user){
-      fbUser = user;
-      updateAuthUI();
-      if(user) syncFromCloud();
-    });
-  }
-
-  // ── Local storage (primary, instant) ────────────────────────────────────────────
-  var KEY = "homeFitTracker_v4";
-  var mem = null;
+  var KEY="vladTracker_v2", mem=null;
   function loadRaw(){ try{ return localStorage.getItem(KEY); }catch(e){ return mem; } }
   function saveRaw(s){ try{ localStorage.setItem(KEY,s); }catch(e){ mem=s; } }
-  function migrate(){
-    var raw = loadRaw();
-    if(raw) return JSON.parse(raw);
-    var prev=null; try{ prev=localStorage.getItem("homeFitTracker_v3");}catch(e){}
-    if(prev){ try{ return JSON.parse(prev); }catch(e){} }
-    return { entries:{}, selectedDate: todayStr() };
-  }
-  var state = migrate();
+  var state=(function(){ var r=loadRaw(); if(r){ try{ return JSON.parse(r); }catch(e){} } return {entries:{},cycle:0}; })();
   if(!state.entries) state.entries={};
-  state.selectedDate = todayStr();
-
+  if(typeof state.cycle!=="number") state.cycle=0;
+  state.selectedDate=todayStr();
   function entry(){
-    var d = state.selectedDate;
-    if(!state.entries[d]) state.entries[d] = {activity:{}, meals:{}, water:0, modes:{}};
-    if(!state.entries[d].modes) state.entries[d].modes = {};
+    var d=state.selectedDate;
+    if(!state.entries[d]) state.entries[d]={activity:{},meals:{},water:0};
     return state.entries[d];
   }
   function save(){ saveRaw(JSON.stringify(state)); pushToCloud(); }
 
-  // ---------- Setup ----------
-  var dNames=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-  var mNames=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  var dLetters = ["M","T","W","T","F","S","S"];
-  var weekStart = mondayOf(new Date());
+  var dNames=["Неділя","Понеділок","Вівторок","Середа","Четвер","П'ятниця","Субота"];
+  var mNames=["січ","лют","бер","кві","тра","чер","лип","сер","вер","жов","лис","гру"];
+  var dLetters=["Пн","Вт","Ср","Чт","Пт","Сб","Нд"];
+  var weekStart=mondayOf(new Date());
   var CHECK='<span class="check"><svg viewBox="0 0 18 18"><polyline points="3,9.5 7.5,14 15,4.5"/></svg></span>';
+  document.getElementById("waterGoal").textContent=(GOAL/1000).toFixed(1)+" л";
 
-  document.getElementById("waterGoal").textContent = (GOAL/1000).toFixed(1)+" L";
-
-  // ---------- Renders ----------
   function renderHeader(){
-    var sel = parseD(state.selectedDate);
-    var isToday = state.selectedDate===todayStr();
-    var h = new Date().getHours();
-    var eyebrow = isToday
-      ? (h<12?"Good morning":h<18?"Good afternoon":"Good evening")
-      : "Plan for";
-    document.getElementById("eyebrow").textContent = eyebrow;
+    var sel=parseD(state.selectedDate), isToday=state.selectedDate===todayStr(), h=new Date().getHours();
+    document.getElementById("eyebrow").textContent = isToday?(h<12?"Доброго ранку":h<18?"Доброго дня":"Доброго вечора"):"План на";
     document.getElementById("dayName").textContent = dNames[sel.getDay()];
     document.getElementById("dateSub").textContent = sel.getDate()+" "+mNames[sel.getMonth()];
   }
-
   function renderCalendar(){
-    var days = document.getElementById("calDays");
-    var html="";
+    var days=document.getElementById("calDays"), html="";
     for(var i=0;i<7;i++){
-      var d = addDays(weekStart,i);
-      var ds = fmt(d);
-      var cls = "cal-day" + (ds===todayStr()?" today":"") + (ds===state.selectedDate?" sel":"");
-      html += '<button class="'+cls+'" data-d="'+ds+'"><span class="lbl">'+dLetters[i]+'</span><span class="num">'+d.getDate()+'</span><span class="tdot"></span></button>';
+      var d=addDays(weekStart,i), ds=fmt(d);
+      var cls="cal-day"+(ds===todayStr()?" today":"")+(ds===state.selectedDate?" sel":"");
+      html+='<button class="'+cls+'" data-d="'+ds+'"><span class="lbl">'+dLetters[i]+'</span><span class="num">'+d.getDate()+'</span><span class="tdot"></span></button>';
     }
-    days.innerHTML = html;
-    days.querySelectorAll(".cal-day").forEach(function(btn){
-      btn.addEventListener("click", function(){
-        state.selectedDate = btn.getAttribute("data-d");
-        save();
-        renderAll();
-      });
+    days.innerHTML=html;
+    days.querySelectorAll(".cal-day").forEach(function(b){
+      b.addEventListener("click",function(){ state.selectedDate=b.getAttribute("data-d"); save(); renderAll(); });
     });
   }
-
   function renderActivity(){
-    var sel = parseD(state.selectedDate);
-    var day = DAYS[sel.getDay()];
-    document.getElementById("activityTitle").textContent = day.title;
-    document.getElementById("moveIco").className = "sec-ico " + (sel.getDay()===3 ? "ico-hiit" : "ico-move");
-    document.getElementById("moveIco").textContent = day.emoji || "🏃";
+    var en = entry();
+    var done = (en.wIdx != null);
+    var idx  = done ? en.wIdx : state.cycle;
+    var w    = ROTATION[idx];
+
+    document.getElementById("activityTitle").textContent = w.title;
+    document.getElementById("moveIco").textContent = w.emoji;
+
+    var html = "";
+    if(!done){
+      html += '<div class="cycle-bar">';
+      html +=   '<button class="cyc-nav" id="cycPrev">‹</button>';
+      html +=   '<div class="cyc-dots">';
+      for(var k=0;k<ROTATION.length;k++){ html += '<span class="cyc-dot'+(k===idx?' on':'')+'"></span>'; }
+      html +=   '</div>';
+      html +=   '<button class="cyc-nav" id="cycNext">›</button>';
+      html += '</div>';
+      html += '<div class="cyc-hint">Наступне за циклом · можна змінити стрілками</div>';
+    }
+
+    html += '<div class="task'+(done?" done":"")+' has-detail" data-task="workout">'+CHECK+
+            '<span class="label">'+w.title+' · '+w.dur+'</span><span class="chev">›</span></div>';
+    html += '<div class="task'+(en.activity.steps?" done":"")+'" data-task="steps">'+CHECK+
+            '<span class="label">10 000 кроків</span></div>';
+
     var at = document.getElementById("activityTasks");
-    var html="", e = entry();
-    var modesMap = e.modes || {};
-    day.tasks.forEach(function(t){
-      // Mode toggle for switchable tasks (workout days)
-      if(t.modes){
-        var cur = modesMap[t.id] || "home";
-        html += '<div class="mode-toggle">';
-        html +=   '<button class="mode-btn'+(cur==="home"?" sel":"")+'" data-task="'+t.id+'" data-mode="home">🏠 Home</button>';
-        html +=   '<button class="mode-btn'+(cur==="gym"?" sel":"")+'" data-task="'+t.id+'" data-mode="gym">🏋️ Gym</button>';
-        html += '</div>';
-      }
-      var taskData = t.modes ? t.modes[modesMap[t.id] || "home"] : t;
-      var done = !!e.activity[t.id];
-      var hasEx = !!taskData.ex;
-      var labelCls = (t.modes && (modesMap[t.id]||"home")==="gym") ? ' class="label gym"' : ' class="label"';
-      html+='<div class="task'+(done?' done':'')+(hasEx?' has-detail':'')+'" data-task="'+t.id+'">'+CHECK+
-            '<span'+labelCls+'>'+taskData.label+'</span>'+
-            (hasEx?'<span class="chev">›</span>':'')+'</div>';
-    });
     at.innerHTML = html;
 
-    // Mode-toggle click handlers
-    at.querySelectorAll(".mode-btn").forEach(function(btn){
-      btn.addEventListener("click", function(ev){
-        ev.stopPropagation();
-        var en = entry();
-        en.modes = en.modes || {};
-        en.modes[btn.getAttribute("data-task")] = btn.getAttribute("data-mode");
-        save(); renderActivity(); updateProgress();
-      });
-    });
+    var pv = document.getElementById("cycPrev"), nx = document.getElementById("cycNext");
+    if(pv) pv.addEventListener("click", function(){ state.cycle=(state.cycle+ROTATION.length-1)%ROTATION.length; save(); renderActivity(); });
+    if(nx) nx.addEventListener("click", function(){ state.cycle=(state.cycle+1)%ROTATION.length; save(); renderActivity(); });
 
     at.querySelectorAll(".task").forEach(function(el){
-      var id=el.getAttribute("data-task");
-      var task=null; for(var i=0;i<day.tasks.length;i++){ if(day.tasks[i].id===id){task=day.tasks[i];break;} }
-      var en2 = entry();
-      var taskData = (task && task.modes) ? task.modes[(en2.modes||{})[id] || "home"] : task;
-      var checkEl = el.querySelector(".check");
-      checkEl.addEventListener("click",function(ev){
+      var id = el.getAttribute("data-task");
+      el.querySelector(".check").addEventListener("click", function(ev){
         ev.stopPropagation();
-        var en = entry();
-        en.activity[id] = !en.activity[id];
-        el.classList.toggle("done", en.activity[id]);
-        save(); updateProgress();
-      });
-      el.addEventListener("click",function(){
-        if(taskData && taskData.ex){
-          openModal(taskData.exTitle, taskData.exSub, taskData.ex);
+        var n = entry();
+        if(id === "workout"){
+          if(n.wIdx != null){ state.cycle = n.wIdx; delete n.wIdx; }
+          else { n.wIdx = state.cycle; state.cycle = (state.cycle+1)%ROTATION.length; }
         } else {
-          var en = entry();
-          en.activity[id] = !en.activity[id];
-          el.classList.toggle("done", en.activity[id]);
-          save(); updateProgress();
+          n.activity[id] = !n.activity[id];
         }
+        save(); renderActivity(); updateProgress();
+      });
+      el.addEventListener("click", function(){
+        if(id === "workout"){ openModal(w.exTitle, w.exSub, w.ex); }
+        else { var n=entry(); n.activity[id]=!n.activity[id]; save(); renderActivity(); updateProgress(); }
       });
     });
   }
 
   function renderMeals(){
-    var mc = document.getElementById("meals");
-    var mh="", e = entry();
+    var mc=document.getElementById("meals"), mh="", e=entry();
     MEALS.forEach(function(m){
-      var sel = e.meals[m.key];
+      var sel=e.meals[m.key];
       mh+='<div class="meal'+(sel!=null?' picked':'')+'" data-meal="'+m.key+'">';
-      mh+='<div class="meal-head"><div class="meal-name"><span class="em">'+m.em+'</span>'+m.name+'</div><div class="badge">✓ logged</div></div>';
+      mh+='<div class="meal-head"><div class="meal-name"><span class="em">'+m.em+'</span>'+m.name+'</div><div class="badge">✓ відмічено</div></div>';
       m.opts.forEach(function(o,i){
         mh+='<div class="opt'+(sel===i?' sel':'')+'" data-i="'+i+'"><span class="dot"></span><span class="o-name">'+o[0]+'</span><span class="o-macros">'+o[1]+'</span></div>';
       });
       mh+='</div>';
     });
-    mc.innerHTML = mh;
+    mc.innerHTML=mh;
     mc.querySelectorAll(".meal").forEach(function(mEl){
-      var key = mEl.getAttribute("data-meal");
+      var key=mEl.getAttribute("data-meal");
       mEl.querySelectorAll(".opt").forEach(function(oEl){
         oEl.addEventListener("click",function(){
-          var i = parseInt(oEl.getAttribute("data-i"),10);
-          var en = entry();
+          var i=parseInt(oEl.getAttribute("data-i"),10), en=entry();
           if(en.meals[key]===i){ delete en.meals[key]; } else { en.meals[key]=i; }
-          var cur = en.meals[key];
-          mEl.classList.toggle("picked", cur!=null);
-          mEl.querySelectorAll(".opt").forEach(function(x){
-            x.classList.toggle("sel", parseInt(x.getAttribute("data-i"),10)===cur);
-          });
+          var cur=en.meals[key];
+          mEl.classList.toggle("picked",cur!=null);
+          mEl.querySelectorAll(".opt").forEach(function(x){ x.classList.toggle("sel",parseInt(x.getAttribute("data-i"),10)===cur); });
           save(); updateProgress();
         });
       });
     });
   }
-
   function renderWater(){
-    var glassesEl = document.getElementById("glasses");
-    var e = entry();
-    var total = GOAL/GLASS;
-    var filled = Math.round(e.water/GLASS);
-    var g="";
-    for(var i=1;i<=total;i++){ g+='<div class="glass'+(i<=filled?' full':'')+'" data-n="'+i+'"></div>'; }
-    glassesEl.innerHTML = g;
-    document.getElementById("waterAmt").innerHTML = (e.water/1000).toFixed(2).replace(/0$/,'')+'<small> L</small>';
-    glassesEl.querySelectorAll(".glass").forEach(function(el){
+    var g=document.getElementById("glasses"), e=entry(), total=GOAL/GLASS, filled=Math.round(e.water/GLASS), h="";
+    for(var i=1;i<=total;i++){ h+='<div class="glass'+(i<=filled?' full':'')+'" data-n="'+i+'"></div>'; }
+    g.innerHTML=h;
+    document.getElementById("waterAmt").innerHTML=(e.water/1000).toFixed(2).replace(/0$/,'')+'<small> л</small>';
+    g.querySelectorAll(".glass").forEach(function(el){
       el.addEventListener("click",function(){
-        var n = parseInt(el.getAttribute("data-n"),10);
-        var en = entry();
-        var filledNow = Math.round(en.water/GLASS);
-        en.water = (n===filledNow ? n-1 : n)*GLASS;
-        if(en.water<0) en.water=0;
+        var n=parseInt(el.getAttribute("data-n"),10), en=entry(), f=Math.round(en.water/GLASS);
+        en.water=(n===f?n-1:n)*GLASS; if(en.water<0) en.water=0;
         save(); renderWater(); updateProgress();
       });
     });
   }
-
   document.getElementById("waterAdd").addEventListener("click",function(){
-    var en = entry();
-    if(en.water < GOAL + GLASS*4){ en.water += GLASS; save(); renderWater(); updateProgress(); }
+    var en=entry(); if(en.water<GOAL+GLASS*4){ en.water+=GLASS; save(); renderWater(); updateProgress(); }
   });
   document.getElementById("waterSub").addEventListener("click",function(){
-    var en = entry();
-    en.water = Math.max(0, en.water - GLASS);
-    save(); renderWater(); updateProgress();
+    var en=entry(); en.water=Math.max(0,en.water-GLASS); save(); renderWater(); updateProgress();
   });
-
   function updateProgress(){
-    var sel = parseD(state.selectedDate);
-    var day = DAYS[sel.getDay()];
-    var e = entry();
-    var done=0, tot = day.tasks.length + MEALS.length + 1;
-    day.tasks.forEach(function(t){ if(e.activity[t.id]) done++; });
+    var e=entry(), done=0, tot=2+MEALS.length+1;
+    if(e.wIdx != null) done++;
+    if(e.activity.steps) done++;
     MEALS.forEach(function(m){ if(e.meals[m.key]!=null) done++; });
     if(e.water>=GOAL) done++;
-    var pct = Math.round(done/tot*100);
-    document.getElementById("progBar").style.width = pct+"%";
-    var p = document.getElementById("progPct");
-    if(pct>=100){ p.innerHTML='<span class="celebrate">Done! 🎉</span>'; }
-    else { p.textContent = pct+"%"; }
+    var pct=Math.round(done/tot*100);
+    document.getElementById("progBar").style.width=pct+"%";
+    var p=document.getElementById("progPct");
+    if(pct>=100){ p.innerHTML='<span class="celebrate">Готово! 🎉</span>'; } else { p.textContent=pct+"%"; }
   }
+  function renderAll(){ renderHeader(); renderCalendar(); renderActivity(); renderMeals(); renderWater(); updateProgress(); updateAuthUI(); }
 
-  function renderAll(){
-    renderHeader(); renderCalendar(); renderActivity(); renderMeals(); renderWater(); updateProgress(); updateAuthUI();
-  }
-
-  document.getElementById("prevWk").addEventListener("click",function(){ weekStart = addDays(weekStart,-7); renderCalendar(); });
-  document.getElementById("nextWk").addEventListener("click",function(){ weekStart = addDays(weekStart, 7); renderCalendar(); });
-
+  document.getElementById("prevWk").addEventListener("click",function(){ weekStart=addDays(weekStart,-7); renderCalendar(); });
+  document.getElementById("nextWk").addEventListener("click",function(){ weekStart=addDays(weekStart,7); renderCalendar(); });
   document.getElementById("resetBtn").addEventListener("click",function(){
-    if(confirm("Clear check-marks, meals and water for "+state.selectedDate+"?")){
-      state.entries[state.selectedDate] = {activity:{}, meals:{}, water:0};
-      save(); renderAll();
+    if(confirm("Скинути всі відмітки за "+state.selectedDate+"?")){
+      var prev=state.entries[state.selectedDate];
+      if(prev && prev.wIdx!=null) state.cycle=prev.wIdx;
+      state.entries[state.selectedDate]={activity:{},meals:{},water:0}; save(); renderAll();
     }
   });
 
-  // ---------- Modal ----------
-  var modal = document.getElementById("modal");
-  var PLAY = '<svg viewBox="0 0 14 14" aria-hidden="true"><polygon points="2,1 12,7 2,13"/></svg>';
-  var frameTimer = null;
-  function startFrameCycle(){
-    stopFrameCycle();
-    frameTimer = setInterval(function(){
-      document.querySelectorAll(".ex-frame").forEach(function(img){
-        if(img.style.display === "none") return;
-        var base = img.getAttribute("data-base");
-        var nextFrame = img.src.indexOf("/0.jpg") > -1 ? "/1.jpg" : "/0.jpg";
-        img.src = base + nextFrame;
-      });
-    }, 800);
-  }
-  function stopFrameCycle(){
-    if(frameTimer){ clearInterval(frameTimer); frameTimer = null; }
-  }
-
-  function openModal(title, sub, sections){
-    document.getElementById("sheetTitle").textContent = title;
-    document.getElementById("sheetSub").textContent = sub || "";
+  var modal=document.getElementById("modal");
+  var PLAY='<svg viewBox="0 0 14 14"><polygon points="2,1 12,7 2,13"/></svg>';
+  function openModal(title,sub,sections){
+    document.getElementById("sheetTitle").textContent=title;
+    document.getElementById("sheetSub").textContent=sub||"";
     var h="";
     sections.forEach(function(sec){
-      if(sec.section){ h += '<div class="ex-section">'+sec.section+'</div>'; }
+      if(sec.section){ h+='<div class="ex-section">'+sec.section+'</div>'; }
       sec.items.forEach(function(e,i){
-        var pose = POSES[e.p] || POSES.squat;
-        var yt = "https://www.youtube.com/results?search_query=" + encodeURIComponent("how to " + e.n + " exercise form");
-        var imgContent;
+        var pose=POSES[e.p]||POSES.squat;
+        var yt="https://www.youtube.com/results?search_query="+encodeURIComponent(e.n+" вправа техніка");
+        var img;
         if(e.img && e.img.sprite){
-          imgContent = '<div class="ex-sprite" style="background-image:url(\''+e.img.sprite+'\')"></div>';
+          img = '<div class="ex-sprite" style="background-image:url(\''+e.img.sprite+'\')"></div>';
         } else if(e.img && e.img.gif){
-          imgContent = '<div class="ex-pose-fb">'+pose+'</div>' +
-                       '<img class="ex-pic" src="'+e.img.gif+'" alt="" onload="this.classList.add(\'ready\')" onerror="this.remove()">';
-        } else {
-          imgContent = pose;
-        }
-        h += '<div class="ex-card">';
-        h +=   '<div class="ex-img">'+imgContent+'</div>';
-        h +=   '<div class="ex-info">';
-        h +=     '<div class="ex-row"><span class="ex-num">'+(i+1<10?"0":"")+(i+1)+'</span><span class="ex-name">'+e.n+'</span></div>';
-        h +=     '<div class="ex-meta">'+e.r+'</div>';
-        if(e.w){ h += '<div class="ex-weight">🏋️ '+e.w+'</div>'; }
-        h +=     '<div class="ex-cue">'+e.c+'</div>';
-        h +=     '<a class="demo-btn" target="_blank" rel="noopener noreferrer" href="'+yt+'">'+PLAY+' Watch demo</a>';
-        h +=   '</div>';
-        h += '</div>';
+          img = '<div class="ex-pose-fb">'+pose+'</div><img class="ex-pic" src="'+e.img.gif+'" alt="" onload="this.classList.add(\'ready\')" onerror="this.remove()">';
+        } else { img = pose; }
+        h+='<div class="ex-card"><div class="ex-img">'+img+'</div><div class="ex-info">';
+        h+='<div class="ex-row"><span class="ex-num">'+(i+1<10?"0":"")+(i+1)+'</span><span class="ex-name">'+e.n+'</span></div>';
+        h+='<div class="ex-meta">'+e.r+'</div>';
+        if(e.w){ h+='<div class="ex-weight">🏋️ '+e.w+'</div>'; }
+        h+='<div class="ex-cue">'+e.c+'</div>';
+        h+='<a class="demo-btn" target="_blank" rel="noopener noreferrer" href="'+yt+'">'+PLAY+' Дивитись демо</a>';
+        h+='</div></div>';
       });
     });
-    document.getElementById("exList").innerHTML = h;
+    document.getElementById("exList").innerHTML=h;
 
     // запуск усередині жесту користувача — обходить блокування автозапуску
     (function(){
@@ -866,16 +629,11 @@
 
     modal.classList.add("open"); modal.setAttribute("aria-hidden","false");
     document.body.classList.add("noscroll");
-    startFrameCycle();
   }
-  function closeModal(){
-    modal.classList.remove("open"); modal.setAttribute("aria-hidden","true");
-    document.body.classList.remove("noscroll");
-    stopFrameCycle();
-  }
-  document.getElementById("closeBtn").addEventListener("click", closeModal);
-  document.getElementById("mbg").addEventListener("click", closeModal);
-  document.addEventListener("keydown", function(e){ if(e.key==="Escape" && modal.classList.contains("open")) closeModal(); });
+  function closeModal(){ modal.classList.remove("open"); modal.setAttribute("aria-hidden","true"); document.body.classList.remove("noscroll"); }
+  document.getElementById("closeBtn").addEventListener("click",closeModal);
+  document.getElementById("mbg").addEventListener("click",closeModal);
+  document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&modal.classList.contains("open")) closeModal(); });
 
   renderAll();
 })();
