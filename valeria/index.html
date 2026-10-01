@@ -627,6 +627,22 @@
       });
     });
     document.getElementById("exList").innerHTML=h;
+
+    // запуск усередині жесту користувача — обходить блокування автозапуску
+    (function(){
+      var vids = document.querySelectorAll('#exList video.ex-pic');
+      for (var q=0; q<vids.length; q++){
+        (function(vd){
+          vd.muted = true;
+          var pr = vd.play();
+          if (pr && pr.catch) pr.catch(function(){
+            vd.addEventListener('click', function(){ vd.play().catch(function(){}); });
+            vd.closest('.ex-card') && vd.closest('.ex-card').addEventListener('click', function(){ vd.play().catch(function(){}); });
+          });
+        })(vids[q]);
+      }
+    })();
+
     modal.classList.add("open"); modal.setAttribute("aria-hidden","false");
     document.body.classList.add("noscroll");
   }
