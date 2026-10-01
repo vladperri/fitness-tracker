@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Тест GIF</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,system-ui,sans-serif;background:#F4F4F6;color:#1A1A1A;padding:18px;max-width:460px;margin:0 auto;line-height:1.5}
+  h1{font-size:22px;margin-bottom:4px}
+  .lead{font-size:14px;color:#666;margin-bottom:18px}
+  .card{background:#fff;border-radius:16px;padding:16px;margin-bottom:14px;border:1px solid rgba(0,0,0,.08)}
+  .ttl{font-size:15px;font-weight:700;margin-bottom:10px}
+  .sub{font-size:12.5px;color:#777;margin-top:8px}
+  .verdict{padding:14px;border-radius:14px;margin-bottom:16px;font-size:15px;font-weight:600}
+  .ok{background:#E3F6E9;color:#1B6B36}
+  .bad{background:#FDE7E7;color:#9B1C1C}
+  .warn{background:#FFF4E0;color:#8A5A00}
+
+  /* 1 — гола картинка, нуль стилів */
+  .bare{width:140px;height:140px}
+
+  /* 2 — так, як у додатку */
+  .app-box{width:120px;height:120px;border-radius:14px;background:#E8F0EA;position:relative;overflow:hidden}
+  .app-box img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:14px}
+
+  /* 3 — усередині контейнера з transform (як модалка) */
+  .tx{transform:translateY(0);transition:transform .3s;background:#fff;border-radius:14px;padding:10px;display:inline-block}
+  .tx img{width:120px;height:120px;object-fit:cover;border-radius:10px;display:block}
+
+  /* 4 — усередині -webkit-overflow-scrolling (стара модалка) */
+  .scroller{max-height:170px;overflow-y:auto;-webkit-overflow-scrolling:touch;border-radius:14px}
+  .scroller img{width:120px;height:120px;object-fit:cover;border-radius:10px;display:block}
+</style>
+</head>
+<body>
+  <h1>Діагностика GIF</h1>
+  <div class="lead">Відкрий цю сторінку в Safari на iPhone і подивись, які картинки рухаються.</div>
+
+  <div id="verdict"></div>
+
+  <div class="card">
+    <div class="ttl">1 · Гола картинка (без стилів)</div>
+    <img class="bare" src="https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/1160.gif" alt="">
+    <div class="sub">Якщо навіть ця стоїть — справа в налаштуваннях iOS, не в коді.</div>
+  </div>
+
+  <div class="card">
+    <div class="ttl">2 · Як у додатку (object-fit + радіус)</div>
+    <div class="app-box">
+      <img src="https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0662.gif" alt="">
+    </div>
+    <div class="sub">Та сама розмітка, що в картці вправи.</div>
+  </div>
+
+  <div class="card">
+    <div class="ttl">3 · Усередині transform-контейнера</div>
+    <div class="tx">
+      <img src="https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0314.gif" alt="">
+    </div>
+    <div class="sub">Як модальне вікно, що виїжджає знизу.</div>
+  </div>
+
+  <div class="card">
+    <div class="ttl">4 · Усередині -webkit-overflow-scrolling</div>
+    <div class="scroller">
+      <img src="https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0085.gif" alt="">
+      <img src="https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0599.gif" alt="">
+    </div>
+    <div class="sub">Підозрюваний: застарілий метод скролу, відомий багами перемальовування.</div>
+  </div>
+
+  <div class="card">
+    <div class="ttl">Що це означає</div>
+    <div class="sub" style="font-size:13.5px;color:#444">
+      <b>Жодна не рухається</b> → налаштування iOS (енергозбереження / Reduce Motion).<br><br>
+      <b>1 рухається, решта ні</b> → проблема в CSS, скажи мені — виправлю.<br><br>
+      <b>Усі рухаються</b> → значить у додатку інша причина, копатиму далі.
+    </div>
+  </div>
+
+<script>
+  var rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var v = document.getElementById('verdict');
+  if(rm){
+    v.className = 'verdict bad';
+    v.innerHTML = '⚠️ Увімкнено <b>Reduce Motion</b>.<br>Це і зупиняє GIF. Вимкни: Налаштування → Доступність → Рух → Reduce Motion.';
+  } else {
+    v.className = 'verdict ok';
+    v.innerHTML = '✅ Reduce Motion вимкнено.<br>Якщо картинки все одно стоять — перевір режим енергозбереження (жовта батарея).';
+  }
+</script>
+</body>
+</html>
