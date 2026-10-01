@@ -164,10 +164,9 @@
   .ex-img svg{width:100%;height:100%}
 
   .ex-img .ex-sprite{position:absolute;inset:0;border-radius:14px;background-repeat:no-repeat;
-    background-size:1200% 100%;background-position:0 0;background-color:#fff;
-    animation:exrun 1.3s steps(12) infinite;opacity:0;transition:opacity .2s}
-  .ex-img .ex-sprite.ready{opacity:1}
-  @keyframes exrun{from{background-position:0 0}to{background-position:-1200% 0}}
+    background-size:1056px 88px;background-position:0 0;background-color:#fff;
+    animation:exrun 1.3s steps(12) infinite}
+  @keyframes exrun{from{background-position:0 0}to{background-position:-1056px 0}}}
   .ex-img .ex-pic{object-fit:cover;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#fff;border-radius:14px;opacity:0;transition:opacity .25s}
   .ex-img .ex-pic.ready{opacity:1}
   .ex-img .ex-pose-fb{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:6px}
@@ -621,7 +620,7 @@
         var yt="https://www.youtube.com/results?search_query="+encodeURIComponent(e.n+" вправа техніка");
         var img;
         if(e.img){
-          img='<div class="ex-pose-fb">'+pose+'</div><video class="ex-pic" src="'+e.img.url+'" data-gif="'+(e.img.gif||'')+'" autoplay loop muted playsinline preload="auto" oncanplay="this.classList.add(\'ready\')" onerror="var g=this.dataset.gif; if(g){var i=document.createElement(\'img\');i.className=\'ex-pic ready\';i.src=g;this.replaceWith(i);} else {this.remove();}"></video>';
+          img='<div class="ex-pose-fb">'+pose+'</div><div class="ex-sprite" style="background-image:url(\''+e.img.sprite+'\')"></div>';
         } else { img=pose; }
         h+='<div class="ex-card"><div class="ex-img">'+img+'</div><div class="ex-info">';
         h+='<div class="ex-row"><span class="ex-num">'+(i+1<10?"0":"")+(i+1)+'</span><span class="ex-name">'+e.n+'</span></div>';
