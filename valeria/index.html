@@ -135,6 +135,8 @@
   .auth-status{font-size:13px;color:var(--muted);font-weight:600;flex:1;line-height:1.3}
   .auth-btn{padding:8px 16px;border-radius:99px;border:1.5px solid var(--accent);color:var(--accent-deep);background:#fff;font-family:'Hanken Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
 
+  .swipe-wrap{touch-action:pan-y}
+  .swipe-wrap.anim{transition:transform .22s cubic-bezier(.2,.8,.2,1),opacity .22s}
   .cycle-bar{display:flex;align-items:center;gap:8px;margin-bottom:12px}
   .cyc-nav{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);background:#fff;color:var(--accent-deep);font-size:17px;font-weight:700;cursor:pointer;flex:none;line-height:1}
   .cyc-nav:disabled{opacity:.3}
@@ -465,6 +467,7 @@
   var mNames=["січ","лют","бер","кві","тра","чер","лип","сер","вер","жов","лис","гру"];
   var dLetters=["Пн","Вт","Ср","Чт","Пт","Сб","Нд"];
   var weekStart=mondayOf(new Date());
+  var swipeGuard = 0;
   var CHECK='<span class="check"><svg viewBox="0 0 18 18"><polyline points="3,9.5 7.5,14 15,4.5"/></svg></span>';
   document.getElementById("waterGoal").textContent=(GOAL/1000).toFixed(1)+" л";
 
@@ -504,7 +507,7 @@
       html +=   '</div>';
       html +=   '<button class="cyc-nav" id="cycNext">›</button>';
       html += '</div>';
-      html += '<div class="cyc-hint">Наступне за циклом · можна змінити стрілками</div>';
+      html += '<div class="cyc-hint">Наступне за циклом · свайп або стрілки</div>';
     }
 
     html += '<div class="task'+(done?" done":"")+' has-detail" data-task="workout">'+CHECK+
@@ -533,10 +536,53 @@
         save(); renderActivity(); updateProgress();
       });
       el.addEventListener("click", function(){
+        if(Date.now()-swipeGuard < 450) return;
         if(id === "workout"){ openModal(w.exTitle, w.exSub, w.ex); }
         else { var n=entry(); n.activity[id]=!n.activity[id]; save(); renderActivity(); updateProgress(); }
       });
     });
+
+    // ── свайп для зміни тренування ──────────────────────────────────
+    (function(){
+      var en0 = entry();
+      if(en0.wIdx != null) return;            // виконане не гортаємо
+      var x0=null, y0=null, dragging=false;
+      function reset(){ at.style.transform=''; at.style.opacity=''; }
+      at.classList.add('swipe-wrap');
+
+      at.addEventListener('touchstart', function(ev){
+        var t=ev.changedTouches[0]; x0=t.clientX; y0=t.clientY; dragging=false;
+        at.classList.remove('anim');
+      }, {passive:true});
+
+      at.addEventListener('touchmove', function(ev){
+        if(x0===null) return;
+        var t=ev.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0;
+        if(!dragging && Math.abs(dx) > Math.abs(dy)*1.3 && Math.abs(dx) > 10) dragging=true;
+        if(dragging){
+          at.style.transform='translateX('+(dx*0.35)+'px)';
+          at.style.opacity = String(Math.max(0.45, 1 - Math.abs(dx)/320));
+        }
+      }, {passive:true});
+
+      at.addEventListener('touchend', function(ev){
+        if(x0===null) return;
+        var t=ev.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0;
+        x0=null;
+        at.classList.add('anim');
+        if(dragging && Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)*1.3){
+          swipeGuard = Date.now();
+          state.cycle = (state.cycle + (dx<0 ? 1 : ROTATION.length-1)) % ROTATION.length;
+          at.style.transform='translateX('+(dx<0?-60:60)+'px)';
+          at.style.opacity='0';
+          setTimeout(function(){ save(); renderActivity(); }, 150);
+        } else {
+          reset();
+        }
+        dragging=false;
+      }, {passive:true});
+    })();
+
   }
 
   function renderMeals(){
