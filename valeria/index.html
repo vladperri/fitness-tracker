@@ -619,9 +619,11 @@
         var pose=POSES[e.p]||POSES.squat;
         var yt="https://www.youtube.com/results?search_query="+encodeURIComponent(e.n+" вправа техніка");
         var img;
-        if(e.img){
-          img='<div class="ex-pose-fb">'+pose+'</div><div class="ex-sprite" style="background-image:url(\''+e.img.sprite+'\')"></div>';
-        } else { img=pose; }
+        if(e.img && e.img.sprite){
+          img = '<div class="ex-sprite" style="background-image:url(\''+e.img.sprite+'\')"></div>';
+        } else if(e.img && e.img.gif){
+          img = '<div class="ex-pose-fb">'+pose+'</div><img class="ex-pic" src="'+e.img.gif+'" alt="" onload="this.classList.add(\'ready\')" onerror="this.remove()">';
+        } else { img = pose; }
         h+='<div class="ex-card"><div class="ex-img">'+img+'</div><div class="ex-info">';
         h+='<div class="ex-row"><span class="ex-num">'+(i+1<10?"0":"")+(i+1)+'</span><span class="ex-name">'+e.n+'</span></div>';
         h+='<div class="ex-meta">'+e.r+'</div>';
