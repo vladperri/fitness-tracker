@@ -204,10 +204,6 @@
     <div class="cal-days" id="calDays"></div>
     <button class="cal-nav" id="nextWk">›</button>
   </div>
-  <div class="progress-wrap">
-    <div class="bar"><i id="progBar"></i></div>
-    <div class="pct" id="progPct">0%</div>
-  </div>
 </header>
 
 <section>
@@ -216,36 +212,6 @@
     <div class="sec-title">Рух<b id="activityTitle">—</b></div>
   </div>
   <div id="activityTasks"></div>
-</section>
-
-<section>
-  <div class="sec-head">
-    <div class="sec-ico">🍽️</div>
-    <div class="sec-title">Харчування · обери що з'їла<b>Прийоми їжі</b></div>
-  </div>
-  <div class="macro-row">
-    <div class="macro"><div class="mv">2200</div><div class="ml">ккал</div></div>
-    <div class="macro"><div class="mv">180 г</div><div class="ml">білок</div></div>
-    <div class="macro"><div class="mv">70 г</div><div class="ml">жири</div></div>
-    <div class="macro"><div class="mv">230 г</div><div class="ml">вугл.</div></div>
-  </div>
-  <div id="meals"></div>
-</section>
-
-<section>
-  <div class="sec-head">
-    <div class="sec-ico ico-water">💧</div>
-    <div class="sec-title">Гідратація<b>Вода</b></div>
-  </div>
-  <div class="water-top">
-    <div class="water-amt" id="waterAmt">0.0<small> л</small></div>
-    <div class="water-goal">ціль<b id="waterGoal">3.0 л</b></div>
-  </div>
-  <div class="glasses" id="glasses"></div>
-  <div class="water-btns">
-    <button class="wbtn sub" id="waterSub">− склянка</button>
-    <button class="wbtn add" id="waterAdd">+ склянка · 250 мл</button>
-  </div>
 </section>
 
 <footer>
@@ -276,7 +242,6 @@
 <script>
 (function(){
   "use strict";
-  var GLASS = 250, GOAL = 3000;
   var STROKE = 'fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"';
   var POSES = {
     squat:       '<svg viewBox="0 0 60 60" '+STROKE+'><circle cx="30" cy="10" r="4" fill="currentColor" stroke="none"/><path d="M30 14 V28"/><path d="M30 20 L22 28 M30 20 L38 28"/><path d="M30 28 L23 38 L23 50 M30 28 L37 38 L37 50"/><line x1="14" y1="54" x2="46" y2="54" opacity=".4"/></svg>',
@@ -390,30 +355,6 @@
     {title:"Legs + Shoulders",           emoji:"🦵", dur:"~55 хв", ex:LEGS, exTitle:"Legs + Shoulders", exSub:"Задній ланцюг · сідниці · плечі · прес"}
   ];
 
-  var MEALS = [
-    {key:"breakfast", em:"☀️", name:"Breakfast", opts:[
-      ["Oatmeal + tvorog","620 kcal · 40g P"],
-      ["Air-fryer syrnyky","450 kcal · 40g P"],
-      ["Tvorog + yogurt bowl","620 kcal · 48g P"],
-      ["Omelette + cheese","500 kcal · 35g P"]]},
-    {key:"lunch", em:"🥗", name:"Lunch", opts:[
-      ["Chicken + grain + salad","620 kcal · 60g P"],
-      ["Chicken + potato + veg","600 kcal · 58g P"],
-      ["Chicken + avocado bowl","520 kcal · 58g P"],
-      ["Pasta + chicken + veg","640 kcal · 52g P"]]},
-    {key:"dinner", em:"🌙", name:"Dinner", opts:[
-      ["Chicken + roasted veg","450 kcal · 55g P"],
-      ["Tuna / chicken salad bowl","480 kcal · 45g P"],
-      ["Omelette + potato + salad","500 kcal · 28g P"],
-      ["Tvorog plate / syrnyky","430 kcal · 40g P"],
-      ["Ham + cheese + veg","450 kcal · 30g P"]]},
-    {key:"snack", em:"🍎", name:"Snack", opts:[
-      ["Tvorog + fruit","190 kcal · 26g P"],
-      ["Greek yogurt + berries","180 kcal · 14g P"],
-      ["Fruit + handful of nuts","180 kcal · 5g P"],
-      ["Hard cheese + veg sticks","140 kcal · 8g P"]]}
-  ];
-
   var FB_CONFIG = {
     apiKey:"AIzaSyBtG3NAe-Eu9m2OuKLYt63zJjCBzMq9VF4",
     authDomain:"fitness-tracker-7ef81.firebaseapp.com",
@@ -475,7 +416,6 @@
   var weekStart=mondayOf(new Date());
   var swipeGuard = 0;
   var CHECK='<span class="check"><svg viewBox="0 0 18 18"><polyline points="3,9.5 7.5,14 15,4.5"/></svg></span>';
-  document.getElementById("waterGoal").textContent=(GOAL/1000).toFixed(1)+" л";
 
   function renderHeader(){
     var sel=parseD(state.selectedDate), isToday=state.selectedDate===todayStr(), h=new Date().getHours();
@@ -518,8 +458,6 @@
 
     html += '<div class="task'+(done?" done":"")+' has-detail" data-task="workout">'+CHECK+
             '<span class="label">'+w.title+' · '+w.dur+'</span><span class="chev">›</span></div>';
-    html += '<div class="task'+(en.activity.steps?" done":"")+'" data-task="steps">'+CHECK+
-            '<span class="label">10 000 кроків</span></div>';
 
     var at = document.getElementById("activityTasks");
     at.innerHTML = html;
@@ -539,75 +477,20 @@
         } else {
           n.activity[id] = !n.activity[id];
         }
-        save(); renderActivity(); updateProgress();
+        save(); renderActivity();
       });
       el.addEventListener("click", function(){
         if(Date.now()-swipeGuard < 450) return;
         if(id === "workout"){ openModal(w.exTitle, w.exSub, w.ex); }
-        else { var n=entry(); n.activity[id]=!n.activity[id]; save(); renderActivity(); updateProgress(); }
+        else { var n=entry(); n.activity[id]=!n.activity[id]; save(); renderActivity(); }
       });
     });
 
 
   }
 
-  function renderMeals(){
-    var mc=document.getElementById("meals"), mh="", e=entry();
-    MEALS.forEach(function(m){
-      var sel=e.meals[m.key];
-      mh+='<div class="meal'+(sel!=null?' picked':'')+'" data-meal="'+m.key+'">';
-      mh+='<div class="meal-head"><div class="meal-name"><span class="em">'+m.em+'</span>'+m.name+'</div><div class="badge">✓ відмічено</div></div>';
-      m.opts.forEach(function(o,i){
-        mh+='<div class="opt'+(sel===i?' sel':'')+'" data-i="'+i+'"><span class="dot"></span><span class="o-name">'+o[0]+'</span><span class="o-macros">'+o[1]+'</span></div>';
-      });
-      mh+='</div>';
-    });
-    mc.innerHTML=mh;
-    mc.querySelectorAll(".meal").forEach(function(mEl){
-      var key=mEl.getAttribute("data-meal");
-      mEl.querySelectorAll(".opt").forEach(function(oEl){
-        oEl.addEventListener("click",function(){
-          var i=parseInt(oEl.getAttribute("data-i"),10), en=entry();
-          if(en.meals[key]===i){ delete en.meals[key]; } else { en.meals[key]=i; }
-          var cur=en.meals[key];
-          mEl.classList.toggle("picked",cur!=null);
-          mEl.querySelectorAll(".opt").forEach(function(x){ x.classList.toggle("sel",parseInt(x.getAttribute("data-i"),10)===cur); });
-          save(); updateProgress();
-        });
-      });
-    });
-  }
-  function renderWater(){
-    var g=document.getElementById("glasses"), e=entry(), total=GOAL/GLASS, filled=Math.round(e.water/GLASS), h="";
-    for(var i=1;i<=total;i++){ h+='<div class="glass'+(i<=filled?' full':'')+'" data-n="'+i+'"></div>'; }
-    g.innerHTML=h;
-    document.getElementById("waterAmt").innerHTML=(e.water/1000).toFixed(2).replace(/0$/,'')+'<small> л</small>';
-    g.querySelectorAll(".glass").forEach(function(el){
-      el.addEventListener("click",function(){
-        var n=parseInt(el.getAttribute("data-n"),10), en=entry(), f=Math.round(en.water/GLASS);
-        en.water=(n===f?n-1:n)*GLASS; if(en.water<0) en.water=0;
-        save(); renderWater(); updateProgress();
-      });
-    });
-  }
-  document.getElementById("waterAdd").addEventListener("click",function(){
-    var en=entry(); if(en.water<GOAL+GLASS*4){ en.water+=GLASS; save(); renderWater(); updateProgress(); }
-  });
-  document.getElementById("waterSub").addEventListener("click",function(){
-    var en=entry(); en.water=Math.max(0,en.water-GLASS); save(); renderWater(); updateProgress();
-  });
-  function updateProgress(){
-    var e=entry(), done=0, tot=2+MEALS.length+1;
-    if(e.wIdx != null) done++;
-    if(e.activity.steps) done++;
-    MEALS.forEach(function(m){ if(e.meals[m.key]!=null) done++; });
-    if(e.water>=GOAL) done++;
-    var pct=Math.round(done/tot*100);
-    document.getElementById("progBar").style.width=pct+"%";
-    var p=document.getElementById("progPct");
-    if(pct>=100){ p.innerHTML='<span class="celebrate">Готово! 🎉</span>'; } else { p.textContent=pct+"%"; }
-  }
-  function renderAll(){ renderHeader(); renderCalendar(); renderActivity(); renderMeals(); renderWater(); updateProgress(); updateAuthUI(); }
+
+  function renderAll(){ renderHeader(); renderCalendar(); renderActivity(); updateAuthUI(); }
 
   document.getElementById("prevWk").addEventListener("click",function(){ weekStart=addDays(weekStart,-7); renderCalendar(); });
   document.getElementById("nextWk").addEventListener("click",function(){ weekStart=addDays(weekStart,7); renderCalendar(); });
