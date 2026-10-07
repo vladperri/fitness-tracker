@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#16794A">
+<meta name="color-scheme" content="light">
+<title>Fitness Tracker</title>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="apple-touch-icon" href="../favicon.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Fitness">
+<meta property="og:title" content="Fitness Tracker">
+<meta property="og:description" content="Push · Pull · Legs — щоденний трекер">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F1ECE2; --card:#FFFFFF; --ink:#17160F; --muted:#75736A;
+    --line:rgba(23,22,15,.09);
+    --accent:#16794A; --accent-deep:#0F5A37; --accent-soft:#E6F1EA;
+    --water:#2B83C4; --water-soft:#E2EFF8;
+    --shadow:0 1px 2px rgba(23,22,15,.04), 0 8px 24px rgba(23,22,15,.06);
+    --radius:20px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html{color-scheme:light;background-color:#F1ECE2 !important}
+  html,body{background-color:#F1ECE2 !important;color:#17160F !important;font-family:'Hanken Grotesk',sans-serif;-webkit-font-smoothing:antialiased}
+  @media (prefers-color-scheme: dark){
+    html,body{background-color:#F1ECE2 !important;color:#17160F !important}
+    section{background:#FFFFFF !important;color:#17160F !important}
+    .opt{background:#fff !important;color:#17160F !important}
+    .glass{background:#fff !important}
+  }
+  body{max-width:520px;margin:0 auto;padding:0 16px calc(40px + env(safe-area-inset-bottom));
+    background-image:radial-gradient(circle at 1px 1px, rgba(23,22,15,.04) 1px, transparent 0);background-size:22px 22px;}
+  body.noscroll{overflow:hidden;height:100vh}
+  h1,h2,h3,h4{font-family:'Bricolage Grotesque',sans-serif;letter-spacing:-.02em}
+
+  header{padding:26px 4px 14px;position:sticky;top:0;z-index:20;background:linear-gradient(180deg,#F1ECE2 78%,rgba(253,242,244,0))}
+
+  .topnav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+  .tn-link,.tn-btn{display:inline-flex;align-items:center;gap:5px;font-family:inherit;font-size:13px;font-weight:600;
+    color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 14px;
+    text-decoration:none;cursor:pointer;line-height:1;transition:.15s}
+  .tn-link:active,.tn-btn:active{background:var(--accent-soft);color:var(--accent-deep);border-color:transparent}
+  @media (hover:hover){.tn-link:hover,.tn-btn:hover{color:var(--accent-deep);border-color:var(--accent)}}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+  .date{display:flex;align-items:baseline;gap:10px;margin-top:2px}
+  .date .day{font-size:32px;font-weight:800;line-height:1;font-family:'Bricolage Grotesque'}
+  .date .sub{font-size:15px;color:var(--muted);font-weight:600}
+
+  .cal{display:flex;align-items:center;gap:2px;margin-top:14px}
+  .cal-nav{width:28px;height:46px;border-radius:8px;border:0;background:transparent;color:var(--muted);font-size:22px;cursor:pointer;line-height:1}
+  .cal-days{flex:1;display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+  .cal-day{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 0 9px;border-radius:11px;cursor:pointer;border:0;background:transparent;transition:.16s}
+  .cal-day:active{transform:scale(.94)}
+  .cal-day .lbl{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin-bottom:3px}
+  .cal-day .num{font-family:'Bricolage Grotesque';font-size:15px;font-weight:700;color:var(--ink);line-height:1}
+  .cal-day .tdot{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--accent);opacity:0}
+  .cal-day.today .tdot{opacity:1}
+  .cal-day.sel{background:var(--accent)}
+  .cal-day.sel .lbl{color:rgba(255,255,255,.8)}
+  .cal-day.sel .num{color:#fff}
+  .cal-day.sel.today .tdot{background:#fff}
+
+  .progress-wrap{margin-top:14px;display:flex;align-items:center;gap:12px}
+  .bar{flex:1;height:8px;border-radius:99px;background:rgba(23,22,15,.08);overflow:hidden}
+  .bar > i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent-deep));transition:width .5s cubic-bezier(.2,.8,.2,1)}
+  .pct{font-size:13px;font-weight:700;color:var(--muted);min-width:46px;text-align:right;font-variant-numeric:tabular-nums}
+
+  section{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-top:16px;
+    opacity:0;transform:translateY(10px);animation:rise .5s cubic-bezier(.2,.8,.2,1) forwards}
+  section:nth-of-type(1){animation-delay:.05s}
+  section:nth-of-type(2){animation-delay:.12s}
+  section:nth-of-type(3){animation-delay:.19s}
+  @keyframes rise{to{opacity:1;transform:none}}
+
+  .sec-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .sec-ico{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:17px;flex:none;background:var(--accent-soft)}
+  .ico-water{background:var(--water-soft)}
+  .sec-title{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);line-height:1.1}
+  .sec-title b{display:block;font-family:'Bricolage Grotesque';font-size:19px;letter-spacing:-.01em;text-transform:none;color:var(--ink);font-weight:700;margin-top:2px}
+
+  .task{display:flex;align-items:center;gap:13px;padding:12px;border-radius:14px;cursor:pointer;transition:background .2s;user-select:none}
+  .task:active{background:rgba(23,22,15,.03)}
+  .task + .task{margin-top:2px}
+  .check{width:25px;height:25px;border-radius:8px;border:2px solid rgba(23,22,15,.18);flex:none;display:grid;place-items:center;transition:.22s;background:#fff}
+  .check svg{width:14px;height:14px;stroke:#fff;stroke-width:3.4;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:22;stroke-dashoffset:22;transition:stroke-dashoffset .26s ease .04s}
+  .task.done .check{background:var(--accent);border-color:var(--accent)}
+  .task.done .check svg{stroke-dashoffset:0}
+  .task .label{font-size:15.5px;font-weight:600;flex:1;line-height:1.25}
+  .task.done .label{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(23,22,15,.25)}
+  .chev{font-size:22px;color:var(--muted);line-height:1;font-weight:300;margin-left:4px}
+  .task.has-detail .chev{color:var(--accent);font-weight:500}
+
+  .meal{padding:6px 0}
+  .meal + .meal{border-top:1px solid var(--line);margin-top:8px;padding-top:12px}
+  .meal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+  .meal-name{font-family:'Bricolage Grotesque';font-size:16px;font-weight:700}
+  .meal-name .em{font-size:14px;margin-right:6px}
+  .badge{font-size:11px;font-weight:800;letter-spacing:.04em;color:var(--accent-deep);background:var(--accent-soft);padding:4px 9px;border-radius:99px;opacity:0;transform:scale(.8);transition:.2s}
+  .meal.picked .badge{opacity:1;transform:none}
+  .opt{display:flex;align-items:center;gap:11px;padding:11px 12px;border:1.5px solid var(--line);border-radius:13px;cursor:pointer;transition:.18s;margin-top:7px;background:#fff}
+  .opt:active{transform:scale(.99)}
+  .opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+  .opt .dot{width:18px;height:18px;border-radius:50%;border:2px solid rgba(23,22,15,.2);flex:none;transition:.18s;position:relative}
+  .opt.sel .dot{border-color:var(--accent);background:var(--accent)}
+  .opt.sel .dot::after{content:"";position:absolute;inset:4px;background:#fff;border-radius:50%}
+  .opt .o-name{flex:1;font-size:14.5px;font-weight:600;line-height:1.2}
+  .opt .o-macros{font-size:11.5px;font-weight:700;color:var(--muted);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+
+  .macro-row{display:flex;gap:8px;margin-bottom:14px}
+  .macro{flex:1;background:var(--accent-soft);border-radius:13px;padding:10px;text-align:center}
+  .macro .mv{font-family:'Bricolage Grotesque';font-size:17px;font-weight:800;color:var(--accent-deep);line-height:1}
+  .macro .ml{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
+
+  .water-top{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px}
+  .water-amt{font-family:'Bricolage Grotesque';font-size:38px;font-weight:800;line-height:.9;color:var(--water)}
+  .water-amt small{font-size:17px;color:var(--muted);font-weight:700}
+  .water-goal{font-size:13px;font-weight:700;color:var(--muted);text-align:right}
+  .water-goal b{display:block;color:var(--ink);font-size:15px}
+  .glasses{display:grid;grid-template-columns:repeat(6,1fr);gap:9px;margin:4px 0 16px}
+  .glass{aspect-ratio:3/4;border-radius:9px 9px 11px 11px;border:2px solid var(--water-soft);background:#fff;position:relative;overflow:hidden;cursor:pointer;transition:transform .12s}
+  .glass:active{transform:scale(.92)}
+  .glass::after{content:"";position:absolute;left:0;right:0;bottom:0;height:0;background:linear-gradient(180deg,#A5CDE5,var(--water));transition:height .3s cubic-bezier(.2,.8,.2,1)}
+  .glass.full{border-color:var(--water)}
+  .glass.full::after{height:100%}
+  .water-btns{display:flex;gap:10px}
+  .wbtn{flex:1;padding:14px;border-radius:14px;border:0;font-family:'Bricolage Grotesque';font-size:15px;font-weight:700;cursor:pointer;transition:.16s}
+  .wbtn:active{transform:scale(.97)}
+  .wbtn.add{background:var(--water);color:#fff}
+  .wbtn.sub{background:var(--water-soft);color:var(--water)}
+
+  footer{text-align:center;margin-top:26px;padding-bottom:8px}
+  .reset{background:none;border:0;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:8px}
+  .note{font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.5;opacity:.85}
+  .celebrate{color:var(--accent-deep);font-weight:800}
+  .auth-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px;padding:10px 4px}
+  .auth-status{font-size:13px;color:var(--muted);font-weight:600;flex:1;line-height:1.3}
+  .auth-btn{padding:8px 16px;border-radius:99px;border:1.5px solid var(--accent);color:var(--accent-deep);background:#fff;font-family:'Hanken Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+
+  .swipe-wrap{touch-action:pan-y}
+  .swipe-wrap.anim{transition:transform .22s cubic-bezier(.2,.8,.2,1),opacity .22s}
+  .cycle-bar{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+  .cyc-nav{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);background:#fff;color:var(--accent-deep);font-size:17px;font-weight:700;cursor:pointer;flex:none;line-height:1}
+  .cyc-nav:disabled{opacity:.3}
+  .cyc-dots{flex:1;display:flex;justify-content:center;gap:6px}
+  .cyc-dot{width:8px;height:8px;border-radius:50%;background:rgba(23,22,15,.15);transition:.2s}
+  .cyc-dot.on{background:var(--accent);transform:scale(1.35)}
+  .cyc-hint{font-size:11.5px;color:var(--muted);text-align:center;margin-bottom:10px;font-weight:600}
+  .modal{position:fixed;inset:0;z-index:100;display:none}
+  .modal.open{display:block}
+  .mbg{position:absolute;inset:0;background:rgba(23,22,15,.5);opacity:0;transition:opacity .25s}
+  .modal.open .mbg{opacity:1}
+  .sheet{position:absolute;left:0;right:0;bottom:0;background:var(--bg);border-radius:26px 26px 0 0;
+    max-height:92vh;overflow-y:auto;
+    padding:22px 16px calc(34px + env(safe-area-inset-bottom));
+    transform:translateY(100%);transition:transform .35s cubic-bezier(.2,.8,.2,1);
+    box-shadow:0 -10px 30px rgba(0,0,0,.18)}
+  .modal.open .sheet{transform:none}
+  .grabber{width:42px;height:5px;border-radius:99px;background:rgba(23,22,15,.18);margin:-8px auto 14px}
+  .sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+  .sheet-title{font-family:'Bricolage Grotesque';font-size:24px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+  .sheet-sub{font-size:13px;color:var(--muted);font-weight:600;margin-top:3px}
+  .close-btn{width:38px;height:38px;border-radius:50%;border:0;background:rgba(23,22,15,.07);font-size:16px;font-weight:700;cursor:pointer;color:var(--ink);flex:none}
+  .ex-section{font-family:'Bricolage Grotesque';font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-deep);padding:14px 4px 4px;margin-top:8px;border-bottom:1px solid var(--accent-soft);margin-bottom:4px;line-height:1.4}
+  .ex-section:first-child{margin-top:0;padding-top:2px}
+  .ex-card{display:flex;gap:12px;padding:13px;border-radius:18px;background:var(--card);border:1px solid var(--line);margin-top:10px;align-items:flex-start}
+  .ex-img{width:88px;height:88px;border-radius:14px;background:var(--accent-soft);flex:none;display:grid;place-items:center;color:var(--accent-deep);padding:6px;overflow:hidden;position:relative}
+  .ex-img svg{width:100%;height:100%}
+
+  .ex-img .ex-sprite{position:absolute;inset:0;border-radius:14px;background-repeat:no-repeat;
+    background-size:1056px 88px;background-position:0 0;background-color:#fff;
+    animation:exrun 1.3s steps(12) infinite}
+  @keyframes exrun{from{background-position:0 0}to{background-position:-1056px 0}}}
+  .ex-img .ex-pic{object-fit:cover;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#fff;border-radius:14px;opacity:0;transition:opacity .25s}
+  .ex-img .ex-pic.ready{opacity:1}
+  .ex-img .ex-pose-fb{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:6px}
+  .ex-info{flex:1;min-width:0}
+  .ex-row{display:flex;align-items:center;gap:8px;margin-bottom:3px;flex-wrap:wrap}
+  .ex-num{font-family:'Bricolage Grotesque';font-size:11px;font-weight:800;color:var(--accent-deep);background:var(--accent-soft);padding:2px 7px;border-radius:6px}
+  .ex-name{font-family:'Bricolage Grotesque';font-size:15.5px;font-weight:700;line-height:1.2}
+  .ex-meta{font-size:13px;color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums;margin-bottom:5px}
+  .ex-weight{display:inline-block;background:var(--accent-soft);color:var(--accent-deep);font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:8px;margin-bottom:7px}
+  .ex-cue{font-size:12.5px;color:var(--muted);line-height:1.45;margin-bottom:8px}
+  .demo-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:99px;border:1.5px solid var(--accent);color:var(--accent-deep);font-size:12px;font-weight:700;text-decoration:none}
+  .demo-btn svg{width:11px;height:11px;fill:currentColor}
+  .sheet-foot{font-size:11.5px;color:var(--muted);margin-top:16px;text-align:center;line-height:1.5;padding:0 10px}
+</style>
+</head>
+<body>
+<header>
+  <div class="topnav">
+    <a class="tn-link" href="../">‹ Меню</a>
+    <button class="tn-btn" type="button" onclick="var u=location.href.split('?')[0].split('#')[0];location.replace(u+'?v='+Date.now())">↻ Оновити</button>
+  </div>
+    <div class="eyebrow" id="eyebrow">Сьогодні</div>
+  <div class="date"><span class="day" id="dayName">—</span><span class="sub" id="dateSub"></span></div>
+  <div class="cal">
+    <button class="cal-nav" id="prevWk">‹</button>
+    <div class="cal-days" id="calDays"></div>
+    <button class="cal-nav" id="nextWk">›</button>
+  </div>
+  <div class="progress-wrap">
+    <div class="bar"><i id="progBar"></i></div>
+    <div class="pct" id="progPct">0%</div>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head">
+    <div class="sec-ico" id="moveIco">💪</div>
+    <div class="sec-title">Рух<b id="activityTitle">—</b></div>
+  </div>
+  <div id="activityTasks"></div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <div class="sec-ico">🍽️</div>
+    <div class="sec-title">Харчування · обери що з'їла<b>Прийоми їжі</b></div>
+  </div>
+  <div class="macro-row">
+    <div class="macro"><div class="mv">2200</div><div class="ml">ккал</div></div>
+    <div class="macro"><div class="mv">180 г</div><div class="ml">білок</div></div>
+    <div class="macro"><div class="mv">70 г</div><div class="ml">жири</div></div>
+    <div class="macro"><div class="mv">230 г</div><div class="ml">вугл.</div></div>
+  </div>
+  <div id="meals"></div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <div class="sec-ico ico-water">💧</div>
+    <div class="sec-title">Гідратація<b>Вода</b></div>
+  </div>
+  <div class="water-top">
+    <div class="water-amt" id="waterAmt">0.0<small> л</small></div>
+    <div class="water-goal">ціль<b id="waterGoal">3.0 л</b></div>
+  </div>
+  <div class="glasses" id="glasses"></div>
+  <div class="water-btns">
+    <button class="wbtn sub" id="waterSub">− склянка</button>
+    <button class="wbtn add" id="waterAdd">+ склянка · 250 мл</button>
+  </div>
+</section>
+
+<footer>
+  <button class="reset" id="resetBtn">Скинути цей день</button>
+  <div id="authBar" class="auth-bar"></div>
+  <div class="note">Зберігається на пристрої · синхронізується з хмарою після входу.<br>Додай на головний екран для швидкого доступу.</div>
+</footer>
+
+<div class="modal" id="modal" aria-hidden="true">
+  <div class="mbg" id="mbg"></div>
+  <div class="sheet" role="dialog">
+    <div class="grabber"></div>
+    <div class="sheet-head">
+      <div>
+        <div class="sheet-title" id="sheetTitle">Тренування</div>
+        <div class="sheet-sub" id="sheetSub"></div>
+      </div>
+      <button class="close-btn" id="closeBtn">✕</button>
+    </div>
+    <div id="exList"></div>
+    <p class="sheet-foot">Натисни «Дивитись демо» для відео на YouTube.<br>Стеж за технікою — зупинись, якщо щось болить.</p>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+(function(){
+  "use strict";
+  var GLASS = 250, GOAL = 3000;
+  var STROKE = 'fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"';
+  var POSES = {
+    squat:       '<svg viewBox="0 0 60 60" '+STROKE+'><circle cx="30" cy="10" r="4" fill="currentColor" stroke="none"/><path d="M30 14 V28"/><path d="M30 20 L22 28 M30 20 L38 28"/><path d="M30 28 L23 38 L23 50 M30 28 L37 38 L37 50"/><line x1="14" y1="54" x2="46" y2="54" opacity=".4"/></svg>',
+    lunge:       '<svg viewBox="0 0 60 60" '+STROKE+'><circle cx="26" cy="10" r="4" fill="currentColor" stroke="none"/><path d="M26 14 V30"/><path d="M26 20 L19 26 M26 20 L33 28"/><path d="M26 30 L20 42 L14 50"/><path d="M26 30 L40 38 L46 50"/><line x1="6" y1="54" x2="54" y2="54" opacity=".4"/></svg>',
+    pushup:      '<svg viewBox="0 0 60 36" '+STROKE+'><circle cx="46" cy="10" r="4" fill="currentColor" stroke="none"/><path d="M42 13 L10 18"/><path d="M42 14 L44 24"/><path d="M10 18 L6 24"/><line x1="2" y1="26" x2="58" y2="26" opacity=".4"/></svg>',
+    plank:       '<svg viewBox="0 0 60 32" '+STROKE+'><circle cx="46" cy="10" r="4" fill="currentColor" stroke="none"/><path d="M42 12 L12 14"/><path d="M42 14 L38 22 L46 22"/><path d="M12 14 L6 22"/><line x1="2" y1="24" x2="58" y2="24" opacity=".4"/></svg>',
+    sideplank:   '<svg viewBox="0 0 60 48" '+STROKE+'><circle cx="46" cy="10" r="4" fill="currentColor" stroke="none"/><path d="M42 12 L14 36"/><path d="M42 13 L40 26"/><path d="M14 36 V42"/><line x1="2" y1="44" x2="58" y2="44" opacity=".4"/></svg>',
+    glutebridge: '<svg viewBox="0 0 60 36" '+STROKE+'><circle cx="10" cy="22" r="4" fill="currentColor" stroke="none"/><path d="M14 22 L26 18 L36 24 L48 24"/><path d="M26 18 L26 26 M36 24 L36 28"/><line x1="2" y1="30" x2="58" y2="30" opacity=".4"/></svg>',
+    seated:      '<svg viewBox="0 0 60 48" '+STROKE+'><circle cx="22" cy="10" r="4" fill="currentColor" stroke="none"/><path d="M22 14 L28 28"/><path d="M28 28 L40 34 L52 30"/><path d="M22 16 L14 24"/><path d="M22 16 L32 22"/><line x1="2" y1="40" x2="58" y2="40" opacity=".4"/></svg>',
+    lyingback:   '<svg viewBox="0 0 60 36" '+STROKE+'><circle cx="10" cy="22" r="4" fill="currentColor" stroke="none"/><path d="M14 22 L40 22"/><path d="M14 22 L18 12"/><path d="M40 22 L36 12"/><path d="M36 12 L40 4"/><line x1="2" y1="28" x2="58" y2="28" opacity=".4"/></svg>',
+    jump:        '<svg viewBox="0 0 60 60" '+STROKE+'><circle cx="30" cy="10" r="4" fill="currentColor" stroke="none"/><path d="M30 14 V26"/><path d="M30 18 L22 12 M30 18 L38 12"/><path d="M30 26 L24 36 L24 48 M30 26 L36 36 L36 48"/><line x1="14" y1="52" x2="46" y2="52" opacity=".4"/></svg>',
+    fold:        '<svg viewBox="0 0 60 60" '+STROKE+'><path d="M30 50 V20"/><path d="M30 20 L24 32 M30 20 L36 32"/><circle cx="24" cy="36" r="4" fill="currentColor" stroke="none"/><line x1="14" y1="54" x2="46" y2="54" opacity=".4"/></svg>'
+  };
+
+  function gURL(id){ return "../vid/"+id+".mp4"; }
+  function gImg(id){ return {type:"gif", sprite:"../sprite/"+id+".jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/"+id+".gif"}; }
+
+  // ── ДЕНЬ 1 · Сідниці A (важкий) ──
+
+
+  // ── ДЕНЬ 2 · Верх, жимовий акцент ──
+
+
+  // ── ДЕНЬ 3 · Сідниці B (об'ємний) ──
+
+
+  // ── ДЕНЬ 4 · Верх, тяговий акцент + кор ──
+
+
+  var PUSH = [
+    {section:"PUSH · груди · плечі · трицепс · 3–4 підходи · 90с відпочинок", items:[
+      {n:"Incline DB Bench Press", r:"4 × 8–10", p:"pushup", w:"Старт: 15 кг кожна · +2 кг коли легко", c:"Верх грудей — найважливіша зона для об'єму. Лава під кутом 30°, опускай до верху грудей, вибухай вгору.", img:gImg("0314")},
+      {n:"Barbell Bench Press",    r:"4 × 8–10", p:"pushup", w:"Старт: 40 кг · +2.5 кг/бік", c:"Другий жимовий рух — класика для маси грудей. Лопатки зведені, ноги в підлогу, опускай до середини грудей під контролем.", img:gImg("0025")},
+      {n:"Shoulder Press Machine", r:"4 × 8–10", p:"pushup", w:"Старт: 30 кг · +5 кг/крок", c:"Головний рух на плечі. Жми строго вгору, повний локаут.", img:gImg("2318")},
+      {n:"DB Lateral Raise",       r:"4 × 12–15", p:"seated", w:"Старт: 6 кг кожна · +1 кг", c:"Ширина плечей = V-подібний силует. Легка вага, чиста техніка, підіймай до рівня плечей.", img:gImg("0334")},
+      {n:"Pec Deck Fly",           r:"3 × 12–15", p:"pushup", w:"Старт: 25 кг · +5 кг/крок", c:"Ізоляція грудей на розтягненні. Стискай груди в центрі, пауза 1с.", img:gImg("0596")},
+      {n:"Cable Tricep Pushdown",  r:"3 × 10–12", p:"pushup", w:"Старт: 20 кг · +5 кг/крок", c:"Канат. Лікті притиснуті до боків, повне розгинання внизу.", img:gImg("0200")},
+      {n:"Overhead Tricep Extension", r:"3 × 12", p:"pushup", w:"Старт: 15 кг · +5 кг/крок", c:"Канат зверху, за голову. Розтягує довгу головку трицепса — головне для об'єму руки.", img:gImg("0194")}
+    ]},
+    {section:"Прес · 8 хвилин · 50с робота / 10с пауза · 1 коло", items:[
+      {n:"Knee Tuck Crunch", r:"50 секунд", p:"lyingback", c:"Лежачи, підтягуй коліна до грудей і одночасно скручуй корпус назустріч.", img:{type:"gif", sprite:"../sprite/0871.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0871.gif"}},
+      {n:"Crunch", r:"50 секунд", p:"lyingback", c:"Класичне скручування. Відривай лопатки, поперек притиснутий до підлоги.", img:{type:"gif", sprite:"../sprite/0274.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0274.gif"}},
+      {n:"Heel Touches", r:"50 секунд", p:"lyingback", c:"Лежачи, коліна зігнуті, лопатки трохи відірвані. Тягнись рукою до п'яти — вліво, вправо, по черзі. Косі працюють, поперек не навантажується.", img:{type:"gif", sprite:"../sprite/0006.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0006.gif"}},
+      {n:"Dead Bug", r:"50 секунд", p:"lyingback", c:"Лежачи на спині, руки вгору, коліна зігнуті під 90°. Повільно опускай протилежні руку й ногу, поперек притиснутий до підлоги. Глибокий кор без скручувань.", img:{type:"gif", sprite:"../sprite/0276.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0276.gif"}},
+      {n:"Jackknife Crunch", r:"50 секунд", p:"lyingback", c:"Одночасно підіймай прямі ноги й корпус, тягнись руками до стоп.", img:{type:"gif", sprite:"../sprite/0507.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0507.gif"}},
+      {n:"Swimmers", r:"50 секунд", p:"superman", c:"Лежачи на животі, поперемінно підіймай протилежні руку й ногу.", img:{type:"gif", sprite:"../sprite/3433.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/3433.gif"}},
+      {n:"Side Plank", r:"25с кожен бік", p:"sideplank", c:"Бічна планка замість Russian Twist — ті самі косі, але без навантаження на поперек.", img:{type:"gif", sprite:"../sprite/1775.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/1775.gif"}},
+      {n:"Plank", r:"50 секунд", p:"plank", c:"Фініш. Тіло в лінію, сідниці стисни, таз не провисає.", img:{type:"gif", sprite:"../sprite/3665.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/3665.gif"}}
+    ]},
+    {section:"Кардіо · 10 хв · гребля", items:[
+      {n:"Гребний Concept2", r:"10 хв рівномірно", p:"seated", c:"Сьогодні тягнув мало — спина свіжа, тож гребля доречна. Бонусом додає тягового об'єму після дня жимів. Штовхай ногами, спина нейтральна, тягни в останню чергу руками."},
+      {n:"AirBike · альтернатива", r:"10 хв", p:"jump", c:"Універсальний запасний варіант на будь-який день. Руки й ноги разом, нуль удару по суглобах.", img:{type:"gif", sprite:"../sprite/2138.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/2138.gif"}}
+    ]}
+  ];
+
+  var PULL = [
+    {section:"PULL · спина · біцепс · задня дельта · 3–4 підходи · 90с відпочинок", items:[
+      {n:"Lat Pulldown (close grip)", r:"4 × 8–10", p:"pushup", w:"Старт: 30 кг · +5 кг/крок", c:"V-рукоятка, вузький хват — руки близько разом. Тягни до верху грудей, лікті вниз, акцент на низ широчайших і товщину спини.", img:gImg("2616")},
+      {n:"Machine Seated Row",     r:"4 × 8–10", p:"seated", w:"Старт: 35 кг · +5 кг/крок", c:"Товщина спини. Груди в подушку, тягни лікті назад, зводь лопатки.", img:gImg("1350")},
+      {n:"Chest Supported Row (Hammer)", r:"3 × 10–12", p:"seated", w:"Старт: 17.5 кг/бік · +5–7.5 кг/бік коли легко", c:"Hammer-тренажер, груди в подушку. Ізолює спину без читінгу.", img:gImg("0581")},
+      {n:"Rear Delt Fly (Pec Deck)", r:"4 × 12–15", p:"seated", w:"Старт: 25 кг · +5 кг/крок", c:"Задня дельта — найслабша зона у всіх. Веди ліктями, без інерції.", img:gImg("0602")},
+      {n:"DB Bicep Curl",          r:"4 × 8–10", p:"seated", w:"Старт: 8 кг кожна · +1 кг", c:"Супінуй кисть вгорі, контролюй негатив. Без розхитування.", img:gImg("0285")},
+      {n:"DB Hammer Curl",         r:"3 × 10–12", p:"seated", w:"Старт: 8 кг кожна · +1 кг", c:"Нейтральний хват — б'є брахіаліс, робить руку товщою.", img:gImg("1648")},
+      {n:"Cable Curl",             r:"3 × 12", p:"seated", w:"Старт: 15 кг · +5 кг/крок", c:"Постійна напруга на біцепс від низу до верху. Фініш пампом.", img:gImg("0868")}
+    ]},
+    {section:"Прес · 8 хвилин · 50с робота / 10с пауза · 1 коло", items:[
+      {n:"Knee Tuck Crunch", r:"50 секунд", p:"lyingback", c:"Лежачи, підтягуй коліна до грудей і одночасно скручуй корпус назустріч.", img:{type:"gif", sprite:"../sprite/0871.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0871.gif"}},
+      {n:"Crunch", r:"50 секунд", p:"lyingback", c:"Класичне скручування. Відривай лопатки, поперек притиснутий до підлоги.", img:{type:"gif", sprite:"../sprite/0274.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0274.gif"}},
+      {n:"Heel Touches", r:"50 секунд", p:"lyingback", c:"Лежачи, коліна зігнуті, лопатки трохи відірвані. Тягнись рукою до п'яти — вліво, вправо, по черзі. Косі працюють, поперек не навантажується.", img:{type:"gif", sprite:"../sprite/0006.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0006.gif"}},
+      {n:"Dead Bug", r:"50 секунд", p:"lyingback", c:"Лежачи на спині, руки вгору, коліна зігнуті під 90°. Повільно опускай протилежні руку й ногу, поперек притиснутий до підлоги. Глибокий кор без скручувань.", img:{type:"gif", sprite:"../sprite/0276.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0276.gif"}},
+      {n:"Jackknife Crunch", r:"50 секунд", p:"lyingback", c:"Одночасно підіймай прямі ноги й корпус, тягнись руками до стоп.", img:{type:"gif", sprite:"../sprite/0507.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0507.gif"}},
+      {n:"Swimmers", r:"50 секунд", p:"superman", c:"Лежачи на животі, поперемінно підіймай протилежні руку й ногу.", img:{type:"gif", sprite:"../sprite/3433.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/3433.gif"}},
+      {n:"Side Plank", r:"25с кожен бік", p:"sideplank", c:"Бічна планка замість Russian Twist — ті самі косі, але без навантаження на поперек.", img:{type:"gif", sprite:"../sprite/1775.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/1775.gif"}},
+      {n:"Plank", r:"50 секунд", p:"plank", c:"Фініш. Тіло в лінію, сідниці стисни, таз не провисає.", img:{type:"gif", sprite:"../sprite/3665.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/3665.gif"}}
+    ]},
+    {section:"Кардіо · 10 хв · доріжка", items:[
+      {n:"Вигнута доріжка", r:"10 хв ходьба", p:"jump", c:"Спина вже відпрацювала, тому гребля сьогодні зайва. Доріжка вантажить лише ноги — а вони свіжі. Без мотора, темп задаєш сам.", img:{type:"gif", sprite:"../sprite/3666.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/3666.gif"}},
+      {n:"AirBike · альтернатива", r:"10 хв", p:"jump", c:"Універсальний запасний варіант на будь-який день. Руки й ноги разом, нуль удару по суглобах.", img:{type:"gif", sprite:"../sprite/2138.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/2138.gif"}}
+    ]}
+  ];
+
+  var LEGS = [
+    {section:"LEGS + CORE · задній ланцюг · мінімум квадрицепса · 3–4 підходи · 90с", items:[
+      {n:"Barbell Romanian Deadlift", r:"4 × 8", p:"glutebridge", w:"Старт: 40 кг · +2.5 кг/бік", c:"Головна вправа на задню поверхню. Штанга близько до ніг, тазом назад, нейтральна спина.", img:gImg("0085")},
+      {n:"Lying Leg Curl",         r:"4 × 10–12", p:"seated", w:"Старт: 30 кг · +5 кг/крок", c:"Пряма ізоляція біцепса стегна. Лежачи обличчям вниз, валик над п'ятами. Таз притиснутий до лави — не відривай, інакше тягне поперек. Стискай повністю, повільний негатив.", img:gImg("0586")},
+      {n:"Cable Kickback",         r:"3 × 15 кожна нога", p:"glutebridge", w:"Старт: 10 кг · +2.5 кг/крок", c:"Ізоляція сідниці. Манжет на щиколотку, стій обличчям до блоку, відводь пряму ногу назад, стискай сідницю вгорі. Опорна нога трохи зігнута.", img:gImg("0228")}
+    ]},
+    {section:"ПЛЕЧІ · ширина / V-силует · 3–4 підходи · 90с", items:[
+      {n:"DB Seated Shoulder Press", r:"4 × 8–10", p:"pushup", w:"Старт: 12 кг кожна · +2 кг", c:"Сидячи на лаві, жми гантелі суворо вгору. Повний локаут вгорі, контрольований негатив.", img:gImg("0405")},
+      {n:"DB Lateral Raise",       r:"4 × 12–15", p:"seated", w:"Старт: 6 кг кожна · +1 кг", c:"Ширина плечей = V-силует, візуально зменшує ноги. Легка вага, підіймай до рівня плечей, лікоть трохи зігнутий, без інерції.", img:gImg("0334")}
+    ]},
+    {section:"Прес · 8 хвилин · 50с робота / 10с пауза · 1 коло", items:[
+      {n:"Knee Tuck Crunch", r:"50 секунд", p:"lyingback", c:"Лежачи, підтягуй коліна до грудей і одночасно скручуй корпус назустріч.", img:{type:"gif", sprite:"../sprite/0871.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0871.gif"}},
+      {n:"Crunch", r:"50 секунд", p:"lyingback", c:"Класичне скручування. Відривай лопатки, поперек притиснутий до підлоги.", img:{type:"gif", sprite:"../sprite/0274.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0274.gif"}},
+      {n:"Heel Touches", r:"50 секунд", p:"lyingback", c:"Лежачи, коліна зігнуті, лопатки трохи відірвані. Тягнись рукою до п'яти — вліво, вправо, по черзі. Косі працюють, поперек не навантажується.", img:{type:"gif", sprite:"../sprite/0006.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0006.gif"}},
+      {n:"Dead Bug", r:"50 секунд", p:"lyingback", c:"Лежачи на спині, руки вгору, коліна зігнуті під 90°. Повільно опускай протилежні руку й ногу, поперек притиснутий до підлоги. Глибокий кор без скручувань.", img:{type:"gif", sprite:"../sprite/0276.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0276.gif"}},
+      {n:"Jackknife Crunch", r:"50 секунд", p:"lyingback", c:"Одночасно підіймай прямі ноги й корпус, тягнись руками до стоп.", img:{type:"gif", sprite:"../sprite/0507.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/0507.gif"}},
+      {n:"Swimmers", r:"50 секунд", p:"superman", c:"Лежачи на животі, поперемінно підіймай протилежні руку й ногу.", img:{type:"gif", sprite:"../sprite/3433.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/3433.gif"}},
+      {n:"Side Plank", r:"25с кожен бік", p:"sideplank", c:"Бічна планка замість Russian Twist — ті самі косі, але без навантаження на поперек.", img:{type:"gif", sprite:"../sprite/1775.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/1775.gif"}},
+      {n:"Plank", r:"50 секунд", p:"plank", c:"Фініш. Тіло в лінію, сідниці стисни, таз не провисає.", img:{type:"gif", sprite:"../sprite/3665.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/3665.gif"}}
+    ]},
+    {section:"Кардіо · 10 хв · SkiErg", items:[
+      {n:"SkiErg", r:"10 хв", p:"pushup", c:"Ноги щойно зроблені — не додаємо їм роботи. SkiErg тягне верхом тіла й кором, ноги майже не задіяні.", img:{type:"gif", sprite:"../sprite/2142.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/2142.gif"}},
+      {n:"AirBike · альтернатива", r:"10 хв", p:"jump", c:"Універсальний запасний варіант на будь-який день. Руки й ноги разом, нуль удару по суглобах.", img:{type:"gif", sprite:"../sprite/2138.jpg", gif:"https://raw.githubusercontent.com/omercotkd/exercises-gifs/main/assets/2138.gif"}}
+    ]}
+  ];
+
+  var ROTATION = [
+    {title:"Push · груди/плечі/трицепс", emoji:"💪", dur:"~50 хв", ex:PUSH, exTitle:"Push day",  exSub:"Груди · плечі · трицепс · прес"},
+    {title:"Pull · спина/біцепс",        emoji:"🔙", dur:"~50 хв", ex:PULL, exTitle:"Pull day",  exSub:"Спина · біцепс · задня дельта · прес"},
+    {title:"Legs + Shoulders",           emoji:"🦵", dur:"~55 хв", ex:LEGS, exTitle:"Legs + Shoulders", exSub:"Задній ланцюг · сідниці · плечі · прес"}
+  ];
+
+  var MEALS = [
+    {key:"breakfast", em:"☀️", name:"Breakfast", opts:[
+      ["Oatmeal + tvorog","620 kcal · 40g P"],
+      ["Air-fryer syrnyky","450 kcal · 40g P"],
+      ["Tvorog + yogurt bowl","620 kcal · 48g P"],
+      ["Omelette + cheese","500 kcal · 35g P"]]},
+    {key:"lunch", em:"🥗", name:"Lunch", opts:[
+      ["Chicken + grain + salad","620 kcal · 60g P"],
+      ["Chicken + potato + veg","600 kcal · 58g P"],
+      ["Chicken + avocado bowl","520 kcal · 58g P"],
+      ["Pasta + chicken + veg","640 kcal · 52g P"]]},
+    {key:"dinner", em:"🌙", name:"Dinner", opts:[
+      ["Chicken + roasted veg","450 kcal · 55g P"],
+      ["Tuna / chicken salad bowl","480 kcal · 45g P"],
+      ["Omelette + potato + salad","500 kcal · 28g P"],
+      ["Tvorog plate / syrnyky","430 kcal · 40g P"],
+      ["Ham + cheese + veg","450 kcal · 30g P"]]},
+    {key:"snack", em:"🍎", name:"Snack", opts:[
+      ["Tvorog + fruit","190 kcal · 26g P"],
+      ["Greek yogurt + berries","180 kcal · 14g P"],
+      ["Fruit + handful of nuts","180 kcal · 5g P"],
+      ["Hard cheese + veg sticks","140 kcal · 8g P"]]}
+  ];
+
+  var FB_CONFIG = {
+    apiKey:"AIzaSyBtG3NAe-Eu9m2OuKLYt63zJjCBzMq9VF4",
+    authDomain:"fitness-tracker-7ef81.firebaseapp.com",
+    projectId:"fitness-tracker-7ef81",
+    storageBucket:"fitness-tracker-7ef81.firebasestorage.app",
+    messagingSenderId:"975830615739",
+    appId:"1:975830615739:web:16a311c1bbfc2428bc8b9e"
+  };
+  var fbAuth=null, fbDb=null, fbUser=null;
+  try{ firebase.initializeApp(FB_CONFIG); fbAuth=firebase.auth(); fbDb=firebase.firestore(); }catch(e){}
+  function cloudDoc(){ return (fbDb&&fbUser)?fbDb.collection("users").doc(fbUser.uid):null; }
+  function pushToCloud(){ var d=cloudDoc(); if(d) d.set({entries:state.entries},{merge:true}).catch(function(){}); }
+  function syncFromCloud(){
+    var d=cloudDoc(); if(!d) return;
+    d.get().then(function(s){
+      var cl = s.exists?(s.data().entries||{}):{};
+      state.entries = Object.assign({}, cl, state.entries);
+      saveRaw(JSON.stringify(state)); renderAll();
+      if(!s.exists) pushToCloud();
+    }).catch(function(){});
+  }
+  function updateAuthUI(){
+    var bar=document.getElementById("authBar"); if(!bar) return;
+    if(!fbAuth){ bar.style.display="none"; return; }
+    if(fbUser){
+      bar.innerHTML='<span class="auth-status">☁️ Синхронізовано · '+fbUser.email+'</span><button class="auth-btn" id="signOutBtn">Вийти</button>';
+      document.getElementById("signOutBtn").onclick=function(){ fbAuth.signOut(); };
+    } else {
+      bar.innerHTML='<span class="auth-status">☁️ Увійди для синхронізації</span><button class="auth-btn" id="signInBtn">Увійти через Google</button>';
+      document.getElementById("signInBtn").onclick=function(){ fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); };
+    }
+  }
+  if(fbAuth) fbAuth.onAuthStateChanged(function(u){ fbUser=u; updateAuthUI(); if(u) syncFromCloud(); });
+
+  function pad(n){ return n<10?"0"+n:""+n; }
+  function fmt(d){ return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+  function todayStr(){ return fmt(new Date()); }
+  function parseD(s){ var p=s.split("-"); return new Date(+p[0],+p[1]-1,+p[2]); }
+  function mondayOf(d){ var x=new Date(d); x.setHours(0,0,0,0); var off=(x.getDay()+6)%7; x.setDate(x.getDate()-off); return x; }
+  function addDays(d,n){ var x=new Date(d); x.setDate(x.getDate()+n); return x; }
+
+  var KEY="vladTracker_v2", mem=null;
+  function loadRaw(){ try{ return localStorage.getItem(KEY); }catch(e){ return mem; } }
+  function saveRaw(s){ try{ localStorage.setItem(KEY,s); }catch(e){ mem=s; } }
+  var state=(function(){ var r=loadRaw(); if(r){ try{ return JSON.parse(r); }catch(e){} } return {entries:{},cycle:0}; })();
+  if(!state.entries) state.entries={};
+  if(typeof state.cycle!=="number") state.cycle=0;
+  state.selectedDate=todayStr();
+  function entry(){
+    var d=state.selectedDate;
+    if(!state.entries[d]) state.entries[d]={activity:{},meals:{},water:0};
+    return state.entries[d];
+  }
+  function save(){ saveRaw(JSON.stringify(state)); pushToCloud(); }
+
+  var dNames=["Неділя","Понеділок","Вівторок","Середа","Четвер","П'ятниця","Субота"];
+  var mNames=["січ","лют","бер","кві","тра","чер","лип","сер","вер","жов","лис","гру"];
+  var dLetters=["Пн","Вт","Ср","Чт","Пт","Сб","Нд"];
+  var weekStart=mondayOf(new Date());
+  var swipeGuard = 0;
+  var CHECK='<span class="check"><svg viewBox="0 0 18 18"><polyline points="3,9.5 7.5,14 15,4.5"/></svg></span>';
+  document.getElementById("waterGoal").textContent=(GOAL/1000).toFixed(1)+" л";
+
+  function renderHeader(){
+    var sel=parseD(state.selectedDate), isToday=state.selectedDate===todayStr(), h=new Date().getHours();
+    document.getElementById("eyebrow").textContent = isToday?(h<12?"Доброго ранку":h<18?"Доброго дня":"Доброго вечора"):"План на";
+    document.getElementById("dayName").textContent = dNames[sel.getDay()];
+    document.getElementById("dateSub").textContent = sel.getDate()+" "+mNames[sel.getMonth()];
+  }
+  function renderCalendar(){
+    var days=document.getElementById("calDays"), html="";
+    for(var i=0;i<7;i++){
+      var d=addDays(weekStart,i), ds=fmt(d);
+      var cls="cal-day"+(ds===todayStr()?" today":"")+(ds===state.selectedDate?" sel":"");
+      html+='<button class="'+cls+'" data-d="'+ds+'"><span class="lbl">'+dLetters[i]+'</span><span class="num">'+d.getDate()+'</span><span class="tdot"></span></button>';
+    }
+    days.innerHTML=html;
+    days.querySelectorAll(".cal-day").forEach(function(b){
+      b.addEventListener("click",function(){ state.selectedDate=b.getAttribute("data-d"); save(); renderAll(); });
+    });
+  }
+  function renderActivity(){
+    var en = entry();
+    var done = (en.wIdx != null);
+    var idx  = done ? en.wIdx : state.cycle;
+    var w    = ROTATION[idx];
+
+    document.getElementById("activityTitle").textContent = w.title;
+    document.getElementById("moveIco").textContent = w.emoji;
+
+    var html = "";
+    if(!done){
+      html += '<div class="cycle-bar">';
+      html +=   '<button class="cyc-nav" id="cycPrev">‹</button>';
+      html +=   '<div class="cyc-dots">';
+      for(var k=0;k<ROTATION.length;k++){ html += '<span class="cyc-dot'+(k===idx?' on':'')+'"></span>'; }
+      html +=   '</div>';
+      html +=   '<button class="cyc-nav" id="cycNext">›</button>';
+      html += '</div>';
+      html += '<div class="cyc-hint">Наступне за циклом · свайп або стрілки</div>';
+    }
+
+    html += '<div class="task'+(done?" done":"")+' has-detail" data-task="workout">'+CHECK+
+            '<span class="label">'+w.title+' · '+w.dur+'</span><span class="chev">›</span></div>';
+    html += '<div class="task'+(en.activity.steps?" done":"")+'" data-task="steps">'+CHECK+
+            '<span class="label">10 000 кроків</span></div>';
+
+    var at = document.getElementById("activityTasks");
+    at.innerHTML = html;
+
+    var pv = document.getElementById("cycPrev"), nx = document.getElementById("cycNext");
+    if(pv) pv.addEventListener("click", function(){ state.cycle=(state.cycle+ROTATION.length-1)%ROTATION.length; save(); renderActivity(); });
+    if(nx) nx.addEventListener("click", function(){ state.cycle=(state.cycle+1)%ROTATION.length; save(); renderActivity(); });
+
+    at.querySelectorAll(".task").forEach(function(el){
+      var id = el.getAttribute("data-task");
+      el.querySelector(".check").addEventListener("click", function(ev){
+        ev.stopPropagation();
+        var n = entry();
+        if(id === "workout"){
+          if(n.wIdx != null){ state.cycle = n.wIdx; delete n.wIdx; }
+          else { n.wIdx = state.cycle; state.cycle = (state.cycle+1)%ROTATION.length; }
+        } else {
+          n.activity[id] = !n.activity[id];
+        }
+        save(); renderActivity(); updateProgress();
+      });
+      el.addEventListener("click", function(){
+        if(Date.now()-swipeGuard < 450) return;
+        if(id === "workout"){ openModal(w.exTitle, w.exSub, w.ex); }
+        else { var n=entry(); n.activity[id]=!n.activity[id]; save(); renderActivity(); updateProgress(); }
+      });
+    });
+
+
+  }
+
+  function renderMeals(){
+    var mc=document.getElementById("meals"), mh="", e=entry();
+    MEALS.forEach(function(m){
+      var sel=e.meals[m.key];
+      mh+='<div class="meal'+(sel!=null?' picked':'')+'" data-meal="'+m.key+'">';
+      mh+='<div class="meal-head"><div class="meal-name"><span class="em">'+m.em+'</span>'+m.name+'</div><div class="badge">✓ відмічено</div></div>';
+      m.opts.forEach(function(o,i){
+        mh+='<div class="opt'+(sel===i?' sel':'')+'" data-i="'+i+'"><span class="dot"></span><span class="o-name">'+o[0]+'</span><span class="o-macros">'+o[1]+'</span></div>';
+      });
+      mh+='</div>';
+    });
+    mc.innerHTML=mh;
+    mc.querySelectorAll(".meal").forEach(function(mEl){
+      var key=mEl.getAttribute("data-meal");
+      mEl.querySelectorAll(".opt").forEach(function(oEl){
+        oEl.addEventListener("click",function(){
+          var i=parseInt(oEl.getAttribute("data-i"),10), en=entry();
+          if(en.meals[key]===i){ delete en.meals[key]; } else { en.meals[key]=i; }
+          var cur=en.meals[key];
+          mEl.classList.toggle("picked",cur!=null);
+          mEl.querySelectorAll(".opt").forEach(function(x){ x.classList.toggle("sel",parseInt(x.getAttribute("data-i"),10)===cur); });
+          save(); updateProgress();
+        });
+      });
+    });
+  }
+  function renderWater(){
+    var g=document.getElementById("glasses"), e=entry(), total=GOAL/GLASS, filled=Math.round(e.water/GLASS), h="";
+    for(var i=1;i<=total;i++){ h+='<div class="glass'+(i<=filled?' full':'')+'" data-n="'+i+'"></div>'; }
+    g.innerHTML=h;
+    document.getElementById("waterAmt").innerHTML=(e.water/1000).toFixed(2).replace(/0$/,'')+'<small> л</small>';
+    g.querySelectorAll(".glass").forEach(function(el){
+      el.addEventListener("click",function(){
+        var n=parseInt(el.getAttribute("data-n"),10), en=entry(), f=Math.round(en.water/GLASS);
+        en.water=(n===f?n-1:n)*GLASS; if(en.water<0) en.water=0;
+        save(); renderWater(); updateProgress();
+      });
+    });
+  }
+  document.getElementById("waterAdd").addEventListener("click",function(){
+    var en=entry(); if(en.water<GOAL+GLASS*4){ en.water+=GLASS; save(); renderWater(); updateProgress(); }
+  });
+  document.getElementById("waterSub").addEventListener("click",function(){
+    var en=entry(); en.water=Math.max(0,en.water-GLASS); save(); renderWater(); updateProgress();
+  });
+  function updateProgress(){
+    var e=entry(), done=0, tot=2+MEALS.length+1;
+    if(e.wIdx != null) done++;
+    if(e.activity.steps) done++;
+    MEALS.forEach(function(m){ if(e.meals[m.key]!=null) done++; });
+    if(e.water>=GOAL) done++;
+    var pct=Math.round(done/tot*100);
+    document.getElementById("progBar").style.width=pct+"%";
+    var p=document.getElementById("progPct");
+    if(pct>=100){ p.innerHTML='<span class="celebrate">Готово! 🎉</span>'; } else { p.textContent=pct+"%"; }
+  }
+  function renderAll(){ renderHeader(); renderCalendar(); renderActivity(); renderMeals(); renderWater(); updateProgress(); updateAuthUI(); }
+
+  document.getElementById("prevWk").addEventListener("click",function(){ weekStart=addDays(weekStart,-7); renderCalendar(); });
+  document.getElementById("nextWk").addEventListener("click",function(){ weekStart=addDays(weekStart,7); renderCalendar(); });
+  document.getElementById("resetBtn").addEventListener("click",function(){
+    if(confirm("Скинути всі відмітки за "+state.selectedDate+"?")){
+      var prev=state.entries[state.selectedDate];
+      if(prev && prev.wIdx!=null) state.cycle=prev.wIdx;
+      state.entries[state.selectedDate]={activity:{},meals:{},water:0}; save(); renderAll();
+    }
+  });
+
+  var modal=document.getElementById("modal");
+  var PLAY='<svg viewBox="0 0 14 14"><polygon points="2,1 12,7 2,13"/></svg>';
+  function openModal(title,sub,sections){
+    document.getElementById("sheetTitle").textContent=title;
+    document.getElementById("sheetSub").textContent=sub||"";
+    var h="";
+    sections.forEach(function(sec){
+      if(sec.section){ h+='<div class="ex-section">'+sec.section+'</div>'; }
+      sec.items.forEach(function(e,i){
+        var pose=POSES[e.p]||POSES.squat;
+        var yt="https://www.youtube.com/results?search_query="+encodeURIComponent(e.n+" вправа техніка");
+        var img;
+        if(e.img && e.img.sprite){
+          img = '<div class="ex-sprite" style="background-image:url(\''+e.img.sprite+'\')"></div>';
+        } else if(e.img && e.img.gif){
+          img = '<div class="ex-pose-fb">'+pose+'</div><img class="ex-pic" src="'+e.img.gif+'" alt="" onload="this.classList.add(\'ready\')" onerror="this.remove()">';
+        } else { img = pose; }
+        h+='<div class="ex-card"><div class="ex-img">'+img+'</div><div class="ex-info">';
+        h+='<div class="ex-row"><span class="ex-num">'+(i+1<10?"0":"")+(i+1)+'</span><span class="ex-name">'+e.n+'</span></div>';
+        h+='<div class="ex-meta">'+e.r+'</div>';
+        if(e.w){ h+='<div class="ex-weight">🏋️ '+e.w+'</div>'; }
+        h+='<div class="ex-cue">'+e.c+'</div>';
+        h+='<a class="demo-btn" target="_blank" rel="noopener noreferrer" href="'+yt+'">'+PLAY+' Дивитись демо</a>';
+        h+='</div></div>';
+      });
+    });
+    document.getElementById("exList").innerHTML=h;
+
+    // запуск усередині жесту користувача — обходить блокування автозапуску
+    (function(){
+      var vids = document.querySelectorAll('#exList video.ex-pic');
+      for (var q=0; q<vids.length; q++){
+        (function(vd){
+          vd.muted = true;
+          var pr = vd.play();
+          if (pr && pr.catch) pr.catch(function(){
+            vd.addEventListener('click', function(){ vd.play().catch(function(){}); });
+            vd.closest('.ex-card') && vd.closest('.ex-card').addEventListener('click', function(){ vd.play().catch(function(){}); });
+          });
+        })(vids[q]);
+      }
+    })();
+
+    modal.classList.add("open"); modal.setAttribute("aria-hidden","false");
+    document.body.classList.add("noscroll");
+  }
+  function closeModal(){ modal.classList.remove("open"); modal.setAttribute("aria-hidden","true"); document.body.classList.remove("noscroll"); }
+  document.getElementById("closeBtn").addEventListener("click",closeModal);
+  document.getElementById("mbg").addEventListener("click",closeModal);
+  document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&modal.classList.contains("open")) closeModal(); });
+
+
+  // ── свайп для зміни тренування (ініціалізується один раз) ──────────
+  (function initSwipe(){
+    var at = document.getElementById("activityTasks");
+    if(!at) return;
+    at.classList.add('swipe-wrap');
+    var x0=null, y0=null, dragging=false;
+    function reset(){ at.style.transform=''; at.style.opacity=''; }
+
+    at.addEventListener('touchstart', function(ev){
+      if(entry().wIdx != null){ x0=null; return; }
+      var t=ev.changedTouches[0]; x0=t.clientX; y0=t.clientY; dragging=false;
+      at.classList.remove('anim');
+    }, {passive:true});
+
+    at.addEventListener('touchmove', function(ev){
+      if(x0===null) return;
+      var t=ev.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0;
+      if(!dragging && Math.abs(dx) > Math.abs(dy)*1.3 && Math.abs(dx) > 10) dragging=true;
+      if(dragging){
+        at.style.transform='translateX('+(dx*0.35)+'px)';
+        at.style.opacity=String(Math.max(0.45, 1-Math.abs(dx)/320));
+      }
+    }, {passive:true});
+
+    at.addEventListener('touchend', function(ev){
+      if(x0===null) return;
+      var t=ev.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0;
+      x0=null;
+      at.classList.add('anim');
+      if(dragging && Math.abs(dx)>45 && Math.abs(dx)>Math.abs(dy)*1.3){
+        swipeGuard = Date.now();
+        state.cycle = (state.cycle + (dx<0 ? 1 : ROTATION.length-1)) % ROTATION.length;
+        at.style.transform='translateX('+(dx<0?-60:60)+'px)';
+        at.style.opacity='0';
+        setTimeout(function(){ save(); renderActivity(); reset(); }, 150);
+      } else { reset(); }
+      dragging=false;
+    }, {passive:true});
+  })();
+
+  renderAll();
+})();
+</script>
+</body>
+</html>
