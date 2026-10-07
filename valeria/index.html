@@ -40,6 +40,13 @@
   h1,h2,h3,h4{font-family:'Bricolage Grotesque',sans-serif;letter-spacing:-.02em}
 
   header{padding:26px 4px 14px;position:sticky;top:0;z-index:20;background:linear-gradient(180deg,#FDF2F4 78%,rgba(253,242,244,0))}
+
+  .topnav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+  .tn-link,.tn-btn{display:inline-flex;align-items:center;gap:5px;font-family:inherit;font-size:13px;font-weight:600;
+    color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 14px;
+    text-decoration:none;cursor:pointer;line-height:1;transition:.15s}
+  .tn-link:active,.tn-btn:active{background:var(--accent-soft);color:var(--accent-deep);border-color:transparent}
+  @media (hover:hover){.tn-link:hover,.tn-btn:hover{color:var(--accent-deep);border-color:var(--accent)}}
   .eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
   .date{display:flex;align-items:baseline;gap:10px;margin-top:2px}
   .date .day{font-size:32px;font-weight:800;line-height:1;font-family:'Bricolage Grotesque'}
@@ -186,7 +193,11 @@
 </head>
 <body>
 <header>
-  <div class="eyebrow" id="eyebrow">Сьогодні</div>
+  <div class="topnav">
+    <a class="tn-link" href="../">‹ Меню</a>
+    <button class="tn-btn" type="button" onclick="var u=location.href.split('?')[0].split('#')[0];location.replace(u+'?v='+Date.now())">↻ Оновити</button>
+  </div>
+    <div class="eyebrow" id="eyebrow">Сьогодні</div>
   <div class="date"><span class="day" id="dayName">—</span><span class="sub" id="dateSub"></span></div>
   <div class="cal">
     <button class="cal-nav" id="prevWk">‹</button>
