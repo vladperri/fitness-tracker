@@ -255,6 +255,111 @@
   .tmr-done{text-align:center}
   .tmr-done .big{font-size:30px;font-weight:800;margin-bottom:8px}
   .tmr-done .sm{font-size:14px;color:var(--muted);font-weight:600;line-height:1.5}
+
+  /* ── блок Apple Watch ── */
+  .hw-empty{font-size:13px;color:var(--muted);font-weight:500;line-height:1.45}
+  .hw-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .hw-tile{background:var(--card2);border-radius:14px;padding:12px 13px}
+  .hw-tile .k{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+  .hw-tile .v{font-size:23px;font-weight:800;letter-spacing:-.02em;margin-top:5px;line-height:1}
+  .hw-tile .v small{font-size:12px;color:var(--muted);font-weight:700;margin-left:2px}
+  .hw-hr .v{color:#FF6B81}
+  .hw-steps .v{color:var(--accent)}
+
+  .hw-wk{margin-top:12px;background:var(--accent-dim);border:1px solid rgba(95,211,230,.3);
+    border-radius:16px;padding:14px}
+  .hw-wk-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px}
+  .hw-wk-name{font-size:15.5px;font-weight:700;letter-spacing:-.01em}
+  .hw-wk-time{font-size:12px;color:var(--muted);font-weight:600;flex:none}
+  .hw-wk-row{display:flex;gap:16px;flex-wrap:wrap}
+  .hw-wk-row div{font-size:12.5px;color:var(--ink2);font-weight:600}
+  .hw-wk-row b{display:block;font-size:17px;font-weight:800;color:var(--ink);margin-top:2px;letter-spacing:-.01em}
+  .hw-note{font-size:11.5px;color:#5C5C64;margin-top:10px;line-height:1.4}
+  :root{--ai-on:#0B0B0D;--ai-soft:var(--accent-dim);--ai-ink2:var(--ink2)}
+
+  /* ══ ШІ-тренер ══════════════════════════════════════════════ */
+  .ai-fab{position:fixed;z-index:90;right:max(16px,calc(50vw - 240px + 16px));
+    bottom:calc(20px + env(safe-area-inset-bottom));width:56px;height:56px;border-radius:50%;
+    border:0;cursor:pointer;display:grid;place-items:center;background:var(--accent);
+    color:var(--ai-on);box-shadow:0 6px 22px rgba(95,211,230,.32);transition:transform .18s}
+  .ai-fab:active{transform:scale(.92)}
+  .ai-fab svg{width:25px;height:25px}
+  .ai-fab i{position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--accent);
+    opacity:.45;animation:aipulse 2.6s ease-out infinite;pointer-events:none}
+  @keyframes aipulse{0%{transform:scale(.9);opacity:.5}70%{transform:scale(1.22);opacity:0}100%{opacity:0}}
+  .ai-fab.has i{animation:none;opacity:0}
+  .ai-fab b{position:absolute;top:-2px;right:-2px;min-width:19px;height:19px;border-radius:999px;
+    background:#FF5A6E;color:#fff;font-size:11px;font-weight:800;display:none;place-items:center;
+    padding:0 5px;line-height:19px;box-shadow:0 0 0 2px var(--bg)}
+  .ai-fab.has b{display:grid}
+
+  .ai{position:fixed;inset:0;z-index:320;display:none;flex-direction:column;background:var(--bg)}
+  .ai.open{display:flex}
+  .ai-hd{flex:none;display:flex;align-items:center;gap:11px;padding:calc(12px + env(safe-area-inset-top)) 16px 12px;
+    border-bottom:1px solid var(--line);background:var(--bg)}
+  .ai-av{width:36px;height:36px;border-radius:12px;flex:none;display:grid;place-items:center;
+    background:var(--ai-soft);color:var(--accent-deep)}
+  .ai-av svg{width:19px;height:19px}
+  .ai-hd-t{flex:1;min-width:0}
+  .ai-hd-t b{display:block;font-size:16px;font-weight:800;letter-spacing:-.01em}
+  .ai-hd-t span{display:block;font-size:11.5px;color:var(--muted);font-weight:600;margin-top:1px}
+  .ai-x{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--card);
+    color:var(--ai-ink2);font-size:15px;cursor:pointer;flex:none;line-height:1;font-family:inherit}
+
+  .ai-log{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;
+    display:flex;flex-direction:column;gap:11px}
+  .ai-msg{max-width:84%;font-size:14.5px;line-height:1.5;font-weight:500;padding:11px 14px;
+    border-radius:17px;white-space:pre-wrap;word-wrap:break-word}
+  .ai-msg.me{align-self:flex-end;background:var(--accent);color:var(--ai-on);
+    border-bottom-right-radius:6px;font-weight:600}
+  .ai-msg.bot{align-self:flex-start;background:var(--card);border:1px solid var(--line);
+    color:var(--ink);border-bottom-left-radius:6px}
+  .ai-msg.sys{align-self:center;max-width:100%;text-align:center;background:none;border:0;
+    font-size:12px;color:var(--muted);font-weight:600;padding:4px 0}
+  .ai-msg b{font-weight:800}
+  .ai-dots{align-self:flex-start;display:flex;gap:4px;padding:14px 16px;background:var(--card);
+    border:1px solid var(--line);border-radius:17px;border-bottom-left-radius:6px}
+  .ai-dots i{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:aibl 1.3s infinite}
+  .ai-dots i:nth-child(2){animation-delay:.18s}
+  .ai-dots i:nth-child(3){animation-delay:.36s}
+  @keyframes aibl{0%,60%,100%{opacity:.25}30%{opacity:1}}
+
+  .ai-card{align-self:stretch;background:var(--ai-soft);border:1px solid var(--accent);
+    border-radius:18px;padding:14px}
+  .ai-card .h{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--accent-deep);margin-bottom:10px}
+  .ai-chg{font-size:13.5px;font-weight:600;color:var(--ink);line-height:1.45;padding:7px 0}
+  .ai-chg + .ai-chg{border-top:1px solid var(--line)}
+  .ai-chg i{display:block;font-size:12px;color:var(--muted);font-style:normal;font-weight:500;margin-top:2px}
+  .ai-chg s{color:var(--muted);text-decoration-color:var(--muted)}
+  .ai-card .row{display:flex;gap:8px;margin-top:12px}
+  .ai-ok,.ai-no{flex:1;font-family:inherit;font-size:13.5px;font-weight:700;padding:11px;
+    border-radius:13px;cursor:pointer;border:1px solid var(--line)}
+  .ai-ok{background:var(--accent);color:var(--ai-on);border-color:var(--accent);flex:1.4}
+  .ai-no{background:var(--card);color:var(--ai-ink2)}
+
+  .ai-chips{flex:none;display:flex;gap:7px;overflow-x:auto;padding:10px 16px 0;
+    scrollbar-width:none;-ms-overflow-style:none}
+  .ai-chips::-webkit-scrollbar{display:none}
+  .ai-chip{flex:none;font-family:inherit;font-size:12.5px;font-weight:600;color:var(--ai-ink2);
+    background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 14px;
+    cursor:pointer;white-space:nowrap}
+  .ai-chip:active{background:var(--ai-soft);color:var(--accent-deep)}
+
+  .ai-in{flex:none;display:flex;align-items:flex-end;gap:9px;padding:10px 16px calc(14px + env(safe-area-inset-bottom));
+    border-top:1px solid var(--line);background:var(--bg)}
+  .ai-ta{flex:1;font-family:inherit;font-size:15px;font-weight:500;color:var(--ink);
+    background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 14px;
+    resize:none;max-height:120px;line-height:1.4;min-height:46px}
+  .ai-ta::placeholder{color:var(--muted)}
+  .ai-ta:focus{outline:none;border-color:var(--accent)}
+  .ai-send{width:46px;height:46px;border-radius:50%;border:0;background:var(--accent);
+    color:var(--ai-on);cursor:pointer;flex:none;display:grid;place-items:center}
+  .ai-send:disabled{opacity:.4;cursor:default}
+  .ai-send svg{width:19px;height:19px}
+
+  .ai-note{flex:none;font-size:11px;color:var(--muted);text-align:center;padding:0 16px 8px;line-height:1.4}
+
 </style>
 </head>
 <body>
@@ -278,6 +383,15 @@
     <div class="sec-title">Програма · через день<b id="activityTitle">Push · Pull · Legs</b></div>
   </div>
   <div id="activityTasks"></div>
+</section>
+
+<section id="hwSec" style="display:none">
+  <div class="sec-head">
+    <div class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="6" width="10" height="12" rx="3"/><path d="M9 6V3.6h6V6M9 18v2.4h6V18M12 10v2.4l1.6 1.2"/></svg></div>
+    <div class="sec-title">З годинника<b>Apple Watch</b></div>
+  </div>
+  <div id="hwBody"></div>
+  <div class="hw-note">Дані пише шорткат Health Sync. Якщо щойно тренувався — запусти його й натисни ↻ Оновити.</div>
 </section>
 
 <footer>
@@ -330,6 +444,30 @@
   <div class="tmr-go" id="tmrGo"><div class="tmr-go-n" id="tmrGoN">3</div></div>
 </div>
 
+<button class="ai-fab" id="aiFab" type="button" aria-label="ШІ-тренер"><i></i><b>1</b><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 2.4l1.75 5.15 5.15 1.75-5.15 1.75L11 16.2 9.25 11.05 4.1 9.3l5.15-1.75z"/><path d="M18.4 14.2l.72 2.08 2.08.72-2.08.72-.72 2.08-.72-2.08-2.08-.72 2.08-.72z"/></svg></button>
+
+<div class="ai" id="ai" aria-hidden="true">
+  <div class="ai-hd">
+    <div class="ai-av"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 2.4l1.75 5.15 5.15 1.75-5.15 1.75L11 16.2 9.25 11.05 4.1 9.3l5.15-1.75z"/><path d="M18.4 14.2l.72 2.08 2.08.72-2.08.72-.72 2.08-.72-2.08-2.08-.72 2.08-.72z"/></svg></div>
+    <div class="ai-hd-t"><b>ШІ-тренер</b><span>Ваги · повтори · відпочинок · баги</span></div>
+    <button class="ai-x" id="aiX" aria-label="Закрити">✕</button>
+  </div>
+  <div class="ai-log" id="aiLog"></div>
+  <div class="ai-chips">
+    <button class="ai-chip" data-q="Хочу підняти вагу — стало легко в ">Підняти вагу</button>
+    <button class="ai-chip" data-q="Важко, не дотягую повтори в ">Забагато ваги</button>
+    <button class="ai-chip" data-q="Мало часу сьогодні, скороти тренування">Мало часу</button>
+    <button class="ai-chip" data-q="Хочу замінити вправу ">Замінити вправу</button>
+    <button class="ai-chip" data-q="Болить ">Болить</button>
+    <button class="ai-chip" data-q="Баг у трекері: ">Баг</button>
+  </div>
+  <div class="ai-in">
+    <textarea class="ai-ta" id="aiTa" rows="1" placeholder="Напиши, що змінити…"></textarea>
+    <button class="ai-send" id="aiSend" aria-label="Надіслати"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"/></svg></button>
+  </div>
+  <div class="ai-note">Вага, повтори й відпочинок змінюються одразу. Заміна вправ і баги йдуть Клоду.</div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -371,7 +509,7 @@
       {n:"Barbell Bench Press",    r:"3 × 8–10", p:"pushup", w:"Старт: 40 кг · +2.5 кг/бік", c:"Другий жимовий рух — класика для маси грудей. Лопатки зведені, ноги в підлогу, опускай до середини грудей під контролем.", img:gImg("0025")},
       {n:"Shoulder Press Machine", r:"4 × 8–10", p:"pushup", w:"Старт: 30 кг · +5 кг/крок", c:"Головний рух на плечі. Жми строго вгору, повний локаут.", img:gImg("2318")},
       {n:"DB Lateral Raise",       r:"4 × 12–15", p:"seated", w:"Старт: 6 кг кожна · +1 кг", c:"Ширина плечей = V-подібний силует. Легка вага, чиста техніка, підіймай до рівня плечей.", img:gImg("0334")},
-      {n:"Face Pull",              r:"3 × 15", p:"pushup", w:"Старт: 15 кг · +5 кг/крок", c:"Задня дельта й зовнішня ротація плеча. Канат на рівні обличчя, тягни до чола, лікті вище кистей, у кінці розведи кисті в сторони. Вага мала — це не тяга.", img:gImg("0233")},
+      {n:"Face Pull",              r:"3 × 15", p:"pushup", w:"Старт: 20 кг · +5 кг/крок", c:"Задня дельта й зовнішня ротація плеча. Канат на рівні обличчя, тягни до чола, лікті вище кистей, у кінці розведи кисті в сторони. Вага мала — це не тяга.", img:gImg("0233")},
       {n:"Pec Deck Fly",           r:"2 × 12–15", p:"pushup", w:"Старт: 25 кг · +5 кг/крок", c:"Ізоляція грудей на розтягненні. Стискай груди в центрі, пауза 1с.", img:gImg("0596")},
       {n:"Cable Tricep Pushdown",  r:"4 × 10–12", p:"pushup", w:"Старт: 20 кг · +5 кг/крок", c:"Канат. Лікті притиснуті до боків, повне розгинання внизу.", img:gImg("0200")},
       {n:"Overhead Tricep Extension", r:"4 × 12", p:"pushup", w:"Старт: 15 кг · +5 кг/крок", c:"Канат зверху, за голову. Розтягує довгу головку трицепса — головне для об'єму руки.", img:gImg("0194")}
@@ -470,7 +608,7 @@
       document.getElementById("signInBtn").onclick=function(){ fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); };
     }
   }
-  if(fbAuth) fbAuth.onAuthStateChanged(function(u){ fbUser=u; updateAuthUI(); if(u) syncFromCloud(); });
+  if(fbAuth) fbAuth.onAuthStateChanged(function(u){ fbUser=u; updateAuthUI(); if(u){ syncFromCloud(); ovPull(); hwRefresh(); } else { renderWatch(); } });
 
   function pad(n){ return n<10?"0"+n:""+n; }
   function fmt(d){ return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
@@ -523,7 +661,7 @@
     pull:'<svg '+SV+'><path d="M4 5h16M9 5v5M15 5v5M12 10v9M12 19l-3.2-3.2M12 19l3.2-3.2"/></svg>',
     legs:'<svg '+SV+'><path d="M13.5 3v5.6l-4 4.4 4 4.4V20M5.5 20h13"/></svg>'
   };
-  function exCount(ex){ var n=0; ex.forEach(function(g){ n += g.items.length; }); return n; }
+  function exCount(ex){ var n=0; ex.forEach(function(g){ n += g.items.filter(function(e){return !e.off;}).length; }); return n; }
   var TICK = '<svg viewBox="0 0 18 18"><polyline points="3,9.5 7.5,14 15,4.5"/></svg>';
 
   function renderActivity(){
@@ -558,12 +696,12 @@
         else { n.wIdx = i; state.cycle = (i+1) % ROTATION.length; }
         save(); renderActivity(); renderCalendar();
       });
-      el.addEventListener("click", function(){ openModal(w.exTitle, w.exSub, w.ex); });
+      el.addEventListener("click", function(){ openModal(w.exTitle, w.exSub, w.ex, i); });
     });
   }
 
 
-  function renderAll(){ renderHeader(); renderCalendar(); renderActivity(); updateAuthUI(); }
+  function renderAll(){ renderHeader(); renderCalendar(); renderActivity(); renderWatch(); updateAuthUI(); }
 
   document.getElementById("prevWk").addEventListener("click",function(){ weekStart=addDays(weekStart,-7); renderCalendar(); });
   document.getElementById("nextWk").addEventListener("click",function(){ weekStart=addDays(weekStart,7); renderCalendar(); });
@@ -577,16 +715,16 @@
 
   var modal=document.getElementById("modal");
   var PLAY='<svg viewBox="0 0 14 14"><polygon points="2,1 12,7 2,13"/></svg>';
-  var curSections=null;
-  function openModal(title,sub,sections){
-    curSections=sections;
+  var curSections=null, curIdx=null;
+  function openModal(title,sub,sections,idx){
+    curSections=sections; curIdx=(idx==null?null:idx);
     document.getElementById("startSub").textContent="Повний прохід ≈ "+Math.round(totalSec(sections)/60)+" хв разом із відпочинком";
     document.getElementById("sheetTitle").textContent=title;
     document.getElementById("sheetSub").textContent=sub||"";
     var h="";
     sections.forEach(function(sec){
       if(sec.section){ h+='<div class="ex-section">'+sec.section+'</div>'; }
-      sec.items.forEach(function(e,i){
+      sec.items.filter(function(e){return !e.off;}).forEach(function(e,i){
         var pose=POSES[e.p]||POSES.squat;
         var yt="https://www.youtube.com/results?search_query="+encodeURIComponent(e.n+" вправа техніка");
         var img;
@@ -626,7 +764,7 @@
   }
   function closeModal(){ modal.classList.remove("open"); modal.setAttribute("aria-hidden","true"); document.body.classList.remove("noscroll"); }
   document.getElementById("startBtn").addEventListener("click",function(){
-    if(curSections){ closeModal(); tmrStart(curSections); }
+    if(curSections){ closeModal(); tmrStart(curSections, curIdx); }
   });
   document.getElementById("closeBtn").addEventListener("click",closeModal);
   document.getElementById("mbg").addEventListener("click",closeModal);
@@ -724,7 +862,7 @@
       var reps = +nums[nums.length-1];              // беремо верх діапазону
       var uni  = /кожн/.test(spec);                 // по черзі на кожну ногу/руку
       var work = uni ? r5(reps*TEMPO.uni)*2 : r5(reps*TEMPO[kind]);
-      return {type:"set", sets:sets, work:work, rest:REST[kind], kind:kind, spec:spec};
+      return {type:"set", sets:sets, work:work, rest:(e.restOv||REST[kind]), kind:kind, spec:spec};
     }
     return {type:"set", sets:1, work:45, rest:60, kind:"iso", spec:r};
   }
@@ -740,6 +878,7 @@
     var out=[];
     sections.forEach(function(sec){
       sec.items.forEach(function(e){
+        if(e.off) return;
         if(/альтернатива/i.test(e.n)) return;       // запасний варіант — не в потік
         out.push(e);
       });
@@ -856,13 +995,15 @@
     tmrPaint();
   }
 
-  function tmrStart(sections, title){
+  function tmrStart(sections, wIdx){
     var b = buildPhases(sections);
     if(!b.phases.length) return;
     T.ph = b.phases; T.nEx = b.list.length; T.i = 0; T.left = b.phases[0].dur;
     T.total = 0; b.phases.forEach(function(x){ T.total += x.dur; });
     T.elapsed = 0; T.paused = false; T.on = true; T.gifOf = undefined;
+    T.wIdx = (wIdx == null ? null : wIdx);
     $("tmrPause").textContent = "Пауза";
+    $("tmrPlus").style.display = ""; $("tmrPause").style.display = ""; $("tmrSkip").textContent = "Далі ›";
     tmr.classList.add("open"); tmr.setAttribute("aria-hidden","false");
     document.body.classList.add("noscroll");
     wakeOn();
@@ -903,7 +1044,18 @@
     $("tmrPhase").textContent = "Готово";
     $("tmrName").textContent = "Тренування завершено";
     $("tmrMeta").textContent = "Час у роботі: " + mmss(Math.round(T.total));
-    $("tmrNext").innerHTML = "Відмітити цей день як виконаний можна на головному екрані.";
+    if(T.wIdx != null){
+      var fin = entry();
+      fin.wIdx = T.wIdx;
+      state.cycle = (T.wIdx + 1) % ROTATION.length;
+      save(); renderActivity(); renderCalendar();
+      $("tmrNext").innerHTML = "Відмічено як виконане · далі за циклом <b>" + ROTATION[state.cycle].title + "</b>";
+    } else {
+      $("tmrNext").innerHTML = "";
+    }
+    $("tmrPlus").style.display = "none";
+    $("tmrPause").style.display = "none";
+    $("tmrSkip").textContent = "Закрити";
     $("tmrTime").textContent = "✓";
     document.getElementById("tmrGif").classList.remove("on");
     document.getElementById("tmrEq").classList.remove("on");
@@ -921,6 +1073,385 @@
     T.last = Date.now();
     $("tmrPause").textContent = T.paused ? "Продовжити" : "Пауза";
   });
+
+
+  // ══════════════════════════════════════════════════════════════
+  //  APPLE WATCH — читання health/{дата} і workouts за цю дату
+  // ══════════════════════════════════════════════════════════════
+  var hwCache = {};          // дата -> {h:…, w:[…]} | "none"
+  var hwBusy  = {};
+
+  function hwNum(v){
+    if(v == null || v === "") return null;
+    var n = parseFloat(String(v).replace(",", "."));
+    return isNaN(n) ? null : n;
+  }
+  function hwFmt(v, dec){
+    var n = hwNum(v); if(n == null) return null;
+    return dec ? n.toFixed(dec) : String(Math.round(n));
+  }
+  function hwVal(f, k){ return (f && f[k] != null) ? f[k] : null; }
+
+  function renderWatch(){
+    var sec = document.getElementById("hwSec"), box = document.getElementById("hwBody");
+    if(!sec || !box) return;
+
+    if(!fbUser){ sec.style.display = "none"; return; }
+    sec.style.display = "";
+
+    var d = state.selectedDate, c = hwCache[d];
+    if(c === undefined){
+      box.innerHTML = '<div class="hw-empty">Завантаження…</div>';
+      loadWatch(d);
+      return;
+    }
+    if(c === "none" || (!c.h && (!c.w || !c.w.length))){
+      box.innerHTML = '<div class="hw-empty">За цей день даних з годинника ще немає. '
+                    + 'Вони зʼявляться після того, як відпрацює шорткат Health Sync.</div>';
+      return;
+    }
+
+    var h = c.h || {}, html = "";
+
+    var tiles = [
+      ["hw-steps", "Кроки",     hwFmt(hwVal(h,"steps")),                 ""],
+      ["",          "Дистанція", hwFmt(hwVal(h,"distanceKm"), 2),         "км"],
+      ["",          "Активні",   hwFmt(hwVal(h,"activeKcal")),            "ккал"],
+      ["hw-hr",     "Пульс сер.",hwFmt(hwVal(h,"hrAvg")),                 "уд"]
+    ].filter(function(t){ return t[2] != null; });
+
+    if(tiles.length){
+      html += '<div class="hw-grid">';
+      tiles.forEach(function(t){
+        html += '<div class="hw-tile '+t[0]+'"><div class="k">'+t[1]+'</div>'
+              + '<div class="v">'+t[2]+(t[3]?'<small>'+t[3]+'</small>':'')+'</div></div>';
+      });
+      html += '</div>';
+    }
+
+    (c.w || []).forEach(function(w){
+      var dur = hwFmt(hwVal(w,"durationMin")), kc = hwFmt(hwVal(w,"kcal")),
+          ha = hwFmt(hwVal(w,"hrAvg")), hm = hwFmt(hwVal(w,"hrMax"));
+      var t = hwVal(w,"start") || "";
+      var clock = /T(\d{2}):(\d{2})/.exec(t);
+      html += '<div class="hw-wk">'
+            +   '<div class="hw-wk-top"><span class="hw-wk-name">'
+            +      (hwVal(w,"type") || "Тренування") + '</span>'
+            +      (clock ? '<span class="hw-wk-time">'+clock[1]+':'+clock[2]+'</span>' : '')
+            +   '</div><div class="hw-wk-row">'
+            +   (dur ? '<div>Тривалість<b>'+dur+' хв</b></div>' : '')
+            +   (kc  ? '<div>Калорії<b>'+kc+'</b></div>' : '')
+            +   (ha  ? '<div>Пульс сер.<b>'+ha+'</b></div>' : '')
+            +   (hm  ? '<div>Пульс макс.<b>'+hm+'</b></div>' : '')
+            +   '</div></div>';
+    });
+
+    if(!html) html = '<div class="hw-empty">Запис за цей день є, але всі значення порожні. '
+                   + 'Зазвичай це означає, що годинник того дня не писав даних.</div>';
+    box.innerHTML = html;
+  }
+
+  function loadWatch(d){
+    if(!fbDb || !fbUser || hwBusy[d]) return;
+    hwBusy[d] = true;
+    var got = { h:null, w:[] };
+
+    var pH = fbDb.collection("health").doc(d).get().then(function(s){
+      if(s.exists) got.h = s.data();
+    }).catch(function(){});
+
+    var pW = fbDb.collection("workouts").where("date", "==", d).get().then(function(q){
+      q.forEach(function(doc){ got.w.push(doc.data()); });
+      got.w.sort(function(a,b){ return String(a.start||"").localeCompare(String(b.start||"")); });
+    }).catch(function(){});
+
+    Promise.all([pH, pW]).then(function(){
+      hwCache[d] = (got.h || got.w.length) ? got : "none";
+      hwBusy[d] = false;
+      renderWatch();
+    });
+  }
+
+  function hwRefresh(){ hwCache = {}; renderWatch(); }
+
+  var AI_WHO = "vlad";
+  var AI_URL = "";   // ← URL воркера Cloudflare; порожній = режим скриньки
+  var AI_HELLO = "Привіт. Я на зв'язку з твоєю програмою — бачу всі три дні, ваги й що ти вже відмітив.\n\nМожу одразу змінити вагу, кількість підходів, повтори й час відпочинку. Заміну вправи або баг передам Клоду — для цього потрібен новий гіф у репозиторії.\n\nЩо правимо?";
+
+  // ══════════════════════════════════════════════════════════════
+  //  ШІ-ТРЕНЕР  ·  чат + шар правок (overrides / requests)
+  // ══════════════════════════════════════════════════════════════
+
+  // ── шар правок ────────────────────────────────────────────────
+  // OV_BASE — початкові значення з програми, щоб правки накладались
+  // чисто й скасовувались без перезавантаження.
+  var OV = {}, OV_BASE = {}, OV_KEY = AI_WHO + "Overrides_v1";
+
+  function ovEach(fn){
+    ROTATION.forEach(function(w){
+      (w.ex || []).forEach(function(sec){
+        (sec.items || []).forEach(function(e){ fn(e, w); });
+      });
+    });
+  }
+  ovEach(function(e){
+    if(!OV_BASE[e.n]) OV_BASE[e.n] = { r:e.r, w:e.w || "" };
+  });
+
+  function ovApply(){
+    ovEach(function(e){
+      var b = OV_BASE[e.n]; if(!b) return;
+      var o = OV[e.n];
+      e.r = (o && o.r) ? o.r : b.r;
+      e.w = (o && o.w) ? o.w : b.w;
+      e.restOv = (o && o.rest) ? o.rest : null;
+      e.off    = !!(o && o.off);
+      e.ovNote = (o && o.note) ? o.note : null;
+    });
+  }
+  function ovLoadLocal(){
+    try{ var r = localStorage.getItem(OV_KEY); if(r) OV = JSON.parse(r) || {}; }catch(e){}
+  }
+  function ovSaveLocal(){
+    try{ localStorage.setItem(OV_KEY, JSON.stringify(OV)); }catch(e){}
+  }
+  function ovDoc(){ return (fbDb && fbUser) ? fbDb.collection("overrides").doc(fbUser.uid) : null; }
+  function ovPull(){
+    var d = ovDoc(); if(!d) return;
+    d.get().then(function(s){
+      if(!s.exists) return;
+      var ex = s.data().ex || {};
+      // хмара — джерело істини для правок: їх вносить тренер, не пристрій
+      OV = ex; ovSaveLocal(); ovApply(); renderAll();
+    }).catch(function(){});
+  }
+  function ovPush(){
+    var d = ovDoc(); if(!d) return Promise.resolve();
+    return d.set({ ex:OV, updated:new Date().toISOString(), who:AI_WHO }, {merge:true}).catch(function(){});
+  }
+
+  ovLoadLocal(); ovApply();
+
+  // ── історія чату ──────────────────────────────────────────────
+  var AI_HKEY = AI_WHO + "AiChat_v1";
+  var aiMsgs = (function(){
+    try{ return JSON.parse(localStorage.getItem(AI_HKEY)) || []; }catch(e){ return []; }
+  })();
+  function aiHSave(){
+    try{ localStorage.setItem(AI_HKEY, JSON.stringify(aiMsgs.slice(-40))); }catch(e){}
+  }
+
+  // ── контекст для моделі ───────────────────────────────────────
+  function aiCtx(){
+    var days = ROTATION.map(function(w){
+      var ex = [];
+      (w.ex || []).forEach(function(sec){
+        (sec.items || []).forEach(function(e){
+          if(/альтернатива/i.test(e.n)) return;
+          ex.push({ n:e.n, r:e.r, w:e.w || null, off:e.off || undefined });
+        });
+      });
+      return { title:w.title, ex:ex };
+    });
+    var recent = [];
+    Object.keys(state.entries || {}).sort().slice(-14).forEach(function(d){
+      var en = state.entries[d];
+      if(en && en.wIdx != null && ROTATION[en.wIdx]) recent.push(d + " — " + ROTATION[en.wIdx].title);
+    });
+    return {
+      who: AI_WHO,
+      today: state.selectedDate,
+      nextUp: ROTATION[state.cycle] ? ROTATION[state.cycle].title : null,
+      days: days,
+      overrides: OV,
+      doneRecently: recent
+    };
+  }
+
+  // ── DOM ───────────────────────────────────────────────────────
+  var aiEl = document.getElementById("ai"), aiLog = document.getElementById("aiLog"),
+      aiTa = document.getElementById("aiTa"), aiSendBtn = document.getElementById("aiSend"),
+      aiFab = document.getElementById("aiFab");
+  var aiBusy = false, aiPending = null;
+
+  function esc(s){
+    return String(s == null ? "" : s)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+  function aiBubble(m){
+    if(m.role === "sys") return '<div class="ai-msg sys">' + esc(m.content) + '</div>';
+    // клас саме "bot", а не "ai": ".ai" — це контейнер чату з display:none
+    return '<div class="ai-msg ' + (m.role === "user" ? "me" : "bot") + '">' + esc(m.content) + '</div>';
+  }
+  function aiPaint(){
+    var h = "";
+    aiMsgs.forEach(function(m){ h += aiBubble(m); });
+    if(aiBusy) h += '<div class="ai-dots"><i></i><i></i><i></i></div>';
+    aiLog.innerHTML = h;
+    if(aiPending) aiCardPaint();
+    aiLog.scrollTop = aiLog.scrollHeight;
+  }
+
+  function chgLine(c){
+    var b = OV_BASE[c.n];
+    if(!b) return "";                     // модель вигадала назву — не показуємо
+    var cur = OV[c.n] || {};
+    var now = { r:(cur.r || (b ? b.r : "")), w:(cur.w || (b ? b.w : "")) };
+    var parts = [];
+    if(c.r && c.r !== now.r) parts.push('<s>' + esc(now.r) + '</s> → <b>' + esc(c.r) + '</b>');
+    if(c.w && c.w !== now.w) parts.push('<s>' + esc(now.w) + '</s> → <b>' + esc(c.w) + '</b>');
+    if(c.rest) parts.push('відпочинок → <b>' + esc(c.rest) + ' с</b>');
+    if(c.off)  parts.push('<b>прибрати з дня</b>');
+    if(c.off === false && (OV[c.n] || {}).off) parts.push('<b>повернути в день</b>');
+    if(!parts.length) return "";
+    return '<div class="ai-chg">' + esc(c.n) + '<i>' + parts.join(" · ")
+         + (c.why ? " — " + esc(c.why) : "") + '</i></div>';
+  }
+  function aiCardPaint(){
+    var lines = aiPending.map(chgLine).filter(Boolean).join("");
+    if(!lines){ aiPending = null; return; }
+    var d = document.createElement("div");
+    d.className = "ai-card";
+    d.innerHTML = '<div class="h">Запропоновані правки</div>' + lines
+      + '<div class="row"><button class="ai-ok" id="aiOk">Застосувати</button>'
+      + '<button class="ai-no" id="aiNo">Не треба</button></div>';
+    aiLog.appendChild(d);
+    document.getElementById("aiOk").onclick = aiApplyPending;
+    document.getElementById("aiNo").onclick = function(){
+      aiPending = null;
+      aiMsgs.push({role:"sys", content:"Правки скасовано"}); aiHSave(); aiPaint();
+    };
+  }
+
+  function aiApplyPending(){
+    var n = 0;
+    aiPending.forEach(function(c){
+      if(!OV_BASE[c.n]) return;            // невідома вправа — не чіпаємо
+      var o = OV[c.n] || (OV[c.n] = {});
+      if(c.r) o.r = String(c.r);
+      if(c.w) o.w = String(c.w);
+      if(c.rest) o.rest = Math.max(10, Math.min(300, parseInt(c.rest, 10) || 0)) || undefined;
+      if(typeof c.off === "boolean") o.off = c.off;
+      if(c.why) o.note = String(c.why).slice(0, 180);
+      n++;
+    });
+    aiPending = null;
+    ovSaveLocal(); ovApply(); ovPush(); renderAll();
+    aiMsgs.push({role:"sys", content:"Застосовано: " + n + " · програма оновлена"});
+    aiHSave(); aiPaint();
+  }
+
+  // ── звернення, які сам ШІ закрити не може ─────────────────────
+  // Заміна вправи вимагає нового спрайта в репозиторії, баг — правки коду.
+  // Такі речі пишемо в Firestore, щоб Клод розгріб наступної сесії.
+  function reqSend(kind, text, extra){
+    if(!fbDb) return Promise.resolve(false);
+    var id = AI_WHO + "-" + Date.now();
+    return fbDb.collection("requests").doc(id).set({
+      who: AI_WHO,
+      uid: fbUser ? fbUser.uid : null,
+      kind: kind,                                  // swap | bug | other
+      text: String(text).slice(0, 2000),
+      ctx: JSON.stringify(extra || {}).slice(0, 4000),
+      created: new Date().toISOString(),
+      done: false
+    }).then(function(){ return true; }).catch(function(){ return false; });
+  }
+
+  // ── відправка ─────────────────────────────────────────────────
+  function aiSend(text){
+    text = String(text || "").trim();
+    if(!text || aiBusy) return;
+    aiMsgs.push({role:"user", content:text});
+    aiTa.value = ""; aiTa.style.height = "";
+    aiPending = null; aiBusy = true; aiHSave(); aiPaint();
+
+    if(!AI_URL){
+      // воркер ще не підключений — працюємо як скринька повідомлень
+      reqSend("other", text, aiCtx()).then(function(ok){
+        aiBusy = false;
+        aiMsgs.push({ role:"assistant", content: ok
+          ? "Записав. ШІ-тренер ще не підключений, тому це повідомлення прочитає Клод і внесе правки наступної сесії."
+          : "Не вдалось зберегти — немає з'єднання. Спробуй ще раз, коли буде інтернет." });
+        aiHSave(); aiPaint();
+      });
+      return;
+    }
+
+    var hist = aiMsgs.filter(function(m){ return m.role !== "sys"; }).slice(-16)
+                     .map(function(m){ return {role:m.role, content:m.content}; });
+    while(hist.length && hist[0].role !== "user") hist.shift();   // API чекає user першим
+
+    (fbUser ? fbUser.getIdToken() : Promise.resolve(null)).then(function(tok){
+      return fetch(AI_URL, {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ idToken:tok, who:AI_WHO, msgs:hist, ctx:aiCtx() })
+      });
+    }).then(function(r){
+      return r.json().then(function(j){ return {ok:r.ok, st:r.status, j:j}; });
+    }).then(function(res){
+      aiBusy = false;
+      if(!res.ok){
+        var m = (res.j && res.j.error) ? res.j.error
+              : res.st === 401 ? "Увійди через Google — без входу чат не працює."
+              : res.st === 429 ? "Денний ліміт повідомлень вичерпано. Продовжимо завтра."
+              : "Сервер відповів помилкою " + res.st + ".";
+        aiMsgs.push({role:"assistant", content:m}); aiHSave(); aiPaint(); return;
+      }
+      var j = res.j || {};
+      aiMsgs.push({role:"assistant", content: j.reply || "…"});
+      if(j.changes && j.changes.length) aiPending = j.changes;
+      aiHSave(); aiPaint();
+      if(j.escalate && j.escalate.text){
+        reqSend(j.escalate.kind || "other", j.escalate.text, aiCtx()).then(function(ok){
+          if(ok){ aiMsgs.push({role:"sys", content:"Передано Клоду на доопрацювання"}); aiHSave(); aiPaint(); }
+        });
+      }
+    }).catch(function(){
+      aiBusy = false;
+      aiMsgs.push({role:"assistant", content:"Не дотягнувся до сервера. Перевір інтернет і спробуй ще раз."});
+      aiHSave(); aiPaint();
+    });
+  }
+
+  // ── відкриття / закриття ──────────────────────────────────────
+  function aiOpen(seed){
+    aiEl.classList.add("open"); aiEl.setAttribute("aria-hidden","false");
+    document.body.classList.add("noscroll");
+    aiFab.classList.remove("has");
+    if(!aiMsgs.length){ aiMsgs.push({role:"assistant", content:AI_HELLO}); aiHSave(); }
+    aiPaint();
+    if(seed){ aiTa.value = seed; aiTa.dispatchEvent(new Event("input")); }
+    setTimeout(function(){ aiTa.focus(); }, 120);
+  }
+  function aiClose(){
+    aiEl.classList.remove("open"); aiEl.setAttribute("aria-hidden","true");
+    document.body.classList.remove("noscroll");
+  }
+
+  aiFab.addEventListener("click", function(){ aiOpen(); });
+  document.getElementById("aiX").addEventListener("click", aiClose);
+  aiSendBtn.addEventListener("click", function(){ aiSend(aiTa.value); });
+  aiTa.addEventListener("input", function(){
+    aiTa.style.height = "auto";
+    aiTa.style.height = Math.min(120, aiTa.scrollHeight) + "px";
+    aiSendBtn.disabled = !aiTa.value.trim();
+  });
+  aiTa.addEventListener("keydown", function(e){
+    if(e.key === "Enter" && (e.metaKey || e.ctrlKey)){ e.preventDefault(); aiSend(aiTa.value); }
+  });
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && aiEl.classList.contains("open")) aiClose();
+  });
+  document.querySelectorAll(".ai-chip").forEach(function(c){
+    c.addEventListener("click", function(){
+      aiTa.value = c.getAttribute("data-q");
+      aiTa.dispatchEvent(new Event("input"));
+      aiTa.focus();
+    });
+  });
+  aiSendBtn.disabled = true;
 
   renderAll();
 })();
