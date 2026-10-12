@@ -204,34 +204,35 @@
     text-align:center;gap:4px;min-height:0;padding:10px 0}
   .tmr-phase{font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
   .tmr.rest .tmr-phase{color:#FFC861}
-  .tmr-name{font-size:23px;font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-top:6px;
+  .tmr-name{font-size:25px;font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-top:6px;
     max-width:320px}
-  .tmr-meta{font-size:13.5px;color:var(--muted);font-weight:600;margin-top:5px}
+  .tmr-meta{font-size:18px;color:var(--ink);font-weight:600;margin-top:6px;line-height:1.3;max-width:340px}
 
-  .tmr-ring{position:relative;width:min(250px,64vw);aspect-ratio:1;margin:14px 0 6px;flex:none}
+  .tmr-ring{position:relative;width:min(180px,43vw);aspect-ratio:1;margin:14px 0 6px;flex:none}
   .tmr-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
   .tmr-ring circle{fill:none;stroke-width:9;stroke-linecap:round}
   .tmr-ring .trk{stroke:var(--card2)}
   .tmr-ring .bar{stroke:var(--accent);stroke-dasharray:691.15;stroke-dashoffset:0;
     transition:stroke-dashoffset .25s linear}
   .tmr.rest .tmr-ring .bar{stroke:#FFC861}
-  .tmr-time{position:absolute;inset:0;display:grid;place-items:center;font-size:52px;font-weight:800;
+  .tmr-time{position:absolute;inset:0;display:grid;place-items:center;font-size:40px;font-weight:800;
     letter-spacing:-.03em;font-variant-numeric:tabular-nums}
 
-  .tmr-gif{width:104px;height:104px;border-radius:16px;background:#fff;position:relative;
+  .tmr-gif{width:188px;height:188px;border-radius:29px;background:#fff;position:relative;
     overflow:hidden;flex:none;margin-top:6px;display:none}
   .tmr-gif.on{display:block}
   .tmr-gif i{position:absolute;inset:0;background-repeat:no-repeat;
-    background-size:1248px 104px;background-position:0 0;
+    background-size:2256px 188px;background-position:0 0;
     animation:exrun2 1.3s steps(12) infinite}
-  @keyframes exrun2{from{background-position:0 0}to{background-position:-1248px 0}}
+  @keyframes exrun2{from{background-position:0 0}to{background-position:-2256px 0}}
   .tmr-gif img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 
   .tmr-eq{display:none;align-items:center;gap:8px;margin-top:10px;padding:10px 14px;
     background:var(--card);border:1px solid var(--line);border-radius:14px;max-width:320px;
-    font-size:13px;font-weight:600;color:var(--ink2);line-height:1.35;text-align:left}
+    font-size:16.5px;font-weight:600;color:var(--ink);line-height:1.35;text-align:left}
   .tmr-eq.on{display:flex}
-  .tmr-eq svg{width:16px;height:16px;flex:none;color:var(--accent)}
+  .tmr-eq svg{width:22px;height:22px;flex:none;color:var(--accent)}
+  .tmr-eq i{display:flex;flex:none}
 
   .tmr-next{font-size:13px;color:var(--muted);font-weight:600;max-width:300px;line-height:1.4}
   .tmr-next b{color:var(--ink2);font-weight:700}
@@ -243,12 +244,18 @@
   .tmr-btn.main{flex:1.3;background:var(--accent);color:#0B0B0D;border-color:var(--accent)}
 
   /* ── 3-2-1 ── */
-  .tmr-go{position:absolute;inset:0;background:var(--bg);display:none;align-items:center;
+  .tmr-go{position:absolute;inset:0;background:var(--bg);display:none;flex-direction:column;gap:26px;align-items:center;
     justify-content:center;z-index:5}
   .tmr-go.on{display:flex}
   .tmr-go-n{font-size:116px;font-weight:800;color:var(--accent);letter-spacing:-.04em;line-height:1;
     animation:pop .9s ease-out}
   .tmr-go-n.word{font-size:30px;letter-spacing:.06em;text-align:center;line-height:1.3;max-width:300px}
+  .tmr-go-w{display:flex;align-items:center;gap:9px;max-width:320px;padding:12px 15px;
+    background:var(--accent-dim);border:1px solid var(--accent);border-radius:15px;
+    font-size:13px;font-weight:600;color:var(--ink);line-height:1.4;text-align:left}
+  .tmr-go-w svg{width:17px;height:17px;flex:none;color:var(--accent)}
+  .tmr-go-w u{text-decoration:none;color:var(--muted);font-weight:600}
+
   @keyframes pop{0%{transform:scale(.55);opacity:0}35%{transform:scale(1);opacity:1}100%{opacity:1}}
 
   /* ── фініш ── */
@@ -360,6 +367,29 @@
 
   .ai-note{flex:none;font-size:11px;color:var(--muted);text-align:center;padding:0 16px 8px;line-height:1.4}
 
+
+  /* ── режими Apple Watch ── */
+  .w-tip{display:flex;gap:10px;align-items:flex-start;background:var(--ai-soft);
+    border:1px solid var(--accent);border-radius:16px;padding:13px 14px;margin-bottom:14px;
+    font-size:12.8px;line-height:1.45;color:var(--ai-ink2);font-weight:500}
+  .w-tip > svg{width:17px;height:17px;flex:none;color:var(--accent-deep);margin-top:1px}
+  .w-tip b{color:var(--ink);font-weight:700}
+  .w-tip i{font-style:normal;color:var(--muted);font-size:11.5px}
+  .w-tip span{display:block;margin-top:5px}
+
+  .ex-watch{display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:11.5px;
+    font-weight:700;color:var(--accent-deep);background:var(--ai-soft);padding:5px 10px;
+    border-radius:999px;line-height:1.2}
+  .ex-watch svg{width:13px;height:13px;flex:none}
+  .ex-watch u{text-decoration:none;font-weight:600;color:var(--muted);font-size:10.5px}
+
+  .tmr-watch{display:none;align-items:center;gap:8px;margin-top:9px;padding:10px 14px;
+    background:var(--accent-dim);border:1px solid var(--accent);border-radius:14px;max-width:330px;
+    font-size:12.8px;font-weight:600;color:var(--ink);line-height:1.35;text-align:left}
+  .tmr-watch.on{display:flex}
+  .tmr-watch svg{width:16px;height:16px;flex:none;color:var(--accent)}
+  .tmr-watch u{text-decoration:none;color:var(--muted);font-weight:600}
+
 </style>
 </head>
 <body>
@@ -411,6 +441,7 @@
       </div>
       <button class="close-btn" id="closeBtn">✕</button>
     </div>
+    <div class="w-tip" id="wTip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="6" width="10" height="12" rx="3"/><path d="M9 6V3.6h6V6M9 18v2.4h6V18M12 10v2.4l1.6 1.2"/></svg></div>
     <button class="start-btn" id="startBtn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12-7.5z"/></svg>Почати тренування</button>
     <div class="start-sub" id="startSub"></div>
     <div id="exList"></div>
@@ -434,14 +465,15 @@
       <div class="tmr-time" id="tmrTime">0:00</div>
     </div>
     <div class="tmr-next" id="tmrNext"></div>
-    <div class="tmr-eq" id="tmrEq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/></svg><span id="tmrEqT"></span></div>
+    <div class="tmr-watch" id="tmrW"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="6" width="10" height="12" rx="3"/><path d="M9 6V3.6h6V6M9 18v2.4h6V18M12 10v2.4l1.6 1.2"/></svg><span id="tmrWT"></span></div>
+    <div class="tmr-eq" id="tmrEq"><i id="tmrEqI"></i><span id="tmrEqT"></span></div>
   </div>
   <div class="tmr-ctl">
     <button class="tmr-btn" id="tmrPlus">+15 с</button>
     <button class="tmr-btn main" id="tmrPause">Пауза</button>
     <button class="tmr-btn" id="tmrSkip">Далі ›</button>
   </div>
-  <div class="tmr-go" id="tmrGo"><div class="tmr-go-n" id="tmrGoN">3</div></div>
+  <div class="tmr-go" id="tmrGo"><div class="tmr-go-n" id="tmrGoN">3</div><div class="tmr-go-w" id="tmrGoW"></div></div>
 </div>
 
 <button class="ai-fab" id="aiFab" type="button" aria-label="ШІ-тренер"><i></i><b>1</b><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 2.4l1.75 5.15 5.15 1.75-5.15 1.75L11 16.2 9.25 11.05 4.1 9.3l5.15-1.75z"/><path d="M18.4 14.2l.72 2.08 2.08.72-2.08.72-.72 2.08-.72-2.08-2.08-.72 2.08-.72z"/></svg></button>
@@ -575,6 +607,37 @@
     {title:"Pull", groups:"Спина · біцепс · дельта", icon:"pull", dur:"~50 хв", ex:PULL, exTitle:"Pull day",  exSub:"Спина · біцепс · задня дельта · прес"},
     {title:"Legs", groups:"Ноги · сідниці · плечі", icon:"legs", dur:"~55 хв", ex:LEGS, exTitle:"Legs + Shoulders", exSub:"Задній ланцюг · сідниці · плечі · прес"}
   ];
+
+  // ── режими Apple Watch ────────────────────────────────────────
+  // Головне не те, який режим, а те, що тренування взагалі запущене:
+  // без нього годинник міряє пульс раз на кілька хвилин, і активні
+  // калорії виходять заниженими в рази.
+  var WATCH_MAIN = {uk:"Силові тренування", en:"Traditional Strength Training"};
+  var WATCH = {
+    "Гребний Concept2":        {uk:"Веслування (у приміщенні)", en:"Rowing (Indoor)"},
+    "Вигнута доріжка":         {uk:"Ходьба (у приміщенні)",     en:"Walking (Indoor)"},
+    "SkiErg":                  {uk:"Еліптичний тренажер",       en:"Elliptical"},
+    "AirBike · альтернатива":  {uk:"Велотренажер (у приміщенні)", en:"Cycling (Indoor)"}
+  };
+
+  function watchTip(sections){
+    var seen = [], out = [];
+    sections.forEach(function(sec){
+      (sec.items || []).forEach(function(e){
+        if(e.off) return;
+        var w = WATCH[e.n];
+        if(w && seen.indexOf(w.uk) < 0){ seen.push(w.uk); out.push(w); }
+      });
+    });
+    var h = '<div><b>' + WATCH_MAIN.uk + '</b> <i>' + WATCH_MAIN.en + '</i> — запусти на годиннику '
+          + 'перед першою вправою й не зупиняй до кінця силової частини.';
+    if(out.length){
+      h += '<span>Перед кардіо заверши його й запусти '
+         + out.map(function(w){ return '<b>' + w.uk + '</b> <i>' + w.en + '</i>'; }).join(' або ')
+         + ' — тоді кардіо піде окремим записом із власною дистанцією.</span>';
+    }
+    return h + '</div>';
+  }
 
   var FB_CONFIG = {
     apiKey:"AIzaSyBtG3NAe-Eu9m2OuKLYt63zJjCBzMq9VF4",
@@ -738,11 +801,14 @@
         h+='<div class="ex-meta">'+e.r+'</div>';
         if(e.w){ h+='<div class="ex-weight">'+e.w+'</div>'; }
         h+='<div class="ex-cue">'+e.c+'</div>';
+        var wm = WATCH[e.n];
+      if(wm){ h += '<div class="ex-watch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="6" width="10" height="12" rx="3"/><path d="M9 6V3.6h6V6M9 18v2.4h6V18M12 10v2.4l1.6 1.2"/></svg>' + wm.uk + ' <u>' + wm.en + '</u></div>'; }
         h+='<a class="demo-btn" target="_blank" rel="noopener noreferrer" href="'+yt+'">'+PLAY+' Дивитись демо</a>';
         h+='</div></div>';
       });
     });
     document.getElementById("exList").innerHTML=h;
+    document.getElementById("wTip").innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="6" width="10" height="12" rx="3"/><path d="M9 6V3.6h6V6M9 18v2.4h6V18M12 10v2.4l1.6 1.2"/></svg>' + watchTip(sections);
 
     // запуск усередині жесту користувача — обходить блокування автозапуску
     (function(){
@@ -810,6 +876,51 @@
 
 
   // Що брати / куди йти — показується під час переходу до наступної вправи
+  // ── іконки інвентарю ──────────────────────────────────────────
+  var ES = 'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"';
+  var EQICON = {
+    // гантелі — короткий гриф, масивні голови
+    db:    '<svg '+ES+'><path d="M6.5 8.5v7M9.5 6v12M14.5 6v12M17.5 8.5v7M9.5 12h5"/></svg>',
+    // штанга — довгий гриф на всю ширину, по два млинці
+    bb:    '<svg '+ES+'><path d="M2 9.5v5M5 7v10M19 7v10M22 9.5v5M5 12h14"/></svg>',
+    // блок — ваговий стек, трос через верх і ручка
+    cable: '<svg '+ES+'><rect x="3" y="4" width="6.5" height="16" rx="1.5"/>'
+         + '<path d="M3 9.3h6.5M3 14.6h6.5M9.5 5.5h8v6M14 11.5h7"/></svg>',
+    // тренажер — сидіння зі спинкою і стійка
+    mach:  '<svg '+ES+'><path d="M4.5 20v-5.5a2 2 0 0 1 2-2h6.5"/>'
+         + '<path d="M13 12.5V6a2 2 0 0 1 2-2h3"/><path d="M3 20h7M19.5 20v-7"/></svg>',
+    // гребний — маховик, ланцюг, рейка й сидіння
+    row:   '<svg '+ES+'><circle cx="18.5" cy="8" r="3.2"/><path d="M15.4 8.8L9 11.5"/>'
+         + '<path d="M2.5 19h18M6 19v-3.3h4.5V19"/></svg>',
+    // доріжка — полотно, стійка й поручень
+    tread: '<svg '+ES+'><rect x="2" y="15" width="13.5" height="4.6" rx="2.3"/>'
+         + '<path d="M13.8 15L17.5 5.5M15.3 5.5h5"/></svg>',
+    // SkiErg — щогла з поперечиною і двома ручками на тросах
+    ski:   '<svg '+ES+'><path d="M12 20V4M8 4h8"/><path d="M9 5v6.5M15 5v6.5"/>'
+         + '<path d="M7.7 11.5h2.6M13.7 11.5h2.6"/><path d="M5.5 20h13"/></svg>',
+    // AirBike — вентилятор
+    fan:   '<svg '+ES+'><circle cx="12" cy="12" r="7.6"/>'
+         + '<path d="M12 12V4.4M12 12l6.6 3.8M12 12l-6.6 3.8"/></svg>',
+    // килимок — рулон
+    mat:   '<svg '+ES+'><rect x="2.5" y="8.5" width="19" height="7" rx="3.5"/><path d="M8 8.5v7"/></svg>'
+  };
+
+  // Порядок перевірки важливий: «верхній блок + довгий прямий гриф» — це блок, не штанга.
+  // Жим ногами веду на іконку тренажера: власний гліф для нього не читався на 16px.
+  function eqIcon(txt){
+    var s = String(txt || "").toLowerCase();
+    if(/skierg/.test(s))                      return EQICON.ski;
+    if(/airbike|вентилят/.test(s))            return EQICON.fan;
+    if(/гребн/.test(s))                       return EQICON.row;
+    if(/доріжк/.test(s))                      return EQICON.tread;
+    if(/блок|канат|трос/.test(s))             return EQICON.cable;
+    if(/тренажер|пек-дек|жим ногами|платформ/.test(s)) return EQICON.mach;
+    if(/гантел/.test(s))                      return EQICON.db;
+    if(/штанг/.test(s))                       return EQICON.bb;
+    if(/килимок/.test(s))                     return EQICON.mat;
+    return EQICON.db;
+  }
+
   var EQUIP = {
     "Incline DB Bench Press":"Гантелі + лава під 30°",
     "Barbell Bench Press":"Штанга зі стійками + горизонтальна лава",
@@ -893,7 +1004,7 @@
       var p = planOf(e), last = (ei === list.length-1);
       for(var s=1; s<=p.sets; s++){
         ph.push({kind:"work", e:e, p:p, set:s, dur:p.work, ei:ei});
-        if(s < p.sets) ph.push({kind:"rest", dur:p.rest, ei:ei, e:e, p:p, set:s+1, to:"Підхід "+(s+1)});
+        if(s < p.sets) ph.push({kind:"rest", dur:p.rest, ei:ei, e:e, p:p, set:s+1, to:"Підхід "+(s+1)+" / "+p.sets});
       }
       if(!last){
         var g = gap(p);
@@ -941,7 +1052,18 @@
     var rest = (p.kind === "rest");
     tmr.classList.toggle("rest", rest);
 
-    var eq = document.getElementById("tmrEq");
+    var eq = document.getElementById("tmrEq"), wB = document.getElementById("tmrW");
+    var wNow = (!rest && p.e) ? WATCH[p.e.n] : null;
+    var wNext = (rest && p.between && p.nextEx) ? WATCH[p.nextEx.n] : null;
+    if(wNext){ document.getElementById("tmrWT").innerHTML = "Заверши силове на годиннику й запусти <b>" + wNext.uk + "</b> <u>" + wNext.en + "</u>"; }
+    else if(wNow){ document.getElementById("tmrWT").innerHTML = "На годиннику має йти <b>" + wNow.uk + "</b> <u>" + wNow.en + "</u>"; }
+    if(!wNow && !wNext && T.i === 0 && !rest){
+      document.getElementById("tmrWT").innerHTML =
+        "На годиннику має йти <b>" + WATCH_MAIN.uk + "</b> <u>" + WATCH_MAIN.en + "</u>";
+      wB.classList.add("on");
+    } else {
+      wB.classList.toggle("on", !!(wNow || wNext));
+    }
     var show = p.e || null;          // чия гіфка на екрані
 
     if(!rest){
@@ -959,6 +1081,7 @@
       $("tmrNext").innerHTML = "";
       var txt = equipOf(p.nextEx);
       $("tmrEqT").textContent = txt;
+      document.getElementById("tmrEqI").innerHTML = eqIcon(txt);
       eq.classList.toggle("on", !!txt);
     } else {
       $("tmrPhase").textContent = "Відпочинок";
@@ -1010,6 +1133,7 @@
 
     // 3 · 2 · 1 · поїхали
     var go = $("tmrGo"), gn = $("tmrGoN");
+    $("tmrGoW").innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="6" width="10" height="12" rx="3"/><path d="M9 6V3.6h6V6M9 18v2.4h6V18M12 10v2.4l1.6 1.2"/></svg>' + "<span>Запусти на годиннику <b>" + WATCH_MAIN.uk + "</b> <u>" + WATCH_MAIN.en + "</u></span>";
     go.classList.add("on");
     var seq = ["3","2","1","ТРЕНУВАННЯ<br>РОЗПОЧАТО"], k = 0;
     function step(){
@@ -1059,6 +1183,7 @@
     $("tmrTime").textContent = "✓";
     document.getElementById("tmrGif").classList.remove("on");
     document.getElementById("tmrEq").classList.remove("on");
+    document.getElementById("tmrW").classList.remove("on");
     $("tmrArc").style.strokeDashoffset = "0";
     $("tmrProg").style.width = "100%";
     T.on = false; wakeOff();
