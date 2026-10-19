@@ -390,6 +390,42 @@
   .tmr-watch svg{width:16px;height:16px;flex:none;color:var(--accent)}
   .tmr-watch u{text-decoration:none;color:var(--muted);font-weight:600}
 
+  /* ── згортання таймера в міні-бар ── */
+  .tmr{will-change:transform}
+  .tmr-grab{flex:none;padding:2px 0 10px;display:flex;justify-content:center;cursor:grab;
+    touch-action:none}
+  .tmr-grab i{display:block;width:38px;height:4px;border-radius:2px;background:rgba(255,255,255,.22)}
+  .tmr-min{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--card);
+    color:var(--ink2);font-size:17px;cursor:pointer;flex:none;line-height:1;font-family:inherit;padding:0}
+
+  .tmr-mini{display:none}
+  .tmr.mini{inset:auto 0 0 0;height:calc(62px + env(safe-area-inset-bottom));
+    padding:0 0 env(safe-area-inset-bottom);border-radius:20px 20px 0 0;
+    border-top:1px solid var(--line);box-shadow:0 -10px 30px rgba(0,0,0,.45);
+    max-width:480px;margin:0 auto}
+  .tmr.mini .tmr-grab,.tmr.mini .tmr-top,.tmr.mini .tmr-body,.tmr.mini .tmr-ctl{display:none}
+  .tmr.mini .tmr-mini{display:block}
+
+  .tmr-mini-prog{position:absolute;top:0;left:0;height:3px;background:var(--accent);
+    border-radius:0 3px 3px 0;transition:width .3s}
+  .tmr.rest .tmr-mini-prog{background:#FFC861}
+  .tmr-mini-row{display:flex;align-items:center;gap:12px;height:62px;padding:0 14px 0 18px;cursor:pointer}
+  .tmr-mini-txt{flex:1;min-width:0}
+  .tmr-mini-txt b{display:block;font-size:14.5px;font-weight:700;letter-spacing:-.01em;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tmr-mini-txt span{display:block;font-size:11px;font-weight:700;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);margin-top:2px}
+  .tmr.rest .tmr-mini-txt span{color:#FFC861}
+  .tmr-mini-time{font-size:20px;font-weight:800;letter-spacing:-.02em;flex:none;
+    font-variant-numeric:tabular-nums}
+  .tmr-mini-btn{width:38px;height:38px;border-radius:50%;border:0;background:var(--accent);
+    color:#0B0B0D;flex:none;cursor:pointer;display:grid;place-items:center;padding:0}
+  .tmr-mini-btn svg{width:15px;height:15px}
+
+  /* щоб міні-бар не накривав підвал і кнопку чату */
+  body.minibar{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
+  body.minibar .ai-fab{bottom:calc(84px + env(safe-area-inset-bottom))}
+
 </style>
 </head>
 <body>
@@ -450,10 +486,20 @@
 </div>
 
 <div class="tmr" id="tmr" aria-hidden="true">
-  <div class="tmr-top">
-    <button class="tmr-x" id="tmrX" aria-label="Закрити">✕</button>
+  <div class="tmr-grab" id="tmrGrab"><i></i></div>
+  <div class="tmr-top" id="tmrTop">
+    <button class="tmr-min" id="tmrMin" aria-label="Згорнути">⌄</button>
     <div class="tmr-prog"><i id="tmrProg"></i></div>
     <div class="tmr-count" id="tmrCount">1 / 1</div>
+    <button class="tmr-x" id="tmrX" aria-label="Завершити">✕</button>
+  </div>
+  <div class="tmr-mini" id="tmrMini">
+    <i class="tmr-mini-prog" id="tmrMiniProg"></i>
+    <div class="tmr-mini-row" id="tmrMiniRow">
+      <div class="tmr-mini-txt"><b id="tmrMiniName">—</b><span id="tmrMiniPhase">—</span></div>
+      <div class="tmr-mini-time" id="tmrMiniTime">0:00</div>
+      <button class="tmr-mini-btn" id="tmrMiniPause" aria-label="Пауза"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="5" width="3.6" height="14" rx="1.2"/><rect x="13.4" y="5" width="3.6" height="14" rx="1.2"/></svg></button>
+    </div>
   </div>
   <div class="tmr-body">
     <div class="tmr-phase" id="tmrPhase">—</div>
@@ -1097,6 +1143,12 @@
     $("tmrArc").style.strokeDashoffset = String(ARC * (1 - T.left / p.dur));
     $("tmrCount").textContent = (p.ei + (p.between ? 2 : 1)) + " / " + T.nEx;
     $("tmrProg").style.width = Math.min(100, T.elapsed / T.total * 100) + "%";
+    $("tmrMiniProg").style.width = Math.min(100, T.elapsed / T.total * 100) + "%";
+    $("tmrMiniName").textContent = rest
+      ? (p.between && p.nextEx ? "Далі: " + p.nextEx.n : p.e ? p.e.n : "")
+      : (p.e ? p.e.n : "");
+    $("tmrMiniPhase").textContent = $("tmrPhase").textContent;
+    $("tmrMiniTime").textContent = mmss(Math.ceil(T.left));
   }
 
   function tmrNext(auto){
@@ -1127,7 +1179,10 @@
     T.wIdx = (wIdx == null ? null : wIdx);
     $("tmrPause").textContent = "Пауза";
     $("tmrPlus").style.display = ""; $("tmrPause").style.display = ""; $("tmrSkip").textContent = "Далі ›";
-    tmr.classList.add("open"); tmr.setAttribute("aria-hidden","false");
+    tmr.classList.add("open"); tmr.classList.remove("mini");
+    tmr.style.transform = ""; document.body.classList.remove("minibar");
+    $("tmrMiniPause").style.display = ""; $("tmrMiniPause").innerHTML = MINI_PAUSE;
+    tmr.setAttribute("aria-hidden","false");
     document.body.classList.add("noscroll");
     wakeOn();
 
@@ -1156,7 +1211,9 @@
   function tmrStop(){
     if(T.tick){ clearInterval(T.tick); T.tick = null; }
     T.on = false;
-    tmr.classList.remove("open","rest"); tmr.setAttribute("aria-hidden","true");
+    tmr.classList.remove("open","rest","mini");
+    tmr.style.transform = "";
+    document.body.classList.remove("minibar"); tmr.setAttribute("aria-hidden","true");
     $("tmrGo").classList.remove("on");
     document.body.classList.remove("noscroll");
     wakeOff();
@@ -1180,6 +1237,7 @@
     $("tmrPlus").style.display = "none";
     $("tmrPause").style.display = "none";
     $("tmrSkip").textContent = "Закрити";
+    $("tmrMiniPause").style.display = "none";
     $("tmrTime").textContent = "✓";
     document.getElementById("tmrGif").classList.remove("on");
     document.getElementById("tmrEq").classList.remove("on");
@@ -1189,6 +1247,73 @@
     T.on = false; wakeOff();
   }
 
+  // ── згортання / розгортання ───────────────────────────────────
+  // Таймер крутиться незалежно від DOM, тож згортання його не зупиняє.
+  var MINI_PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="5" width="3.6" height="14" rx="1.2"/><rect x="13.4" y="5" width="3.6" height="14" rx="1.2"/></svg>';
+  var MINI_PLAY  = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l10-6.5z"/></svg>';
+
+  function tmrSetMini(on){
+    tmr.style.transform = "";
+    tmr.classList.toggle("mini", !!on);
+    document.body.classList.toggle("minibar", !!on);
+    document.body.classList.toggle("noscroll", !on && T.on);
+    if(!on) wakeOn(); else wakeOff();
+    tmrPaint();
+  }
+
+  $("tmrMin").addEventListener("click", function(){ tmrSetMini(true); });
+  $("tmrMiniRow").addEventListener("click", function(e){
+    if(e.target.closest("#tmrMiniPause")) return;
+    tmrSetMini(false);
+  });
+  $("tmrMiniPause").addEventListener("click", function(e){
+    e.stopPropagation();          // інакше клік спливе на рядок і розгорне аркуш
+    if(!T.on) return;
+    T.paused = !T.paused; T.last = Date.now();
+    $("tmrPause").textContent = T.paused ? "Продовжити" : "Пауза";
+    $("tmrMiniPause").innerHTML = T.paused ? MINI_PLAY : MINI_PAUSE;
+  });
+
+  // Тягнемо за шапку: вниз — згорнути, вгору на міні-барі — розгорнути.
+  (function(){
+    var y0 = null, dy = 0, dragging = false;
+    function start(e){
+      if(!T.on && !tmr.classList.contains("open")) return;
+      y0 = e.touches ? e.touches[0].clientY : e.clientY;
+      dy = 0; dragging = true;
+      tmr.style.transition = "none";
+    }
+    function move(e){
+      if(!dragging) return;
+      var y = e.touches ? e.touches[0].clientY : e.clientY;
+      dy = y - y0;
+      var mini = tmr.classList.contains("mini");
+      if(mini && dy > 0) dy = 0;          // міні-бар донизу не тягнемо
+      if(!mini && dy < 0) dy = dy * 0.25; // повний аркуш угору — з опором
+      tmr.style.transform = "translateY(" + dy + "px)";
+    }
+    function end(){
+      if(!dragging) return;
+      dragging = false;
+      tmr.style.transition = "";
+      var mini = tmr.classList.contains("mini");
+      if(!mini && dy > 70)       tmrSetMini(true);
+      else if(mini && dy < -40)  tmrSetMini(false);
+      else                       tmr.style.transform = "";
+    }
+    $("tmrMiniPause").addEventListener("mousedown", function(e){ e.stopPropagation(); });
+    $("tmrMiniPause").addEventListener("touchstart", function(e){ e.stopPropagation(); }, {passive:true});
+    ["tmrGrab","tmrTop","tmrMiniRow"].forEach(function(id){
+      var el = document.getElementById(id); if(!el) return;
+      el.addEventListener("touchstart", start, {passive:true});
+      el.addEventListener("touchmove",  move,  {passive:true});
+      el.addEventListener("touchend",   end);
+      el.addEventListener("mousedown",  start);
+    });
+    document.addEventListener("mousemove", move);
+    document.addEventListener("mouseup",   end);
+  })();
+
   $("tmrX").addEventListener("click", tmrStop);
   $("tmrSkip").addEventListener("click", function(){ if(T.on) tmrNext(false); else tmrStop(); });
   $("tmrPlus").addEventListener("click", function(){ if(T.on){ T.left += 15; T.ph[T.i].dur += 15; tmrPaint(); } });
@@ -1197,6 +1322,7 @@
     T.paused = !T.paused;
     T.last = Date.now();
     $("tmrPause").textContent = T.paused ? "Продовжити" : "Пауза";
+    $("tmrMiniPause").innerHTML = T.paused ? MINI_PLAY : MINI_PAUSE;
   });
 
 
