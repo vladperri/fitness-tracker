@@ -607,7 +607,7 @@
       document.getElementById("signInBtn").onclick=function(){ fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); };
     }
   }
-  if(fbAuth) fbAuth.onAuthStateChanged(function(u){ fbUser=u; updateAuthUI(); if(u){ syncFromCloud(); ovPull(); } });
+  if(fbAuth) fbAuth.onAuthStateChanged(function(u){ fbUser=u; updateAuthUI(); if(u){ syncFromCloud(); ovPull(); chatPull(); } });
 
   function pad(n){ return n<10?"0"+n:""+n; }
   function fmt(d){ return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
@@ -933,13 +933,61 @@
 
   ovLoadLocal(); ovApply();
 
+  // ── історія чату в хмарі ──────────────────────────────────────
+  // Документ chats/{uid}, повідомлення одним JSON-рядком: так правила
+  // перевіряють лише розмір, а не вміст масиву.
+  var CHAT_MAX = 40;
+
+  function chatDoc(){ return (fbDb && fbUser) ? fbDb.collection("chats").doc(fbUser.uid) : null; }
+
+  // Злиття за часом, а не «хмара перемагає»: інакше повідомлення,
+  // написане на телефоні без мережі, зникне після входу з іншого пристрою.
+  function chatMerge(cloud){
+    var seen = {}, all = [];
+    (cloud || []).concat(aiMsgs).forEach(function(m){
+      if(!m || !m.content || !m.role) return;
+      var k = (m.t || 0) + "|" + m.role + "|" + String(m.content).slice(0, 60);
+      if(seen[k]) return;
+      seen[k] = 1;
+      all.push(m);
+    });
+    all.sort(function(a, b){ return (a.t || 0) - (b.t || 0); });   // сортування стабільне
+    aiMsgs = all.slice(-CHAT_MAX);
+  }
+
+  function chatPull(){
+    var d = chatDoc(); if(!d) return;
+    d.get().then(function(s){
+      if(!s.exists) { chatPush(); return; }
+      var raw = s.data().j, cloud = [];
+      try{ cloud = JSON.parse(raw) || []; }catch(e){}
+      chatMerge(cloud);
+      try{ localStorage.setItem(AI_HKEY, JSON.stringify(aiMsgs)); }catch(e){}
+      if(aiEl.classList.contains("open")) aiPaint();
+    }).catch(function(){});
+  }
+
+  function chatPush(){
+    var d = chatDoc(); if(!d) return;
+    // стара історія з localStorage позначок часу не має — без них вона
+    // злилася б у початок стрічки на іншому пристрої
+    var now = Date.now();
+    aiMsgs.forEach(function(m){ if(!m.t) m.t = now; });
+    d.set({ j: JSON.stringify(aiMsgs), updated: new Date().toISOString(), who: AI_WHO })
+     .catch(function(){});
+  }
+
   // ── історія чату ──────────────────────────────────────────────
   var AI_HKEY = AI_WHO + "AiChat_v1";
   var aiMsgs = (function(){
     try{ return JSON.parse(localStorage.getItem(AI_HKEY)) || []; }catch(e){ return []; }
   })();
   function aiHSave(){
-    try{ localStorage.setItem(AI_HKEY, JSON.stringify(aiMsgs.slice(-40))); }catch(e){}
+    var now = Date.now();
+    aiMsgs.forEach(function(m){ if(!m.t) m.t = now; });
+    aiMsgs = aiMsgs.slice(-CHAT_MAX);
+    try{ localStorage.setItem(AI_HKEY, JSON.stringify(aiMsgs)); }catch(e){}
+    chatPush();
   }
 
   // ── контекст для моделі ───────────────────────────────────────
