@@ -198,33 +198,66 @@
     color:var(--ink2);font-size:15px;cursor:pointer;flex:none;line-height:1}
   .tmr-prog{flex:1;height:5px;border-radius:3px;background:var(--card2);overflow:hidden}
   .tmr-prog i{display:block;height:100%;background:var(--accent);width:0;border-radius:3px;transition:width .3s}
-  .tmr-count{font-size:12px;font-weight:700;color:var(--muted);flex:none;font-variant-numeric:tabular-nums}
+  .tmr-count{font-size:12px;font-weight:700;color:var(--muted);flex:none;
+    font-variant-numeric:tabular-nums;text-align:right;line-height:1.15}
+  .tmr-count u{display:none;text-decoration:none;color:var(--accent);font-size:15px;font-weight:800}
+  .tmr.rest .tmr-count u{color:#FFC861}
+  .tmr.away .tmr-count u{display:block}
 
-  .tmr-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    text-align:center;gap:4px;min-height:0;padding:10px 0}
+  .tmr-list{flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+    min-height:0;margin:0 -18px;padding:12px 18px;scrollbar-width:none;
+    -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 16px,#000 calc(100% - 20px),transparent 100%);
+    mask-image:linear-gradient(to bottom,transparent 0,#000 16px,#000 calc(100% - 20px),transparent 100%)}
+  .tmr-list::-webkit-scrollbar{display:none}
+
+  /* активна вправа — картка в потоці списку, а не окремий шар */
+  .tl-card{background:var(--card);border:1px solid var(--line2);border-radius:22px;
+    padding:18px 16px 16px;margin:4px 0 10px;display:flex;flex-direction:column;
+    align-items:center;text-align:center;gap:4px;scroll-margin:14px}
+  .tmr.rest .tl-card{border-color:rgba(255,200,97,.28);background:#111A1C}
+
+  .tl-sec{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted);margin:14px 2px 7px}
+  .tl-sec:first-child{margin-top:0}
+
+  .tl-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:13px;
+    background:var(--card);margin-bottom:6px}
+  .tl-row b{flex:1;min-width:0;font-size:14px;font-weight:600;color:var(--ink2);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tl-row.done{background:transparent;opacity:.45}
+  .tl-row.done b{text-decoration:line-through;text-decoration-color:var(--muted)}
+  .tl-tick{width:17px;height:17px;flex:none;border-radius:50%;border:1.5px solid var(--line2);
+    display:grid;place-items:center;font-size:10px;color:var(--muted);line-height:1}
+  .tl-row.done .tl-tick{border-color:var(--ok);color:var(--ok)}
+  .tl-spec{font-size:12px;font-weight:700;color:var(--muted);flex:none;
+    font-variant-numeric:tabular-nums}
+  .tl-dots{display:flex;gap:3px;flex:none}
+  .tl-dots i{width:5px;height:5px;border-radius:50%;background:var(--line2)}
+  .tl-dots i.on{background:var(--accent)}
+  .tl-row.done .tl-dots i.on{background:var(--ok)}
   .tmr-phase{font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
   .tmr.rest .tmr-phase{color:#FFC861}
   .tmr-name{font-size:25px;font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-top:6px;
     max-width:320px}
   .tmr-meta{font-size:18px;color:var(--ink);font-weight:600;margin-top:6px;line-height:1.3;max-width:340px}
 
-  .tmr-ring{position:relative;width:min(180px,43vw);aspect-ratio:1;margin:14px 0 6px;flex:none}
+  .tmr-ring{position:relative;width:min(150px,38vw);aspect-ratio:1;margin:12px 0 4px;flex:none}
   .tmr-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
   .tmr-ring circle{fill:none;stroke-width:9;stroke-linecap:round}
   .tmr-ring .trk{stroke:var(--card2)}
   .tmr-ring .bar{stroke:var(--accent);stroke-dasharray:691.15;stroke-dashoffset:0;
     transition:stroke-dashoffset .25s linear}
   .tmr.rest .tmr-ring .bar{stroke:#FFC861}
-  .tmr-time{position:absolute;inset:0;display:grid;place-items:center;font-size:40px;font-weight:800;
+  .tmr-time{position:absolute;inset:0;display:grid;place-items:center;font-size:35px;font-weight:800;
     letter-spacing:-.03em;font-variant-numeric:tabular-nums}
 
-  .tmr-gif{width:188px;height:188px;border-radius:29px;background:#fff;position:relative;
+  .tmr-gif{width:156px;height:156px;border-radius:24px;background:#fff;position:relative;
     overflow:hidden;flex:none;margin-top:6px;display:none}
   .tmr-gif.on{display:block}
   .tmr-gif i{position:absolute;inset:0;background-repeat:no-repeat;
-    background-size:2256px 188px;background-position:0 0;
+    background-size:1872px 156px;background-position:0 0;
     animation:exrun2 1.3s steps(12) infinite}
-  @keyframes exrun2{from{background-position:0 0}to{background-position:-2256px 0}}
+  @keyframes exrun2{from{background-position:0 0}to{background-position:-1872px 0}}
   .tmr-gif img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 
   .tmr-eq{display:none;align-items:center;gap:8px;margin-top:10px;padding:10px 14px;
@@ -390,6 +423,20 @@
   .tmr-watch svg{width:16px;height:16px;flex:none;color:var(--accent)}
   .tmr-watch u{text-decoration:none;color:var(--muted);font-weight:600}
 
+  /* відкритий таймер — аркуш із заокругленим верхом, як міні-бар */
+  .tmr.open:not(.mini){top:calc(env(safe-area-inset-top) + 6px);bottom:0;height:auto;
+    border-radius:22px 22px 0 0;
+    max-width:480px;margin:0 auto;padding-top:12px;overflow:hidden;
+    border-top:1px solid var(--line);box-shadow:0 -12px 34px rgba(0,0,0,.5)}
+
+  .tmr-total{font-size:13.5px;font-weight:700;color:var(--muted);margin-top:3px;
+    font-variant-numeric:tabular-nums;letter-spacing:.01em}
+
+  /* відпочинок — гіфка завмирає на першому кадрі й гасне;
+     рух на екрані тепер означає рівно одне: працюй */
+  .tmr.rest .tmr-gif{opacity:.62}
+  .tmr.rest .tmr-gif i{animation:none;background-position:0 0}
+
   /* ── згортання таймера в міні-бар ── */
   .tmr{will-change:transform}
   .tmr-grab{flex:none;padding:2px 0 10px;display:flex;justify-content:center;cursor:grab;
@@ -403,7 +450,7 @@
     padding:0 0 env(safe-area-inset-bottom);border-radius:20px 20px 0 0;
     border-top:1px solid var(--line);box-shadow:0 -10px 30px rgba(0,0,0,.45);
     max-width:480px;margin:0 auto}
-  .tmr.mini .tmr-grab,.tmr.mini .tmr-top,.tmr.mini .tmr-body,.tmr.mini .tmr-ctl{display:none}
+  .tmr.mini .tmr-grab,.tmr.mini .tmr-top,.tmr.mini .tmr-list,.tmr.mini .tmr-ctl{display:none}
   .tmr.mini .tmr-mini{display:block}
 
   .tmr-mini-prog{position:absolute;top:0;left:0;height:3px;background:var(--accent);
@@ -425,6 +472,102 @@
   /* щоб міні-бар не накривав підвал і кнопку чату */
   body.minibar{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
   body.minibar .ai-fab{bottom:calc(84px + env(safe-area-inset-bottom))}
+
+  /* ── меню на сьогодні ── */
+  .mn-goal{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--card);
+    border:1px solid var(--line);border-radius:18px;margin-bottom:10px}
+  .mn-goal-n{flex:1;min-width:0}
+  .mn-goal-n b{display:block;font-size:21px;font-weight:800;letter-spacing:-.02em;
+    font-variant-numeric:tabular-nums}
+  .mn-goal-n span{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-top:2px}
+  .mn-bar{height:6px;border-radius:3px;background:var(--card2);overflow:hidden;margin-top:9px}
+  .mn-bar i{display:block;height:100%;width:0;border-radius:3px;background:var(--accent);
+    transition:width .35s}
+  .mn-bar i.over{background:#FFC861}
+  .mn-day{font-family:inherit;font-size:12px;font-weight:700;color:var(--accent);
+    background:var(--accent-dim);border:0;border-radius:8px;padding:3px 8px;cursor:pointer;
+    margin-left:2px}
+  .mn-day.rest{color:var(--muted);background:var(--card2)}
+  .mn-mac{display:flex;gap:14px;margin-top:9px}
+  .mn-mac div{font-size:11.5px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+  .mn-mac u{text-decoration:none;color:var(--ink2)}
+
+  .mn-meal{background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:14px 15px;margin-bottom:9px}
+  .mn-meal.eaten{opacity:.5}
+  .mn-top{display:flex;align-items:flex-start;gap:11px}
+  .mn-slot{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:3px}
+  .mn-top-t{flex:1;min-width:0}
+  .mn-top-t b{display:block;font-size:16px;font-weight:700;letter-spacing:-.01em;line-height:1.25}
+  .mn-kc{font-size:13px;font-weight:800;color:var(--ink2);flex:none;
+    font-variant-numeric:tabular-nums;padding-top:12px}
+  .mn-tick{width:28px;height:28px;flex:none;border-radius:50%;border:1.5px solid var(--line2);
+    background:transparent;color:var(--muted);font-size:14px;cursor:pointer;display:grid;
+    place-items:center;padding:0;font-family:inherit;margin-top:8px}
+  .mn-meal.eaten .mn-tick{border-color:var(--ok);color:var(--ok);background:rgba(78,214,161,.12)}
+  .mn-ing{font-size:13px;color:var(--ink2);font-weight:600;line-height:1.5;margin-top:8px}
+  .mn-how{font-size:12.5px;color:var(--muted);font-weight:500;line-height:1.45;margin-top:6px}
+  .mn-note{font-size:12.5px;color:#FFC861;font-weight:600;line-height:1.45;
+    padding:11px 13px;background:rgba(255,200,97,.09);border-radius:13px;margin-bottom:9px}
+
+  .mn-acts{display:flex;gap:8px;margin-top:2px}
+  .mn-btn{flex:1;background:var(--card);border:1px solid var(--line);color:var(--ink2);
+    font-family:inherit;font-size:13.5px;font-weight:700;padding:13px 8px;border-radius:14px;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px}
+  .mn-btn:active{background:var(--card2)}
+  .mn-btn svg{width:16px;height:16px;flex:none}
+  .mn-btn.main{background:var(--accent);color:#0B0B0D;border-color:var(--accent)}
+  .mn-empty{font-size:13.5px;color:var(--muted);font-weight:600;line-height:1.5;
+    text-align:center;padding:18px 10px 14px}
+
+  .mn-snack{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--card);
+    border:1px solid var(--line);border-radius:14px;margin-bottom:7px;font-size:13.5px;font-weight:600}
+  .mn-snack b{flex:1;min-width:0;font-weight:600;color:var(--ink2);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mn-snack span{flex:none;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums}
+  .mn-snack button{flex:none;width:24px;height:24px;border-radius:50%;border:0;background:var(--card2);
+    color:var(--muted);font-size:13px;cursor:pointer;padding:0;line-height:1;font-family:inherit}
+
+  /* ── холодильник ── */
+  .fr{position:fixed;inset:0;z-index:330;display:none;flex-direction:column;background:var(--bg)}
+  .fr.open{display:flex}
+  .fr-hd{flex:none;display:flex;align-items:center;gap:11px;
+    padding:calc(12px + env(safe-area-inset-top)) 16px 12px;
+    border-bottom:1px solid var(--line)}
+  .fr-hd-t{flex:1;min-width:0}
+  .fr-hd-t b{display:block;font-size:16px;font-weight:800;letter-spacing:-.01em}
+  .fr-hd-t span{display:block;font-size:12px;color:var(--muted);font-weight:600;margin-top:1px}
+  .fr-x{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--card);
+    color:var(--ink2);font-size:15px;cursor:pointer;flex:none;line-height:1;font-family:inherit;padding:0}
+  .fr-body{flex:1;overflow-y:auto;padding:14px 16px calc(14px + env(safe-area-inset-bottom));
+    max-width:480px;margin:0 auto;width:100%}
+  .fr-foot{flex:none;padding:10px 16px calc(14px + env(safe-area-inset-bottom));
+    border-top:1px solid var(--line);max-width:480px;margin:0 auto;width:100%}
+
+  .fr-item{display:flex;align-items:center;gap:11px;padding:12px 14px;background:var(--card);
+    border:1px solid var(--line);border-radius:15px;margin-bottom:7px}
+  .fr-item-t{flex:1;min-width:0}
+  .fr-item-t b{display:block;font-size:14.5px;font-weight:700;letter-spacing:-.01em;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .fr-item-t span{display:block;font-size:12px;color:var(--muted);font-weight:600;margin-top:2px;
+    font-variant-numeric:tabular-nums}
+  .fr-est{font-size:9.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+    color:#FFC861;background:rgba(255,200,97,.12);padding:3px 6px;border-radius:6px;flex:none}
+  .fr-del{width:28px;height:28px;flex:none;border-radius:50%;border:0;background:var(--card2);
+    color:var(--muted);font-size:14px;cursor:pointer;padding:0;line-height:1;font-family:inherit}
+
+  /* картка підтвердження: нічого не пишемо в холодильник без неї */
+  .fr-ask{background:var(--card);border:1px solid var(--accent);border-radius:18px;
+    padding:15px;margin-bottom:9px}
+  .fr-ask-n{font-size:16px;font-weight:800;letter-spacing:-.01em;margin-bottom:3px}
+  .fr-ask-m{font-size:13px;color:var(--ink2);font-weight:600;font-variant-numeric:tabular-nums}
+  .fr-ask-w{font-size:12.5px;color:#FFC861;font-weight:600;line-height:1.4;margin-top:7px}
+  .fr-ask-b{display:flex;gap:8px;margin-top:12px}
+  .fr-ask-b button{flex:1;font-family:inherit;font-size:13.5px;font-weight:700;padding:11px 8px;
+    border-radius:12px;cursor:pointer;border:1px solid var(--line);background:var(--card2);color:var(--ink2)}
+  .fr-ask-b button.ok{background:var(--accent);color:#0B0B0D;border-color:var(--accent)}
+  .fr-busy{font-size:13px;color:var(--muted);font-weight:600;text-align:center;padding:14px}
 
 </style>
 </head>
@@ -449,6 +592,14 @@
     <div class="sec-title">Програма · через день<b id="activityTitle">Push · Pull · Legs</b></div>
   </div>
   <div id="activityTasks"></div>
+</section>
+
+<section id="mnSec">
+  <div class="sec-head">
+    <div class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v8a3 3 0 0 0 6 0V3M8 11v10M19 3c-1.7 1.4-2.5 3.4-2.5 6s.8 3.5 2.5 3.5V21"/></svg></div>
+    <div class="sec-title">Меню<b id="mnDayT">на сьогодні</b></div>
+  </div>
+  <div id="mnBody"></div>
 </section>
 
 <section id="hwSec" style="display:none">
@@ -485,12 +636,24 @@
   </div>
 </div>
 
+<div class="fr" id="fr" aria-hidden="true">
+  <div class="fr-hd">
+    <div class="fr-hd-t"><b>Холодильник</b><span id="frCount">—</span></div>
+    <button class="fr-x" id="frX" aria-label="Закрити">✕</button>
+  </div>
+  <div class="fr-body" id="frBody"></div>
+  <div class="fr-foot">
+    <button class="mn-btn main" id="frAdd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h2L9 4h6l1.5 2h2A2.5 2.5 0 0 1 21 8.5v8A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5z"/><circle cx="12" cy="12" r="3.2"/></svg>Додати продукти</button>
+    <input type="file" id="frFile" accept="image/*" multiple hidden>
+  </div>
+</div>
+
 <div class="tmr" id="tmr" aria-hidden="true">
   <div class="tmr-grab" id="tmrGrab"><i></i></div>
   <div class="tmr-top" id="tmrTop">
     <button class="tmr-min" id="tmrMin" aria-label="Згорнути">⌄</button>
     <div class="tmr-prog"><i id="tmrProg"></i></div>
-    <div class="tmr-count" id="tmrCount">1 / 1</div>
+    <div class="tmr-count"><span id="tmrCount">1 / 1</span><u id="tmrAway">0:00</u></div>
     <button class="tmr-x" id="tmrX" aria-label="Завершити">✕</button>
   </div>
   <div class="tmr-mini" id="tmrMini">
@@ -501,7 +664,8 @@
       <button class="tmr-mini-btn" id="tmrMiniPause" aria-label="Пауза"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="5" width="3.6" height="14" rx="1.2"/><rect x="13.4" y="5" width="3.6" height="14" rx="1.2"/></svg></button>
     </div>
   </div>
-  <div class="tmr-body">
+  <div class="tmr-list" id="tmrList">
+  <div class="tl-card" id="tlCard">
     <div class="tmr-phase" id="tmrPhase">—</div>
     <div class="tmr-name" id="tmrName">—</div>
     <div class="tmr-meta" id="tmrMeta"></div>
@@ -510,9 +674,11 @@
       <svg viewBox="0 0 240 240"><circle class="trk" cx="120" cy="120" r="110"/><circle class="bar" id="tmrArc" cx="120" cy="120" r="110"/></svg>
       <div class="tmr-time" id="tmrTime">0:00</div>
     </div>
+    <div class="tmr-total" id="tmrTotal">0:00 / 0:00</div>
     <div class="tmr-next" id="tmrNext"></div>
     <div class="tmr-watch" id="tmrW"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="6" width="10" height="12" rx="3"/><path d="M9 6V3.6h6V6M9 18v2.4h6V18M12 10v2.4l1.6 1.2"/></svg><span id="tmrWT"></span></div>
     <div class="tmr-eq" id="tmrEq"><i id="tmrEqI"></i><span id="tmrEqT"></span></div>
+  </div>
   </div>
   <div class="tmr-ctl">
     <button class="tmr-btn" id="tmrPlus">+15 с</button>
@@ -696,12 +862,13 @@
   var fbAuth=null, fbDb=null, fbUser=null;
   try{ firebase.initializeApp(FB_CONFIG); fbAuth=firebase.auth(); fbDb=firebase.firestore(); }catch(e){}
   function cloudDoc(){ return (fbDb&&fbUser)?fbDb.collection("users").doc(fbUser.uid):null; }
-  function pushToCloud(){ var d=cloudDoc(); if(d) d.set({entries:state.entries},{merge:true}).catch(function(){}); }
+  function pushToCloud(){ var d=cloudDoc(); if(d) d.set({entries:state.entries,goal:state.goal||null},{merge:true}).catch(function(){}); }
   function syncFromCloud(){
     var d=cloudDoc(); if(!d) return;
     d.get().then(function(s){
       var cl = s.exists?(s.data().entries||{}):{};
       state.entries = Object.assign({}, cl, state.entries);
+      if(!state.goal && s.exists && s.data().goal) state.goal = s.data().goal;
       saveRaw(JSON.stringify(state)); renderAll();
       if(!s.exists) pushToCloud();
     }).catch(function(){});
@@ -717,7 +884,7 @@
       document.getElementById("signInBtn").onclick=function(){ fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); };
     }
   }
-  if(fbAuth) fbAuth.onAuthStateChanged(function(u){ fbUser=u; updateAuthUI(); if(u){ syncFromCloud(); ovPull(); chatPull(); hwRefresh(); } else { renderWatch(); } });
+  if(fbAuth) fbAuth.onAuthStateChanged(function(u){ fbUser=u; updateAuthUI(); if(u){ syncFromCloud(); ovPull(); chatPull(); frPull(); mnPull(); hwRefresh(); } else { renderWatch(); } });
 
   function pad(n){ return n<10?"0"+n:""+n; }
   function fmt(d){ return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
@@ -810,7 +977,7 @@
   }
 
 
-  function renderAll(){ renderHeader(); renderCalendar(); renderActivity(); renderWatch(); updateAuthUI(); }
+  function renderAll(){ renderHeader(); renderCalendar(); renderActivity(); renderWatch(); updateAuthUI(); renderMenu(); }
 
   document.getElementById("prevWk").addEventListener("click",function(){ weekStart=addDays(weekStart,-7); renderCalendar(); });
   document.getElementById("nextWk").addEventListener("click",function(){ weekStart=addDays(weekStart,7); renderCalendar(); });
@@ -1093,6 +1260,102 @@
   var $ = function(id){ return document.getElementById(id); };
   var ARC = 691.15;
 
+
+  // ── список вправ навколо активної картки ──────────────────────
+  // Префікс tl- навмисний: ex-row / ex-sec вже зайняті модалкою дня.
+  // Картка — один і той самий вузол: її переставляють у потоці, тож
+  // кільце й гіфка при переході між вправами не перемальовуються з нуля.
+  var listEl = document.getElementById("tmrList");
+  var tlCard = document.getElementById("tlCard");
+  var tlRows = [], cardAt = -1;
+
+  function curEi(){
+    var p = T.ph[T.i];
+    if(!p) return 0;
+    return p.between ? Math.min(p.ei + 1, tlRows.length - 1) : p.ei;
+  }
+
+  // Скільки підходів вправи вже позаду — для крапок у згорнутому рядку.
+  function doneSets(ei){
+    var n = 0;
+    for(var k = 0; k < T.i; k++){
+      var q = T.ph[k];
+      if(q.kind === "work" && q.ei === ei) n++;
+    }
+    return n;
+  }
+
+  function buildList(sections, list){
+    listEl.innerHTML = "";          // tlCard від'єднується і повертається нижче
+    tlRows = []; cardAt = -1;
+
+    var secOf = [];
+    sections.forEach(function(sec){
+      (sec.items || []).forEach(function(e){
+        if(e.off) return;
+        if(/альтернатива/i.test(e.n)) return;
+        secOf.push(String(sec.section || "").split(" · ")[0]);
+      });
+    });
+
+    var lastSec = null;
+    list.forEach(function(e, ei){
+      if(secOf[ei] && secOf[ei] !== lastSec){
+        lastSec = secOf[ei];
+        var h = document.createElement("div");
+        h.className = "tl-sec"; h.textContent = lastSec;
+        listEl.appendChild(h);
+      }
+      var p = planOf(e), dots = "";
+      for(var s = 0; s < p.sets; s++) dots += "<i></i>";
+      var r = document.createElement("div");
+      r.className = "tl-row";
+      r.innerHTML = '<span class="tl-tick">\u2713</span><b></b>'
+                  + '<span class="tl-dots">' + dots + '</span>'
+                  + '<span class="tl-spec"></span>';
+      r.querySelector("b").textContent = e.n;
+      r.querySelector(".tl-spec").textContent = p.type === "set" ? p.sets + "\u00D7" + p.spec : p.spec;
+      listEl.appendChild(r);
+      tlRows.push({el: r, ei: ei, sets: p.sets});
+    });
+
+    placeCard(0);
+  }
+
+  function placeCard(ei){
+    if(cardAt === ei && tlCard.parentElement === listEl) return;
+    cardAt = ei;
+    var r = tlRows[ei];
+    listEl.insertBefore(tlCard, r ? r.el : null);
+    tlRows.forEach(function(x){ x.el.style.display = (x.ei === ei ? "none" : ""); });
+  }
+
+  function paintRows(){
+    var now = curEi();
+    tlRows.forEach(function(r){
+      var d = doneSets(r.ei);
+      r.el.classList.toggle("done", d >= r.sets && r.ei < now);
+      var dots = r.el.querySelectorAll(".tl-dots i");
+      for(var k = 0; k < dots.length; k++) dots[k].classList.toggle("on", k < d);
+    });
+  }
+
+  // Якір: активна картка сама вертається в центр на кожній зміні фази.
+  function tlAnchor(){
+    if(!tlCard.parentElement || tmr.classList.contains("mini")) return;
+    try{ tlCard.scrollIntoView({block:"center", behavior:"smooth"}); }
+    catch(e){ tlCard.scrollIntoView(); }
+  }
+
+  // Картку прогортали геть — відлік переїжджає в шапку, щоб не губитись.
+  function checkAway(){
+    if(!tlCard.parentElement){ tmr.classList.remove("away"); return; }
+    var cb = tlCard.getBoundingClientRect(), lb = listEl.getBoundingClientRect();
+    var seen = Math.min(cb.bottom, lb.bottom) - Math.max(cb.top, lb.top);
+    tmr.classList.toggle("away", seen < cb.height * 0.25);
+  }
+  listEl.addEventListener("scroll", checkAway, {passive:true});
+
   function tmrPaint(){
     var p = T.ph[T.i]; if(!p) return;
     var rest = (p.kind === "rest");
@@ -1142,6 +1405,9 @@
     $("tmrTime").textContent = mmss(Math.ceil(T.left));
     $("tmrArc").style.strokeDashoffset = String(ARC * (1 - T.left / p.dur));
     $("tmrCount").textContent = (p.ei + (p.between ? 2 : 1)) + " / " + T.nEx;
+    $("tmrAway").textContent = mmss(Math.ceil(T.left));
+    placeCard(curEi()); paintRows(); checkAway();
+    $("tmrTotal").textContent = mmss(Math.round(T.elapsed)) + " / " + mmss(Math.round(T.total));
     $("tmrProg").style.width = Math.min(100, T.elapsed / T.total * 100) + "%";
     $("tmrMiniProg").style.width = Math.min(100, T.elapsed / T.total * 100) + "%";
     $("tmrMiniName").textContent = rest
@@ -1157,6 +1423,7 @@
     T.left = T.ph[T.i].dur;
     if(auto) beep(T.ph[T.i].kind === "work" ? 880 : 520, 200, .18);
     tmrPaint();
+    tlAnchor();
   }
 
   function tmrLoop(){
@@ -1174,6 +1441,7 @@
     var b = buildPhases(sections);
     if(!b.phases.length) return;
     T.ph = b.phases; T.nEx = b.list.length; T.i = 0; T.left = b.phases[0].dur;
+    buildList(sections, b.list);
     T.total = 0; b.phases.forEach(function(x){ T.total += x.dur; });
     T.elapsed = 0; T.paused = false; T.on = true; T.gifOf = undefined;
     T.wIdx = (wIdx == null ? null : wIdx);
@@ -1201,6 +1469,7 @@
       else setTimeout(function(){
         go.classList.remove("on");
         tmrPaint();
+        requestAnimationFrame(tlAnchor);
         T.last = Date.now();
         T.tick = setInterval(tmrLoop, 200);
       }, 900);
@@ -1211,7 +1480,7 @@
   function tmrStop(){
     if(T.tick){ clearInterval(T.tick); T.tick = null; }
     T.on = false;
-    tmr.classList.remove("open","rest","mini");
+    tmr.classList.remove("open","rest","mini","away");
     tmr.style.transform = "";
     document.body.classList.remove("minibar"); tmr.setAttribute("aria-hidden","true");
     $("tmrGo").classList.remove("on");
@@ -1259,6 +1528,7 @@
     document.body.classList.toggle("noscroll", !on && T.on);
     if(!on) wakeOn(); else wakeOff();
     tmrPaint();
+    if(!on) requestAnimationFrame(tlAnchor);
   }
 
   $("tmrMin").addEventListener("click", function(){ tmrSetMini(true); });
@@ -1316,7 +1586,7 @@
 
   $("tmrX").addEventListener("click", tmrStop);
   $("tmrSkip").addEventListener("click", function(){ if(T.on) tmrNext(false); else tmrStop(); });
-  $("tmrPlus").addEventListener("click", function(){ if(T.on){ T.left += 15; T.ph[T.i].dur += 15; tmrPaint(); } });
+  $("tmrPlus").addEventListener("click", function(){ if(T.on){ T.left += 15; T.ph[T.i].dur += 15; T.total += 15; tmrPaint(); } });
   $("tmrPause").addEventListener("click", function(){
     if(!T.on) return;
     T.paused = !T.paused;
@@ -1565,6 +1835,404 @@
       overrides: OV,
       doneRecently: recent
     };
+  }
+
+  // ══ ХОЛОДИЛЬНИК І МЕНЮ ═══════════════════════════════════════
+  // Холодильник — список без кількостей: інвентар, який треба списувати
+  // після кожного прийому їжі, розходиться з реальністю за тиждень.
+  var FR = [], FR_KEY = AI_WHO + "Fridge_v1";
+  var MENU = {}, MN_KEY = AI_WHO + "Menu_v1", MN_DAYS = 7;
+
+  function frDoc(){ return (fbDb && fbUser) ? fbDb.collection("fridge").doc(fbUser.uid) : null; }
+  function mnDoc(){ return (fbDb && fbUser) ? fbDb.collection("menu").doc(fbUser.uid) : null; }
+
+  function frLoad(){ try{ FR = JSON.parse(localStorage.getItem(FR_KEY)) || []; }catch(e){ FR = []; } }
+  function mnLoad(){ try{ MENU = JSON.parse(localStorage.getItem(MN_KEY)) || {}; }catch(e){ MENU = {}; } }
+  frLoad(); mnLoad();
+
+  function frSave(){
+    try{ localStorage.setItem(FR_KEY, JSON.stringify(FR)); }catch(e){}
+    var d = frDoc();
+    if(d) d.set({ j:JSON.stringify(FR), updated:new Date().toISOString(), who:AI_WHO }).catch(function(){});
+  }
+  function mnSave(){
+    // тримаємо лише останні дні, інакше документ росте без меж
+    var keys = Object.keys(MENU).sort();
+    while(keys.length > MN_DAYS) delete MENU[keys.shift()];
+    try{ localStorage.setItem(MN_KEY, JSON.stringify(MENU)); }catch(e){}
+    var d = mnDoc();
+    if(d) d.set({ j:JSON.stringify(MENU), updated:new Date().toISOString(), who:AI_WHO }).catch(function(){});
+  }
+
+  function frPull(){
+    var d = frDoc(); if(!d) return;
+    d.get().then(function(s){
+      if(!s.exists){ if(FR.length) frSave(); return; }
+      try{
+        var cloud = JSON.parse(s.data().j) || [];
+        if(cloud.length || !FR.length){ FR = cloud; try{ localStorage.setItem(FR_KEY, JSON.stringify(FR)); }catch(e){} }
+      }catch(e){}
+      frPaint(); renderMenu();
+    }).catch(function(){});
+  }
+  function mnPull(){
+    var d = mnDoc(); if(!d) return;
+    d.get().then(function(s){
+      if(!s.exists) return;
+      try{
+        var cloud = JSON.parse(s.data().j) || {};
+        Object.keys(cloud).forEach(function(k){ if(!MENU[k]) MENU[k] = cloud[k]; });
+        try{ localStorage.setItem(MN_KEY, JSON.stringify(MENU)); }catch(e){}
+      }catch(e){}
+      renderMenu();
+    }).catch(function(){});
+  }
+
+  // ── норма на день ─────────────────────────────────────────────
+  // Живе в state, тож їде в хмару разом із рештою даних трекера.
+  // Норма з InBody 18.10.26. Підтримка порахована знизу вгору, по
+  // складових: BMR 1929 + NEAT ~400 (сидяча робота) + зал ~125/день
+  // + 10% на травлення = ~2730. Множник 1.55 давав 2990 і завищував —
+  // 3020 у звіті InBody це той самий множник, а не окремий вимір.
+  // База 2400 — дефіцит 12%, щоб утримати 41.4 кг м'язів.
+  // Білок 185 г = 2.1 г/кг ваги. Циклювання ±175 робить середнє по
+  // циклу рівно базою, бо тренувальних і відпочинкових днів порівну.
+  var GOAL_BASE = 2400, GOAL_PROT = 185, GOAL_SWING = 175;
+
+  function goal(){
+    var g = state.goal || {};
+    var base = g.kcal || GOAL_BASE;
+    return {
+      base: base,
+      kcal: base + (isTrain() ? GOAL_SWING : -GOAL_SWING),
+      p:    g.p || GOAL_PROT
+    };
+  }
+
+  // ── підсумки ──────────────────────────────────────────────────
+  function sumItems(items){
+    var t = { kcal:0, p:0, f:0, c:0 };
+    (items || []).forEach(function(x){
+      var k = (x.g || 0) / 100;
+      t.kcal += (x.kcal || 0) * k; t.p += (x.p || 0) * k;
+      t.f    += (x.f    || 0) * k; t.c += (x.c || 0) * k;
+    });
+    t.kcal = Math.round(t.kcal); t.p = Math.round(t.p);
+    t.f = Math.round(t.f); t.c = Math.round(t.c);
+    return t;
+  }
+  function addT(a, b){
+    return { kcal:a.kcal+b.kcal, p:a.p+b.p, f:a.f+b.f, c:a.c+b.c };
+  }
+
+  function eatenToday(){
+    var en = entry(), mn = MENU[state.selectedDate], tot = {kcal:0,p:0,f:0,c:0};
+    if(mn && mn.meals) mn.meals.forEach(function(m){
+      if(en.meals && en.meals[m.slot]) tot = addT(tot, sumItems(m.items));
+    });
+    (en.snacks || []).forEach(function(s){ tot = addT(tot, sumItems([s])); });
+    return tot;
+  }
+
+  // ── екран холодильника ────────────────────────────────────────
+  var frEl = document.getElementById("fr"), frBody = document.getElementById("frBody");
+  var frAsk = [];            // черга карток, що чекають підтвердження
+  var frBusyN = 0;
+
+  function frPaint(){
+    var h = "";
+    if(frBusyN) h += '<div class="fr-busy">Розпізнаю ' + frBusyN + ' фото…</div>';
+
+    frAsk.forEach(function(a, i){
+      // У картки помилки кнопки підтвердження бути не може: інакше в
+      // холодильник лягає текст помилки з нульовим КБЖВ.
+      if(a.bad){
+        h += '<div class="fr-ask">'
+           +   '<div class="fr-ask-n">Не вдалося</div>'
+           +   '<div class="fr-ask-w">' + esc(a.err || "") + '</div>'
+           +   '<div class="fr-ask-b"><button data-no="' + i + '">Зрозуміло</button></div>'
+           + '</div>';
+        return;
+      }
+      h += '<div class="fr-ask">'
+         +   '<div class="fr-ask-n">' + esc(a.n) + '</div>'
+         +   '<div class="fr-ask-m">' + a.kcal + ' ккал · Б' + a.p + ' Ж' + a.f + ' В' + a.c + ' на 100 г</div>'
+         +   (a.src === "est"
+              ? '<div class="fr-ask-w">Етикетки на фото не було — це довідкове значення. Перевір, якщо важливо.</div>' : "")
+         +   (a.note ? '<div class="fr-ask-w">' + esc(a.note) + '</div>' : "")
+         +   '<div class="fr-ask-b">'
+         +     '<button data-no="' + i + '">Не те</button>'
+         +     '<button class="ok" data-yes="' + i + '">У холодильник</button>'
+         +   '</div>'
+         + '</div>';
+    });
+
+    if(!FR.length && !frAsk.length && !frBusyN){
+      h += '<div class="mn-empty">Поки порожньо.<br>Натисни «Додати продукти» і зніми те, що лежить у холодильнику — я розпізнаю назву й КБЖВ.</div>';
+    }
+
+    FR.forEach(function(x, i){
+      h += '<div class="fr-item">'
+         +   '<div class="fr-item-t"><b>' + esc(x.n) + '</b>'
+         +     '<span>' + x.kcal + ' ккал · Б' + x.p + ' Ж' + x.f + ' В' + x.c + ' / 100 г</span></div>'
+         +   (x.src === "est" ? '<span class="fr-est">оцінка</span>' : "")
+         +   '<button class="fr-del" data-del="' + i + '" aria-label="Прибрати">✕</button>'
+         + '</div>';
+    });
+
+    frBody.innerHTML = h;
+    document.getElementById("frCount").textContent =
+      FR.length ? FR.length + " " + plural(FR.length, "продукт", "продукти", "продуктів") : "порожньо";
+  }
+
+  function plural(n, a, b, c){
+    var x = n % 100; if(x > 10 && x < 20) return c;
+    x = n % 10; return x === 1 ? a : (x > 1 && x < 5 ? b : c);
+  }
+
+  frBody.addEventListener("click", function(e){
+    var b = e.target.closest("button"); if(!b) return;
+    if(b.dataset.del != null){
+      FR.splice(+b.dataset.del, 1); frSave(); frPaint(); renderMenu(); return;
+    }
+    if(b.dataset.yes != null){
+      var a = frAsk.splice(+b.dataset.yes, 1)[0];
+      if(a && !a.bad && a.n){ FR.unshift({ n:a.n, kcal:a.kcal, p:a.p, f:a.f, c:a.c, src:a.src }); frSave(); }
+      frPaint(); renderMenu(); return;
+    }
+    if(b.dataset.no != null){ frAsk.splice(+b.dataset.no, 1); frPaint(); }
+  });
+
+  document.getElementById("frX").addEventListener("click", function(){
+    frEl.classList.remove("open"); frEl.setAttribute("aria-hidden","true");
+    document.body.classList.remove("noscroll");
+  });
+  function frOpen(){
+    frEl.classList.add("open"); frEl.setAttribute("aria-hidden","false");
+    document.body.classList.add("noscroll");
+    frPaint();
+  }
+
+  // ── фото → продукт ────────────────────────────────────────────
+  // Стискаємо на клієнті: інакше кожне фото з 17 Air — це десятки мегабайт,
+  // яких не бере ні воркер, ні API.
+  function shrink(file){
+    return new Promise(function(res, rej){
+      var img = new Image(), url = URL.createObjectURL(file);
+      img.onload = function(){
+        URL.revokeObjectURL(url);
+        var max = 1100, k = Math.min(1, max / Math.max(img.width, img.height));
+        var cv = document.createElement("canvas");
+        cv.width  = Math.max(1, Math.round(img.width  * k));
+        cv.height = Math.max(1, Math.round(img.height * k));
+        cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+        var d = cv.toDataURL("image/jpeg", 0.82);
+        res({ media:"image/jpeg", data: d.slice(d.indexOf(",") + 1) });
+      };
+      img.onerror = function(){ URL.revokeObjectURL(url); rej(new Error("формат не читається")); };
+      img.src = url;
+    });
+  }
+
+  function askWorker(payload){
+    if(!AI_URL) return Promise.reject(new Error("Воркер не налаштований"));
+    if(!fbUser) return Promise.reject(new Error("Увійди через Google"));
+    return fbUser.getIdToken().then(function(tok){
+      return fetch(AI_URL, {
+        method:"POST", headers:{"Content-Type":"application/json"},
+        body: JSON.stringify(Object.assign({ idToken:tok, who:AI_WHO }, payload))
+      });
+    }).then(function(r){
+      return r.json().then(function(j){
+        if(!r.ok) throw new Error((j && j.error) || ("Сервер відповів " + r.status));
+        return j;
+      });
+    });
+  }
+
+  document.getElementById("frAdd").addEventListener("click", function(){
+    document.getElementById("frFile").click();
+  });
+  document.getElementById("frFile").addEventListener("change", function(e){
+    var files = [].slice.call(e.target.files || []).slice(0, 10);
+    e.target.value = "";                      // щоб те саме фото можна було обрати вдруге
+    if(!files.length) return;
+    frBusyN += files.length; frPaint();
+
+    files.forEach(function(f){
+      shrink(f)
+        .then(function(img){ return askWorker({ kind:"product", img:img }); })
+        .then(function(j){
+          if(j.product) frAsk.push(j.product);
+          else frAsk.push({ bad:true, err:j.error || "модель не розпізнала продукт" });
+        })
+        .catch(function(err){
+          frAsk.push({ bad:true, err:err.message });
+        })
+        .then(function(){ frBusyN = Math.max(0, frBusyN - 1); frPaint(); });
+    });
+  });
+
+  // ── секція меню ───────────────────────────────────────────────
+  var SLOT_UK = { breakfast:"Сніданок", lunch:"Обід", dinner:"Вечеря" };
+  var mnBusy = false;
+
+  // Тренування відмічається вже ПІСЛЯ залу, а меню потрібне до нього —
+  // тож відмітка лише задає замовчування, а перемкнути можна вручну.
+  function isTrain(){
+    var en = entry();
+    if(typeof en.train === "boolean") return en.train;
+    return en.wIdx != null;
+  }
+  function dayType(){
+    var en = entry();
+    if(isTrain()) return (en.wIdx != null && ROTATION[en.wIdx] ? ROTATION[en.wIdx].title : "тренування");
+    return "відпочинок";
+  }
+
+  function renderMenu(){
+    var box = document.getElementById("mnBody"), g = goal(), eat = eatenToday();
+    var mn = MENU[state.selectedDate], en = entry();
+    var pct = Math.min(100, Math.round(eat.kcal / g.kcal * 100));
+    var over = eat.kcal > g.kcal;
+
+    var h = '<div class="mn-goal"><div class="mn-goal-n">'
+          +   '<b>' + eat.kcal + ' / ' + g.kcal + ' ккал</b>'
+          +   '<span>Білок ' + eat.p + ' / ' + g.p + ' г · <button class="mn-day'
+          +     (isTrain() ? "" : " rest") + '" id="mnDay">' + esc(dayType()) + '</button></span>'
+          +   '<div class="mn-bar"><i class="' + (over ? "over" : "") + '" style="width:' + pct + '%"></i></div>'
+          +   '<div class="mn-mac"><div>Ж <u>' + eat.f + ' г</u></div><div>В <u>' + eat.c + ' г</u></div></div>'
+          + '</div></div>';
+
+    if(mn && mn.note) h += '<div class="mn-note">' + esc(mn.note) + '</div>';
+
+    if(mn && mn.meals && mn.meals.length){
+      mn.meals.forEach(function(m){
+        var tt = sumItems(m.items), done = !!(en.meals && en.meals[m.slot]);
+        h += '<div class="mn-meal' + (done ? " eaten" : "") + '">'
+           +   '<div class="mn-top">'
+           +     '<div class="mn-top-t"><div class="mn-slot">' + (SLOT_UK[m.slot] || m.slot) + '</div>'
+           +       '<b>' + esc(m.title) + '</b></div>'
+           +     '<div class="mn-kc">' + tt.kcal + ' ккал<br>Б' + tt.p + '</div>'
+           +     '<button class="mn-tick" data-eat="' + m.slot + '" aria-label="Зʼїв">✓</button>'
+           +   '</div>'
+           +   '<div class="mn-ing">' + m.items.map(function(x){
+                 return esc(x.n) + " — " + x.g + " г"; }).join(" · ") + '</div>'
+           +   (m.how ? '<div class="mn-how">' + esc(m.how) + '</div>' : "")
+           + '</div>';
+      });
+    } else {
+      h += '<div class="mn-empty">' + (FR.length
+            ? "Меню ще не складено на цей день."
+            : "Спершу наповни холодильник — із порожнього меню не вийде.") + '</div>';
+    }
+
+    (en.snacks || []).forEach(function(s, i){
+      var tt = sumItems([s]);
+      h += '<div class="mn-snack"><b>' + esc(s.n) + ' · ' + s.g + ' г</b>'
+         +   '<span>' + tt.kcal + ' ккал</span>'
+         +   '<button data-unsnack="' + i + '" aria-label="Прибрати">✕</button></div>';
+    });
+
+    h += '<div class="mn-acts">'
+       +   '<button class="mn-btn" id="mnFridge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M6 10h12M9.5 6v2M9.5 13.5v2.5"/></svg>Холодильник</button>'
+       +   '<button class="mn-btn" id="mnSnack">+ Перекус</button>'
+       +   '<button class="mn-btn main" id="mnGen">' + (mnBusy ? "Складаю…" : (mn ? "Інше меню" : "Скласти меню")) + '</button>'
+       + '</div>';
+
+    box.innerHTML = h;
+    document.getElementById("mnDayT").textContent =
+      state.selectedDate === todayStr() ? "на сьогодні" : state.selectedDate;
+  }
+
+  document.getElementById("mnBody").addEventListener("click", function(e){
+    var b = e.target.closest("button"); if(!b) return;
+
+    if(b.id === "mnDay"){
+      var en0 = entry(); en0.train = !isTrain(); save(); renderMenu(); return;
+    }
+    if(b.id === "mnFridge"){ frOpen(); return; }
+    if(b.id === "mnGen"){ mnGenerate(); return; }
+    if(b.id === "mnSnack"){ mnAddSnack(); return; }
+
+    if(b.dataset.eat){
+      var en = entry();
+      if(!en.meals) en.meals = {};
+      en.meals[b.dataset.eat] = !en.meals[b.dataset.eat];
+      save(); renderMenu(); return;
+    }
+    if(b.dataset.unsnack != null){
+      var e2 = entry();
+      (e2.snacks || []).splice(+b.dataset.unsnack, 1);
+      save(); renderMenu();
+    }
+  });
+
+  // Норму правимо тапом по рядку з калоріями — але не по кнопці в ньому.
+  document.getElementById("mnBody").addEventListener("click", function(e){
+    if(e.target.closest("button")) return;
+    if(!e.target.closest(".mn-goal")) return;
+    var g = goal();
+    var k = prompt("Базова норма калорій (±" + GOAL_SWING + " за типом дня):", g.base);
+    if(k === null) return;
+    var p = prompt("Норма білка, г:", g.p);           if(p === null) return;
+    k = parseInt(k, 10); p = parseInt(p, 10);
+    if(!(k > 0) || !(p > 0)){ alert("Потрібні числа."); return; }
+    state.goal = { kcal:k, p:p };
+    save(); renderMenu();
+  });
+
+  function mnAddSnack(){
+    if(!FR.length){ alert("Холодильник порожній — нема що додати."); return; }
+    var names = FR.map(function(x, i){ return (i+1) + ". " + x.n; }).join("\n");
+    var pick = prompt("Що зʼїв? Введи номер:\n\n" + names);
+    if(pick === null) return;
+    var i = parseInt(pick, 10) - 1;
+    if(!FR[i]){ alert("Немає такого номера."); return; }
+    var g = prompt("Скільки грамів?", "100"); if(g === null) return;
+    g = parseInt(g, 10);
+    if(!(g > 0)){ alert("Потрібне число."); return; }
+    var en = entry();
+    if(!en.snacks) en.snacks = [];
+    en.snacks.push({ n:FR[i].n, kcal:FR[i].kcal, p:FR[i].p, f:FR[i].f, c:FR[i].c, g:g });
+    save(); renderMenu();
+  }
+
+  function mnGenerate(){
+    if(mnBusy) return;
+    if(!FR.length){ alert("Спершу наповни холодильник."); return; }
+    var prev = MENU[state.selectedDate];
+    mnBusy = true; renderMenu();
+
+    askWorker({
+      kind:   "menu",
+      fridge: FR.map(function(x){ return { n:x.n, kcal:x.kcal, p:x.p, f:x.f, c:x.c }; }),
+      goal:   goal(),
+      day:    dayType(),
+      avoid:  prev ? prev.meals.map(function(m){ return m.title; }).join(", ") : ""
+    }).then(function(j){
+      if(!j.menu) throw new Error(j.error || "порожня відповідь");
+      // Індекси перетворюємо на знімок продукту ОДРАЗУ: інакше видалення
+      // продукту з холодильника зсуне індекси, і меню показуватиме не те.
+      var meals = j.menu.meals.map(function(m){
+        return {
+          slot:m.slot, title:m.title, how:m.how,
+          items: m.items.map(function(it){
+            var p = FR[it.i];
+            return p ? { n:p.n, kcal:p.kcal, p:p.p, f:p.f, c:p.c, g:it.g } : null;
+          }).filter(Boolean)
+        };
+      }).filter(function(m){ return m.items.length; });
+
+      if(!meals.length) throw new Error("меню вийшло порожнім");
+      MENU[state.selectedDate] = { meals:meals, note:j.menu.note || "", made:new Date().toISOString() };
+      var en = entry(); en.meals = {};        // нове меню — відмітки скидаються
+      save(); mnSave();
+    }).catch(function(err){
+      alert("Не вийшло скласти меню: " + err.message);
+    }).then(function(){
+      mnBusy = false; renderMenu();
+    });
   }
 
   // ── DOM ───────────────────────────────────────────────────────
