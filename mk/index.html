@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#f0f4f8" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0b1622" media="(prefers-color-scheme: dark)">
+  <title>Медкартка</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon-180.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="css/app.css">
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <section class="gate" id="gate" aria-live="polite">
+      <div class="eyebrow">Медична картка</div>
+      <h1>Медкартка</h1>
+      <p>Завантажую…</p>
+    </section>
+
+    <div class="view" id="home" hidden>
+      <header class="masthead">
+        <div>
+          <div class="eyebrow">Медична картка</div>
+          <h1>Медкартка</h1>
+          <p class="who" id="who"></p>
+        </div>
+        <div class="head-side">
+          <div class="counts" aria-live="polite">
+            <div class="count"><b id="n-rec">–</b><span>записів</span></div>
+            <div class="count"><b id="n-img">–</b><span>файлів</span></div>
+          </div>
+          <button class="signout" id="signout" type="button">Вийти</button>
+        </div>
+      </header>
+
+      <section class="now" id="now-panel" hidden aria-labelledby="now-title"></section>
+
+      <div class="toolbar">
+        <div class="chips" id="chips" role="group" aria-label="Фільтр записів"></div>
+        <a class="btn" href="#new" id="add-open">Додати запис</a>
+      </div>
+
+      <main id="timeline" aria-live="polite"></main>
+    </div>
+
+    <article class="view" id="page" hidden aria-live="polite"></article>
+
+    <p class="foot">Особиста медкартка. Коментарі до результатів — не медичний висновок; рішення щодо лікування приймає лікар.</p>
+  </div>
+
+  <div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Перегляд фото">
+    <div class="lb-top">
+      <span class="lb-count" id="lb-count"></span>
+      <button class="lb-btn" id="lb-close" type="button" aria-label="Закрити">×</button>
+    </div>
+    <div class="lb-stage" id="lb-stage">
+      <img id="lb-img" alt="">
+      <button class="lb-btn lb-nav lb-prev" id="lb-prev" type="button" aria-label="Попереднє фото">‹</button>
+      <button class="lb-btn lb-nav lb-next" id="lb-next" type="button" aria-label="Наступне фото">›</button>
+    </div>
+    <div class="lb-cap" id="lb-cap"></div>
+  </div>
+</body>
+</html>
