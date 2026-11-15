@@ -2,7 +2,7 @@
 // не перетиналися з трекерами на тому самому сайті.
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
 import {
-  getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut,
+  getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut,
 } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
 import {
   initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, doc, query, orderBy, onSnapshot,
@@ -27,6 +27,6 @@ export function initFirebase() {
 }
 
 export {
-  GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut,
+  GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut,
   collection, doc, query, orderBy, onSnapshot, getDoc, getDocFromCache, setDoc, updateDoc, deleteDoc, serverTimestamp, Bytes,
 };
