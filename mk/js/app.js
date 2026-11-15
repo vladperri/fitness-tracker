@@ -1,6 +1,6 @@
 // Точка входу: вхід через Google, маршрути, підписка на дані.
 import { initFirebase, fb, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "./fb.js";
-import { h, put } from "./util.js";
+import { h, put, focusEl } from "./util.js";
 import { S, onChange, subscribe, unsubscribe } from "./data.js";
 import { renderChips, renderList, renderNowPanel, renderNowPage, renderRecord, initLightbox, closeLb } from "./render.js";
 import { renderNew, renderEdit } from "./ai.js";
@@ -69,7 +69,21 @@ window.addEventListener("hashchange", () => {
   render();
   if (current?.name !== "home") window.scrollTo(0, 0);
   else if (was && was.name !== "home") window.scrollTo(0, S.homeScroll || 0);
+  focusView(was);
 });
+
+/** Після переходу фокус іде на заголовок нової сторінки (або на запис, з якого повернулись), щоб читалка знала, де користувач. */
+function focusView(was) {
+  if (!current || !S.user || S.denied) return;
+  let el = null;
+  if (current.name === "home") {
+    if (was?.name === "record") el = [...document.querySelectorAll("#timeline a.row")].find((a) => a.getAttribute("href") === `#r-${was.id}`);
+    el = el || document.querySelector("#home h1");
+  } else {
+    el = document.querySelector("#page h1");
+  }
+  focusEl(el);
+}
 
 onChange((what) => {
   refreshAsk();

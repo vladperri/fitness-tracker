@@ -1,5 +1,5 @@
 // Головна, сторінка запису, блок «Зараз», переглядач фото.
-import { h, str, dparts, dm, dmy, plural, todayISO, put } from "./util.js";
+import { h, str, dparts, dm, dmy, plural, todayISO, put, inertOutside } from "./util.js";
 import { S, CATS, catOf, fileUrl, thumbUrl, toggleTodo, removeRecord, findRecord } from "./data.js";
 import { PROFILE } from "./config.js";
 
@@ -168,14 +168,14 @@ export function renderNowPanel() {
     const todoEl = todo.length ? h("div", null,
       h("div", { class: "label", text: `Справи · ${open.length} з ${todo.length}` }),
       shown.length ? h("ul", { class: "todo compact" }, shown.map((i) => todoItem(todo[i], i, "ptodo", false))) : h("p", { class: "src", text: "Усі справи зроблено." }),
-      open.length > shown.length ? h("a", { class: "more", href: "#now", onclick: rememberHome, text: `ще ${open.length - shown.length} ›` }) : null,
+      open.length > shown.length ? h("a", { class: "more", href: "#now", onclick: rememberHome, text: `ще ${open.length - shown.length} ›`, "aria-label": `ще ${open.length - shown.length} справ — відкрити поточне лікування` }) : null,
       undoT ? h("div", { class: "undo" }, h("span", { text: `Позначено: ${str(undoT.text)}` }),
         h("button", { class: "linkbtn", type: "button", id: "ptodo-undo", text: "Повернути", disabled: S.saving, onclick: undoLast })) : null,
       h("div", { class: "saving", id: "now-todo-msg", role: "status", text: S.saving ? "Зберігаю…" : "" })) : null;
     put(box, 
       h("div", { class: "now-head" },
         h("div", null, h("div", { class: "eyebrow", text: "Зараз" }), h("h2", { id: "now-title", text: str(st.diagnosis_short || st.diagnosis) })),
-        h("a", { class: "more", href: "#now", onclick: rememberHome, text: "Детальніше ›" })),
+        h("a", { class: "more", href: "#now", onclick: rememberHome, text: "Детальніше ›", "aria-label": "Детальніше про поточне лікування" })),
       h("div", { class: "now-grid" }, h("div", { class: "now-col" }, stageBlock, careEl), todoEl));
     box.hidden = false;
   });
@@ -200,11 +200,11 @@ export function renderNowPage(box) {
       backBtn(),
       h("header", { class: "rec-head" },
         h("div", { class: "row-meta" }, h("span", { class: "cat now", text: "Зараз" }), st.updated ? h("span", { class: "mono", text: `оновлено ${dmy(st.updated)}` }) : null),
-        h("h2", { text: "Поточне лікування" }),
+        h("h1", { text: "Поточне лікування" }),
         st.diagnosis_meta ? h("span", { class: "src", text: str(st.diagnosis_meta) }) : null),
       st.diagnosis ? h("p", { class: "summary", text: `Діагноз: ${str(st.diagnosis)}.` }) : null,
       si.plan.length ? h("div", { class: "block" },
-        h("h3", { text: si.finished ? "Курс лікування завершено" : "Курс лікування" }),
+        h("h2", { text: si.finished ? "Курс лікування завершено" : "Курс лікування" }),
         h("div", { class: "stages" }, si.plan.map((p, i) => {
           const done = si.finished || i < si.cur;
           const now = !done && i === si.cur;
@@ -216,10 +216,10 @@ export function renderNowPage(box) {
         })),
         st.plan_note ? h("p", { class: "plan-note", text: str(st.plan_note) }) : null) : null,
       todo.length ? h("div", { class: "block" },
-        h("h3", { text: `Що зробити · ${left ? `${left} з ${todo.length}` : "усе зроблено"}` }),
+        h("h2", { text: `Що зробити · ${left ? `${left} з ${todo.length}` : "усе зроблено"}` }),
         h("div", { class: "box" }, h("ul", { class: "todo" }, todo.map((t, i) => todoItem(t, i, "todo", false))), h("div", { class: "saving", id: "todo-msg", role: "status", text: S.saving ? "Зберігаю…" : "" }))) : null,
       care.length || rules.length ? h("div", { class: "block" },
-        h("h3", { text: care.length ? "Щоденний догляд" : "Правила" }),
+        h("h2", { text: care.length ? "Щоденний догляд" : "Правила" }),
         h("div", { class: "box" },
           care.length ? h("dl", { class: "care" }, care.flatMap((c) => [h("dt", { text: str(c.when) }), h("dd", { text: str(c.what) })])) : null,
           rules.length ? h("ul", { class: `rules${care.length ? "" : " solo"}` }, rules.map((r) => h("li", { text: str(r) }))) : null)) : null,
@@ -261,7 +261,7 @@ export function section(sec) {
   let body;
   if (sec.type === "table") {
     const num = Array.isArray(sec.num) ? sec.num : [];
-    body = h("div", { class: "tablebox" }, h("table", null,
+    body = h("div", { class: "tablebox", tabindex: 0, role: "region", "aria-label": str(sec.title) || "Таблиця" }, h("table", null,
       Array.isArray(sec.head) && sec.head.length ? h("thead", null, h("tr", null, sec.head.map((c) => h("th", { scope: "col", text: str(c) })))) : null,
       h("tbody", null, (sec.rows || []).map((r) => h("tr", null, (Array.isArray(r) ? r : []).map((c, ci) => h("td", { class: num.includes(ci) ? "n" : null, text: str(c) })))))));
   } else if (sec.type === "links") {
@@ -274,7 +274,7 @@ export function section(sec) {
   } else {
     body = h("ul", null, (sec.items || []).map(listItem));
   }
-  return h("section", { class: "sec" }, sec.title ? h("h4", { text: str(sec.title) }) : null, body);
+  return h("section", { class: "sec" }, sec.title ? h("h3", { text: str(sec.title) }) : null, body);
 }
 
 /** Плитка файлу: фото відкривається в переглядачі, PDF — у новій вкладці. */
@@ -290,7 +290,7 @@ export function fileThumb(item, i, all) {
       .catch(() => { label.textContent = "Не вдалося завантажити"; });
     return a;
   }
-  const img = h("img", { class: "ph", alt: caption, decoding: "async" });
+  const img = h("img", { class: "ph", alt: "", decoding: "async" });
   thumbUrl(item.file).then((u) => (u ? u : fileUrl(item.file))).then((u) => { img.src = u; }).catch(() => {});
   const images = all.filter((g) => g.kind !== "pdf");
   return h("button", { class: "thumb", type: "button", "aria-label": `Відкрити: ${caption}`, onclick: (e) => openLb(images, images.indexOf(item), e.currentTarget) },
@@ -324,11 +324,11 @@ export function renderRecord(box, id) {
         h("span", { class: "mono", text: dmy(r.date) + (r.time ? `, ${r.time}` : "") }),
         gal.length ? h("span", { class: "mono", text: `${gal.length} ${plural(gal.length, "файл", "файли", "файлів")}` }) : null,
         r.added_by === "ai" ? h("span", { text: "розпізнано AI" }) : null),
-      h("h2", { text: str(r.title) || "Без назви" }),
+      h("h1", { text: str(r.title) || "Без назви" }),
       r.source ? h("span", { class: "src", text: str(r.source) }) : null),
     r.summary ? h("p", { class: "summary", text: str(r.summary) }) : null,
-    hls.length ? h("div", { class: "block" }, h("h3", { text: "Головні показники" }), h("div", { class: "tiles" }, hls.map(tile))) : null,
-    gal.length ? h("div", { class: "block" }, h("h3", { text: "Фото та документи" }), h("div", { class: "photos" }, gal.map((g, i) => fileThumb(g, i, gal)))) : null,
+    hls.length ? h("div", { class: "block" }, h("h2", { text: "Головні показники" }), h("div", { class: "tiles" }, hls.map(tile))) : null,
+    gal.length ? h("div", { class: "block" }, h("h2", { text: "Фото та документи" }), h("div", { class: "photos" }, gal.map((g, i) => fileThumb(g, i, gal)))) : null,
     secs.length ? h("div", { class: "sections" }, secs.map(section)) : null,
     h("div", { class: "actions" },
       h("a", { class: "btn ghost small", href: `#edit-${r._id}`, text: "Редагувати" }),
@@ -357,12 +357,14 @@ export function openLb(items, i, opener) {
   LB.items = items; LB.i = Math.max(0, i); LB.opener = opener || null;
   showLb();
   $("lb").hidden = false;
+  inertOutside($("lb"), true);
   document.body.style.overflow = "hidden";
   $("lb-close").focus();
 }
 export function closeLb() {
   if ($("lb").hidden) return;
   $("lb").hidden = true;
+  inertOutside(null, false);
   $("lb-img").removeAttribute("src");
   document.body.style.overflow = "";
   if (LB.opener && document.body.contains(LB.opener)) LB.opener.focus();

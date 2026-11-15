@@ -1,6 +1,6 @@
 // Новий запис через AI (фото/PDF → Claude → перевірка → збереження) і редагування запису.
 // Файли зберігаються лише після «Зберегти запис»; до того вони живуть у браузері.
-import { h, str, todayISO, parseNum, parseRange, shortId, prepareFile, blobToBase64, put } from "./util.js";
+import { h, str, todayISO, parseNum, parseRange, shortId, prepareFile, blobToBase64, put, markInvalid } from "./util.js";
 import { S, CATS, saveFile, deleteFile, saveRecord, findRecord, thumbUrl, getToken } from "./data.js";
 import { backBtn, section, goHome } from "./render.js";
 import { buildRequest, compactContext, normalizeDraft, analyzeDocuments, kyivToday } from "./claude.js";
@@ -70,7 +70,7 @@ export function renderEdit(box, id) {
 function draw() {
   if (!BOX || !D) return;
   const title = D.mode === "edit" ? "Редагування запису" : "Новий запис";
-  const head = h("header", { class: "rec-head" }, h("h2", { text: title }),
+  const head = h("header", { class: "rec-head" }, h("h1", { text: title }),
     D.mode === "new" && D.step === "pick" ? h("span", { class: "src", text: "Сфотографуй бланк, протокол або завантаж PDF. Claude розпізнає показники, а ти перевіриш перед збереженням." }) : null);
   const views = { pick: drawPick, work: drawWork, error: drawError, review: drawReview };
   const back = h("button", { class: "back", type: "button", onclick: cancel }, h("span", { "aria-hidden": "true", text: "←" }), "Скасувати");
@@ -287,12 +287,12 @@ function drawReview() {
       h("div", { class: "field" }, h("label", { for: "f-summary", text: "Підсумок" }), summary),
       h("div", { class: "field" }, h("label", { for: "f-source", text: "Джерело" }), source)),
     h("div", { class: "block" },
-      h("h3", { text: "Головні показники" }),
+      h("h2", { text: "Головні показники" }),
       D.highlights.length ? h("div", { class: "hl-row hl-head", "aria-hidden": "true" }, ["Показник", "Значення", "Од.", "Норма", "Позначка", "Стан", ""].map((t) => h("span", { text: t }))) : null,
       h("div", { class: "hl-list" }, D.highlights.map(hlRow)),
       h("div", null, h("button", { class: "btn ghost small", type: "button", text: "Додати показник", onclick: () => { D.highlights.push(fromStoredHl({ tone: "info" })); draw(); } }))),
     D.sections.length ? h("div", { class: "block" },
-      h("h3", { text: "Розділи сторінки" }),
+      h("h2", { text: "Розділи сторінки" }),
       h("div", { class: "sections" }, D.sections.map((s, i) => {
         const el = section(s);
         el.classList.add("sec-edit");
@@ -300,7 +300,7 @@ function drawReview() {
         return el;
       }))) : null,
     D.files.length ? h("div", { class: "block" },
-      h("h3", { text: "Підписи до файлів" }),
+      h("h2", { text: "Підписи до файлів" }),
       h("div", { class: "cap-list" }, D.files.map((f, i) => h("div", { class: "cap-row" }, fileRowThumb(f),
         bind(h("input", { type: "text", id: `cap-${i}`, placeholder: f.name, "aria-label": `Підпис до ${f.name}` }), f, "caption"))))) : null,
     msg,
@@ -328,8 +328,10 @@ export function finalizeHl(hl) {
 async function save(btn, msg) {
   const d = D;
   const r = d.rec;
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(r.date)) { msg.textContent = "Вкажи дату."; return; }
-  if (!r.title.trim()) { msg.textContent = "Вкажи заголовок."; return; }
+  const form = BOX;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(r.date)) { msg.textContent = "Вкажи дату."; markInvalid(form, document.getElementById("f-date"), msg); return; }
+  if (!r.title.trim()) { msg.textContent = "Вкажи заголовок."; markInvalid(form, document.getElementById("f-title"), msg); return; }
+  markInvalid(form, null);
   btn.disabled = true;
   msg.textContent = "";
   try {
