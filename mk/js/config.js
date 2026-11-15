@@ -21,6 +21,8 @@ export const MODEL = "claude-sonnet-5-5";
 export const PROFILES = {
   vlad: { root: ["medkartka", "data"], title: "", gen: "Влада", dat: "Владу", import: true },
   oksana: { root: ["medkartka", "oksana"], title: "Оксана", gen: "Оксани", dat: "Оксані", import: false },
+  oleg: { root: ["medkartka", "oleg"], title: "Олег", gen: "Олега", dat: "Олегу", import: false },
+  alla: { root: ["medkartka", "alla"], title: "Алла", gen: "Алли", dat: "Аллі", import: false },
 };
 const pid = (typeof document !== "undefined" && document.documentElement.dataset.profile) || "vlad";
 export const PROFILE = { id: PROFILES[pid] ? pid : "vlad", ...(PROFILES[pid] || PROFILES.vlad) };
