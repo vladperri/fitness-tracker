@@ -1,4 +1,4 @@
-// Стан застосунку і робота з Firestore. Усе медкартки лежить під medkartka/data/…:
+// Стан застосунку і робота з Firestore. Медкартка профілю лежить під medkartka/<профіль>/… (у Влада — medkartka/data):
 //   records/{id}               записи
 //   status/current             поточне лікування
 //   files/{id}                 опис файлу + мініатюра
@@ -7,6 +7,7 @@ import {
   fb, collection, doc, query, orderBy, onSnapshot, getDoc, getDocFromCache, setDoc, updateDoc, deleteDoc, serverTimestamp, Bytes,
 } from "./fb.js";
 import { shortId } from "./util.js";
+import { PROFILE } from "./config.js";
 
 export const CATS = { labs: "Аналізи", doctor: "Лікар", skin: "Шкіра", body: "Тіло", note: "Нотатка" };
 export const catOf = (r) => (CATS[r?.category] ? r.category : "note");
@@ -30,7 +31,7 @@ const listeners = new Set();
 export const onChange = (fn) => listeners.add(fn);
 const emit = (what) => listeners.forEach((fn) => fn(what));
 
-const ROOT = ["medkartka", "data"];
+const ROOT = PROFILE.root;
 
 // Firestore не зберігає масиви в масивах, тому рядки таблиць лежать у базі як { c: [...] }.
 const packSections = (secs) => (Array.isArray(secs)
@@ -181,6 +182,10 @@ export async function removeRecord(rec) {
 
 export async function setStatus(data) {
   await setDoc(ref("status", "current"), data);
+}
+
+export async function removeStatus() {
+  await deleteDoc(ref("status", "current"));
 }
 
 export async function toggleTodo(i, done) {

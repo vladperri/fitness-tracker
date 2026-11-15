@@ -5,6 +5,8 @@ import { S, onChange, subscribe, unsubscribe } from "./data.js";
 import { renderChips, renderList, renderNowPanel, renderNowPage, renderRecord, initLightbox, closeLb } from "./render.js";
 import { renderNew, renderEdit } from "./ai.js";
 import { renderImport, isImporting } from "./import.js";
+import { renderPlan, resetPlan, isPlanOpen } from "./plan.js";
+import { PROFILE } from "./config.js";
 
 const $ = (id) => document.getElementById(id);
 const GOOGLE_ICON = '<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.5l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.8 6C12.4 13.7 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 7.1-10 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.9-4.7l-7.8-6A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.7l7.9-6z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.8 2.3-8.4 2.3-6.3 0-11.6-4.2-13.5-10l-7.9 6C6.6 42.6 14.6 48 24 48z"/></svg>';
@@ -16,7 +18,8 @@ function route() {
   const hash = location.hash || "";
   if (hash === "#now") return { name: "now" };
   if (hash === "#new") return { name: "new" };
-  if (hash === "#import") return { name: "import" };
+  if (hash === "#import" && PROFILE.import) return { name: "import" };
+  if (hash === "#plan") return { name: "plan" };
   let m = /^#r-([A-Za-z0-9_-]+)$/.exec(hash);
   if (m) return { name: "record", id: m[1] };
   m = /^#edit-([A-Za-z0-9_-]+)$/.exec(hash);
@@ -46,17 +49,20 @@ function render(reason) {
     // Форми не перемальовуємо від змін даних, щоб не стерти введене.
     if (reason && ["new", "edit", "import"].includes(rt.name)) return;
     if (rt.name === "import" && isImporting()) return;
+    if (rt.name === "plan" && reason && isPlanOpen()) return;
     if (rt.name === "now") renderNowPage(page);
     else if (rt.name === "record") renderRecord(page, rt.id);
     else if (rt.name === "new") renderNew(page);
     else if (rt.name === "edit") renderEdit(page, rt.id);
     else if (rt.name === "import") renderImport(page);
+    else if (rt.name === "plan") renderPlan(page);
   }
   current = rt;
 }
 
 window.addEventListener("hashchange", () => {
   closeLb();
+  if (route().name !== "plan") resetPlan();
   const was = current;
   render();
   if (current?.name !== "home") window.scrollTo(0, 0);
@@ -118,8 +124,10 @@ async function signIn() {
 
 function setupHeader(user) {
   $("signout").onclick = () => signOut(fb.auth);
-  $("who").textContent = user.displayName ? user.displayName : user.email || "";
-  const initials = (user.displayName || user.email || "").split(/[\s@.]+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+  // На сторінці іншої людини (профіль із назвою) показуємо її ім'я, а не того, хто увійшов.
+  const name = PROFILE.title || user.displayName || user.email || "";
+  $("who").textContent = name;
+  const initials = name.split(/[\s@.]+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
   $("avatar").textContent = initials || "•";
 }
 

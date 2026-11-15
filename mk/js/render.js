@@ -1,6 +1,7 @@
 // Головна, сторінка запису, блок «Зараз», переглядач фото.
 import { h, str, dparts, dm, dmy, plural, todayISO, put } from "./util.js";
 import { S, CATS, catOf, fileUrl, thumbUrl, toggleTodo, removeRecord, findRecord } from "./data.js";
+import { PROFILE } from "./config.js";
 
 const $ = (id) => document.getElementById(id);
 const photos = (r) => (Array.isArray(r.gallery) ? r.gallery.filter((g) => g && g.file) : []);
@@ -66,7 +67,9 @@ export function renderList() {
   if (!list.length) {
     put(tl, h("div", { class: "state" },
       h("strong", { text: "Записів поки немає" }),
-      h("span", null, "Натисни «Додати запис», щоб сфотографувати бланк, або ", h("a", { href: "#import", text: "імпортуй записи з claude.ai" }), ".")));
+      PROFILE.import
+        ? h("span", null, "Натисни «Додати запис», щоб сфотографувати бланк, або ", h("a", { href: "#import", text: "імпортуй записи з claude.ai" }), ".")
+        : h("span", { text: "Натисни «Додати запис», щоб сфотографувати бланк аналізів чи висновок лікаря." })));
     return;
   }
   put(tl, h("div", { class: "list" }, list.map((r) => {
@@ -128,7 +131,17 @@ function keepFocus(fn) {
 export function renderNowPanel() {
   const box = $("now-panel");
   const st = S.status;
-  if (!st) { box.hidden = true; put(box, ); return; }
+  if (!st) {
+    if (!S.statusLoaded) { box.hidden = true; put(box); return; }
+    // Плану ще немає: показуємо порожній блок із кнопкою.
+    put(box,
+      h("div", { class: "now-head" },
+        h("div", null, h("div", { class: "eyebrow", text: "Зараз" }), h("h2", { id: "now-title", text: "Плану лікування немає" }))),
+      h("p", { class: "src", text: "Додай план із протоколу лікаря — тут з'являться етапи лікування, догляд і справи." }),
+      h("div", { class: "actions" }, h("a", { class: "btn ghost small", href: "#plan", id: "plan-add", onclick: rememberHome, text: "Додати план" })));
+    box.hidden = false;
+    return;
+  }
   keepFocus(() => {
     const si = stageInfo(st);
     let stageBlock = null;
@@ -139,7 +152,7 @@ export function renderNowPanel() {
         h("div", { class: "mini", style: `grid-template-columns:repeat(${si.plan.length},minmax(0,1fr))`, "aria-hidden": "true" },
           si.plan.map((_, i) => h("span", { class: si.finished || i < si.cur ? "seg-done" : i === si.cur ? "seg-now" : null }))),
         si.finished ? h("span", { class: "t", text: "Курс лікування завершено" }) : [
-          h("span", { class: "k", text: `Етап ${si.cur + 1} з ${si.plan.length} · ${str(p.dates)}` }),
+          h("span", { class: "k", text: `Етап ${si.cur + 1} з ${si.plan.length}${str(p.dates) ? ` · ${str(p.dates)}` : ""}` }),
           h("span", { class: "t", text: str(p.title) }),
           p.how ? h("span", { class: "how", text: str(p.how) }) : null,
           nx ? h("span", { class: "next", text: `Далі: ${str(nx.title)}${nx.start ? ` з ${dm(nx.start)}` : ""}` }) : null,
@@ -172,7 +185,9 @@ export function renderNowPage(box) {
   const st = S.status;
   document.title = "Поточне лікування · Медкартка";
   if (!st) {
-    put(box, backBtn(), h("div", { class: "state" }, h("strong", { text: S.statusLoaded ? "Даних про лікування поки немає" : "Завантажую…" })));
+    put(box, backBtn(), h("div", { class: "state" },
+      h("strong", { text: S.statusLoaded ? "Плану лікування поки немає" : "Завантажую…" }),
+      S.statusLoaded ? h("div", { class: "actions" }, h("a", { class: "btn small", href: "#plan", text: "Додати план" })) : null));
     return;
   }
   keepFocus(() => {
@@ -180,6 +195,7 @@ export function renderNowPage(box) {
     const todo = Array.isArray(st.todo) ? st.todo : [];
     const left = todo.filter((t) => !t.done).length;
     const care = Array.isArray(st.care) ? st.care : [];
+    const rules = Array.isArray(st.rules) ? st.rules.filter((r) => str(r).trim()) : [];
     put(box, 
       backBtn(),
       h("header", { class: "rec-head" },
@@ -202,11 +218,12 @@ export function renderNowPage(box) {
       todo.length ? h("div", { class: "block" },
         h("h3", { text: `Що зробити · ${left ? `${left} з ${todo.length}` : "усе зроблено"}` }),
         h("div", { class: "box" }, h("ul", { class: "todo" }, todo.map((t, i) => todoItem(t, i, "todo", false))), h("div", { class: "saving", id: "todo-msg", role: "status", text: S.saving ? "Зберігаю…" : "" }))) : null,
-      care.length ? h("div", { class: "block" },
-        h("h3", { text: "Щоденний догляд" }),
+      care.length || rules.length ? h("div", { class: "block" },
+        h("h3", { text: care.length ? "Щоденний догляд" : "Правила" }),
         h("div", { class: "box" },
-          h("dl", { class: "care" }, care.flatMap((c) => [h("dt", { text: str(c.when) }), h("dd", { text: str(c.what) })])),
-          Array.isArray(st.rules) && st.rules.length ? h("ul", { class: "rules" }, st.rules.map((r) => h("li", { text: str(r) }))) : null)) : null);
+          care.length ? h("dl", { class: "care" }, care.flatMap((c) => [h("dt", { text: str(c.when) }), h("dd", { text: str(c.what) })])) : null,
+          rules.length ? h("ul", { class: `rules${care.length ? "" : " solo"}` }, rules.map((r) => h("li", { text: str(r) }))) : null)) : null,
+      h("div", { class: "actions" }, h("a", { class: "btn ghost", href: "#plan", id: "plan-edit", text: "Редагувати план" })));
   });
 }
 

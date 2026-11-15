@@ -14,3 +14,13 @@ export const AI_URL = "https://mk-ai.wlad-semenyuk97.workers.dev";
 
 // Модель для розпізнавання документів.
 export const MODEL = "claude-sonnet-5-5";
+
+// Профілі: одна й та сама сторінка для кількох людей, у кожного свій розділ у базі.
+// Профіль задає атрибут data-profile на <html> (mk/oksana/index.html → "oksana").
+// gen і dat — ім'я в родовому й давальному відмінку для промптів Claude.
+export const PROFILES = {
+  vlad: { root: ["medkartka", "data"], title: "", gen: "Влада", dat: "Владу", import: true },
+  oksana: { root: ["medkartka", "oksana"], title: "Оксана", gen: "Оксани", dat: "Оксані", import: false },
+};
+const pid = (typeof document !== "undefined" && document.documentElement.dataset.profile) || "vlad";
+export const PROFILE = { id: PROFILES[pid] ? pid : "vlad", ...(PROFILES[pid] || PROFILES.vlad) };

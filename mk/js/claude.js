@@ -63,7 +63,9 @@ export const RECORD_SCHEMA = {
 };
 
 /* ---------- промпт ---------- */
-export const SYSTEM_PROMPT = `Ти допомагаєш вести особисту медичну картку Влада. Тобі надсилають фото або PDF медичних документів: результати аналізів, протоколи огляду лікаря, звіти апаратів (InBody, аналізатори шкіри тощо). Твоє завдання — перетворити їх на один запис медкартки за заданою схемою. Пиши українською.
+// person: { gen, dat } — ім'я власника картки в родовому й давальному відмінку.
+export const DEFAULT_PERSON = { gen: "Влада", dat: "Владу" };
+export const systemPrompt = ({ gen, dat } = DEFAULT_PERSON) => `Ти допомагаєш вести особисту медичну картку ${gen}. Тобі надсилають фото або PDF медичних документів: результати аналізів, протоколи огляду лікаря, звіти апаратів (InBody, аналізатори шкіри тощо). Твоє завдання — перетворити їх на один запис медкартки за заданою схемою. Пиши українською.
 
 Головне правило — точність. Переносиш значення, одиниці й норми рівно так, як вони надруковані. Нічого не вигадуєш і не «виправляєш». Якщо значення погано видно, став uncertain: true і додай пункт у warnings. Якщо в документі немає дати, лиши date порожнім і напиши про це у warnings.
 
@@ -78,23 +80,28 @@ export const SYSTEM_PROMPT = `Ти допомагаєш вести особис�
   2. Для протоколу лікаря — скарги, діагноз, призначення й рекомендації дослівно (type: list або text).
   3. Розділ «Коментар (не медичний висновок)» (type: list) — 3–6 пунктів простою мовою: що означають відхилення; порівняння з попередніми записами з контексту, якщо там є ті самі показники (з датами і значеннями); зв'язок із поточним діагнозом і лікуванням, якщо він очевидний. Без діагнозів і без порад змінювати ліки — для цього «обговорити з лікарем».
 - captions — по одному короткому підпису на кожен файл у тому ж порядку («Бланк ЗАК, стор. 1»).
-- warnings — що Владу варто перевірити вручну. Порожній масив, якщо все чітко.
+- warnings — що ${dat} варто перевірити вручну. Порожній масив, якщо все чітко.
 
 Для порожніх полів використовуй порожній рядок або порожній масив, як вимагає схема.`;
+export const SYSTEM_PROMPT = systemPrompt();
 
 /**
  * Будує content повідомлення: спочатку файли, потім текст із підказкою й контекстом.
  * files: [{ type: "image/jpeg" | "application/pdf" | ..., data: base64, name }]
  */
-export function buildUserContent({ files, note, context, today }) {
-  const blocks = files.map((f, i) => (f.type === "application/pdf"
+function fileBlocks(files) {
+  return files.map((f, i) => (f.type === "application/pdf"
     ? { type: "document", source: { type: "base64", media_type: "application/pdf", data: f.data }, title: f.name || `Документ ${i + 1}` }
     : { type: "image", source: { type: "base64", media_type: f.type, data: f.data } }));
+}
+
+export function buildUserContent({ files, note, context, today, person = DEFAULT_PERSON }) {
+  const blocks = fileBlocks(files);
   const lines = [
     `Сьогодні: ${today}.`,
     `Файлів: ${files.length}. Порядок підписів у captions — як порядок файлів вище.`,
   ];
-  if (note && note.trim()) lines.push(`Підказка від Влада: ${note.trim()}`);
+  if (note && note.trim()) lines.push(`Підказка від ${person.gen}: ${note.trim()}`);
   if (context) {
     lines.push("Контекст медкартки для порівняння (не переносити в запис як нові дані):");
     lines.push(JSON.stringify(context));
@@ -122,13 +129,13 @@ export function compactContext({ status, records }) {
 }
 
 /** Тіло запиту до Messages API (воркер передає його в Anthropic без змін). */
-export function buildRequest({ model, files, note, context, today, effort = "medium", maxTokens = 16000 }) {
+export function buildRequest({ model, files, note, context, today, person = DEFAULT_PERSON, effort = "medium", maxTokens = 16000 }) {
   return {
     model,
     max_tokens: maxTokens,
     stream: true,
-    system: SYSTEM_PROMPT,
-    messages: [{ role: "user", content: buildUserContent({ files, note, context, today }) }],
+    system: systemPrompt(person),
+    messages: [{ role: "user", content: buildUserContent({ files, note, context, today, person }) }],
     output_config: { effort, format: { type: "json_schema", schema: RECORD_SCHEMA } },
   };
 }
@@ -136,6 +143,91 @@ export function buildRequest({ model, files, note, context, today, effort = "med
 /** Сьогоднішня дата за Києвом у форматі YYYY-MM-DD. */
 export function kyivToday(now = new Date()) {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Kyiv", year: "numeric", month: "2-digit", day: "2-digit" }).format(now);
+}
+
+/* ---------- план лікування з протоколу лікаря ---------- */
+const nullableDate = (description) => sch(`${description} Формат YYYY-MM-DD або порожній рядок.`);
+export const PLAN_SCHEMA = {
+  type: "object",
+  additionalProperties: false,
+  required: ["diagnosis", "diagnosis_short", "diagnosis_meta", "plan", "plan_note", "care", "rules", "todo", "warnings"],
+  properties: {
+    diagnosis: sch("Діагноз так, як у документі."),
+    diagnosis_short: sch("Діагноз коротко, 2–4 слова, для заголовка."),
+    diagnosis_meta: sch("«Попередній/Заключний діагноз · ДД.ММ.РРРР · спеціальність і ПІБ лікаря, клініка» з того, що є в документі."),
+    plan: {
+      type: "array",
+      description: "Етапи лікування, що змінюються в часі, у порядку виконання.",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["title", "how", "dates", "start", "end"],
+        properties: {
+          title: sch("Препарат і кратність коротко: «Елідел 2 р/день»."),
+          how: sch("Як застосовувати і скільки днів, як у документі."),
+          dates: sch("Дати людською мовою: «15.11 → 21–24.11», «~22–25.11 → ~1–4.12»."),
+          start: nullableDate("Дата початку етапу."),
+          end: nullableDate("Найпізніша дата кінця етапу."),
+        },
+      },
+    },
+    plan_note: sch("Як пораховано дати і що може їх зсунути. Порожньо, якщо етапів немає."),
+    care: {
+      type: "array",
+      description: "Щоденний догляд і постійні засоби.",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["when", "what"],
+        properties: { when: sch("Коли: «Ранок», «Вечір», «Вмивання», «Після гоління»…"), what: sch("Засіб і як застосовувати.") },
+      },
+    },
+    rules: { type: "array", items: { type: "string" }, description: "Практичні правила з документа: як наносити, чого уникати." },
+    todo: {
+      type: "array",
+      description: "Що треба зробити.",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["text", "note", "due"],
+        properties: { text: sch("Справа коротко."), note: sch("Уточнення з документа або порожній рядок."), due: nullableDate("Термін.") },
+      },
+    },
+    warnings: { type: "array", items: { type: "string" }, description: "Що перевірити вручну: нечитабельне, неоднозначні дати." },
+  },
+};
+
+export const planSystemPrompt = ({ gen, dat } = DEFAULT_PERSON) => `Ти допомагаєш вести план лікування в особистій медичній картці ${gen}. Тобі надсилають фото або PDF протоколу огляду лікаря, рецепта чи листка призначень. Склади з них план за заданою схемою. Пиши українською.
+
+Головне правило — точність. Назви препаратів, дозування, кратність і тривалість переносиш точно як у документі. Нічого не додаєш від себе і не змінюєш призначень. Якщо щось погано видно або неоднозначно, напиши про це у warnings.
+
+Як заповнювати:
+- plan — лише засоби, схема яких змінюється в часі (наприклад: мазь ще 3 дні → крем 2 р/день 7–10 днів → крем 1 р/день 10 днів). Кожен етап окремо. Дати рахуй від дати документа; якщо в підказці сказано, коли почали, — від неї. Якщо тривалість задана діапазоном, end — за найдовшим варіантом, а в dates познач орієнтовність знаком «~». Якщо тривалість не вказана, end порожній.
+- care — засоби, які застосовують щодня без етапів: вмивання, креми зранку й увечері, спреї тощо.
+- rules — практичні правила з документа: як наносити, де не наносити, чого уникати.
+- todo — що треба зробити: призначені аналізи й обстеження; перехід на наступний етап (due — дата початку етапу); завершення курсу; повторний візит, якщо згадано. В note — коротке уточнення з документа.
+- plan_note — одним-двома реченнями: від якої дати пораховано етапи і що їх зсуне.
+- warnings — що ${dat} варто перевірити вручну. Порожній масив, якщо все чітко.
+
+Для порожніх полів використовуй порожній рядок або порожній масив, як вимагає схема.`;
+
+/** Запит на розбір протоколу в план. current — чинний план (для довідки), може бути null. */
+export function buildPlanRequest({ model, files, note, current, today, person = DEFAULT_PERSON, effort = "medium", maxTokens = 12000 }) {
+  const lines = [`Сьогодні: ${today}.`];
+  if (note && note.trim()) lines.push(`Підказка від ${person.gen}: ${note.trim()}`);
+  if (current) {
+    lines.push("Чинний план (для довідки; новий документ має пріоритет):");
+    lines.push(JSON.stringify(current));
+  }
+  lines.push("Склади план лікування за схемою.");
+  return {
+    model,
+    max_tokens: maxTokens,
+    stream: true,
+    system: planSystemPrompt(person),
+    messages: [{ role: "user", content: [...fileBlocks(files), { type: "text", text: lines.join("\n") }] }],
+    output_config: { effort, format: { type: "json_schema", schema: PLAN_SCHEMA } },
+  };
 }
 
 /* ---------- нормалізація відповіді ---------- */
@@ -200,6 +292,27 @@ export function normalizeDraft(raw, { fileCount = 0 } = {}) {
     highlights: (Array.isArray(r.highlights) ? r.highlights : []).map(normalizeHighlight).filter(Boolean).slice(0, 16),
     sections: (Array.isArray(r.sections) ? r.sections : []).map(normalizeSection).filter(Boolean).slice(0, 20),
     captions: Array.from({ length: fileCount }, (_, i) => captions[i] || `Файл ${i + 1}`),
+    warnings: strArr(r.warnings, 300).slice(0, 12),
+  };
+}
+
+const isoDate = (v) => (typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : "");
+const objArr = (v) => (Array.isArray(v) ? v.filter((x) => x && typeof x === "object") : []);
+
+/** Чистить план (від Claude або з форми) до формату, який зберігається в status/current. */
+export function normalizePlan(raw, { keepDone = false } = {}) {
+  const r = raw && typeof raw === "object" ? raw : {};
+  return {
+    diagnosis: s(r.diagnosis, 300),
+    diagnosis_short: s(r.diagnosis_short, 60),
+    diagnosis_meta: s(r.diagnosis_meta, 300),
+    plan: objArr(r.plan).map((p) => ({ title: s(p.title, 120), how: s(p.how, 300), dates: s(p.dates, 60), start: isoDate(p.start), end: isoDate(p.end) }))
+      .filter((p) => p.title).slice(0, 12),
+    plan_note: s(r.plan_note, 600),
+    care: objArr(r.care).map((c) => ({ when: s(c.when, 60), what: s(c.what, 300) })).filter((c) => c.what).slice(0, 20),
+    rules: strArr(r.rules, 300).slice(0, 20),
+    todo: objArr(r.todo).map((t, i) => ({ id: s(t.id, 40) || `t${i + 1}`, text: s(t.text, 200), note: s(t.note, 300), due: isoDate(t.due), done: keepDone ? t.done === true : false }))
+      .filter((t) => t.text).slice(0, 30),
     warnings: strArr(r.warnings, 300).slice(0, 12),
   };
 }

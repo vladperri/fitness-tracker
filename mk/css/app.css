@@ -335,3 +335,27 @@ th { background: var(--surface-2); color: var(--muted); font-family: var(--font-
 /* Поточний етап на сторінці лікування — смужка кольору статусу, без рамки картки «Зараз». */
 .stage.now { background: transparent; border: 0; border-top: 4px solid var(--status); border-radius: 0; padding: 8px 0 0; gap: 2px; }
 .stage.now .n { color: var(--warn); }
+
+/* ---------- Редактор плану лікування ---------- */
+.ed-list { display: flex; flex-direction: column; gap: 10px; }
+.ed-row { display: grid; gap: 8px 10px; align-items: end; padding: 12px 12px 12px 14px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+.ed-row.ed-stage { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.6fr) minmax(0, 0.9fr) minmax(0, 0.85fr) minmax(0, 0.85fr) 32px; }
+.ed-row.ed-care { grid-template-columns: minmax(0, 0.7fr) minmax(0, 2fr) 32px; }
+.ed-row.ed-rule { grid-template-columns: minmax(0, 1fr) 32px; }
+.ed-row.ed-todo { grid-template-columns: 64px minmax(0, 1.5fr) minmax(0, 1.2fr) minmax(0, 0.85fr) 32px; }
+.cell { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.cell > span { font-size: 12px; color: var(--muted); }
+.cell input[type="text"], .cell input[type="date"] { color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; width: 100%; min-width: 0; }
+.cell input[type="checkbox"] { width: 20px; height: 20px; margin: 8px 0; accent-color: var(--accent); }
+.ed-row .x { width: 32px; height: 32px; border: 1px solid var(--line); background: var(--surface); border-radius: 10px; cursor: pointer; color: var(--muted); align-self: end; margin-bottom: 2px; }
+.danger-link { color: var(--alert); font-size: 14px; }
+.rules.solo { margin-top: 0; padding-top: 0; border-top: 0; }
+@media (max-width: 560px) {
+  .ed-row.ed-stage, .ed-row.ed-care, .ed-row.ed-todo, .ed-row.ed-rule { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); position: relative; padding-top: 14px; }
+  .ed-row .wide { grid-column: 1 / -1; }
+  .ed-row .x { position: absolute; top: 8px; right: 8px; }
+  .ed-row > .wide:first-child { padding-right: 38px; }
+  .ed-row.ed-todo > .cell:first-child { grid-column: 1 / -1; flex-direction: row; align-items: center; gap: 8px; }
+  .ed-row.ed-todo > .cell:first-child > span { order: 2; font-size: 13px; }
+  .ed-row.ed-todo > .cell:first-child input { margin: 0; }
+}
