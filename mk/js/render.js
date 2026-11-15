@@ -110,6 +110,12 @@ function todoItem(t, i, prefix, readOnly) {
       t.due ? h("span", { class: "due", text: `до ${dm(t.due)}` }) : null,
       prefix === "todo" && t.note ? h("span", { class: "note", text: str(t.note) }) : null));
 }
+async function undoLast() {
+  if (S.lastDone == null) return;
+  setTodoMsg("Зберігаю…");
+  const res = await toggleTodo(S.lastDone, false);
+  setTodoMsg(res.ok ? "" : "Не вдалося зберегти. Спробуй ще раз.");
+}
 function setTodoMsg(t) {
   ["todo-msg", "now-todo-msg"].forEach((id) => { const m = $(id); if (m) m.textContent = t; });
 }
@@ -151,8 +157,8 @@ export function renderNowPanel() {
       shown.length ? h("ul", { class: "todo compact" }, shown.map((i) => todoItem(todo[i], i, "ptodo", false))) : h("p", { class: "src", text: "Усі справи зроблено." }),
       open.length > shown.length ? h("a", { class: "more", href: "#now", onclick: rememberHome, text: `ще ${open.length - shown.length} ›` }) : null,
       undoT ? h("div", { class: "undo" }, h("span", { text: `Позначено: ${str(undoT.text)}` }),
-        h("button", { class: "linkbtn", type: "button", id: "ptodo-undo", text: "Повернути", onclick: () => toggleTodo(S.lastDone, false) })) : null,
-      h("div", { class: "saving", id: "now-todo-msg", role: "status" })) : null;
+        h("button", { class: "linkbtn", type: "button", id: "ptodo-undo", text: "Повернути", disabled: S.saving, onclick: undoLast })) : null,
+      h("div", { class: "saving", id: "now-todo-msg", role: "status", text: S.saving ? "Зберігаю…" : "" })) : null;
     put(box, 
       h("div", { class: "now-head" },
         h("div", null, h("div", { class: "eyebrow", text: "Зараз" }), h("h2", { id: "now-title", text: str(st.diagnosis_short || st.diagnosis) })),
@@ -195,7 +201,7 @@ export function renderNowPage(box) {
         st.plan_note ? h("p", { class: "plan-note", text: str(st.plan_note) }) : null) : null,
       todo.length ? h("div", { class: "block" },
         h("h3", { text: `Що зробити · ${left ? `${left} з ${todo.length}` : "усе зроблено"}` }),
-        h("div", { class: "box" }, h("ul", { class: "todo" }, todo.map((t, i) => todoItem(t, i, "todo", false))), h("div", { class: "saving", id: "todo-msg", role: "status" }))) : null,
+        h("div", { class: "box" }, h("ul", { class: "todo" }, todo.map((t, i) => todoItem(t, i, "todo", false))), h("div", { class: "saving", id: "todo-msg", role: "status", text: S.saving ? "Зберігаю…" : "" }))) : null,
       care.length ? h("div", { class: "block" },
         h("h3", { text: "Щоденний догляд" }),
         h("div", { class: "box" },
