@@ -4,7 +4,7 @@ import { h, str, todayISO, parseNum, parseRange, shortId, prepareFile, blobToBas
 import { S, CATS, saveFile, deleteFile, saveRecord, findRecord, thumbUrl, getToken } from "./data.js";
 import { backBtn, section, goHome } from "./render.js";
 import { buildRequest, compactContext, normalizeDraft, analyzeDocuments, kyivToday } from "./claude.js";
-import { AI_URL, MODEL } from "./config.js";
+import { AI_URL, MODEL, PROFILE } from "./config.js";
 
 const TONES = { ok: "у нормі", warn: "увага", alert: "суттєво", info: "без норми" };
 const MAX_FILES = 10;
@@ -162,6 +162,7 @@ async function run(withAI) {
         note: d.note,
         context: compactContext({ status: S.status, records: S.records.slice(0, 8) }),
         today: kyivToday(),
+        person: PROFILE,
       });
       const res = await analyzeDocuments({
         url: AI_URL,
