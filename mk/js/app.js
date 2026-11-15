@@ -119,6 +119,8 @@ async function signIn() {
 function setupHeader(user) {
   $("signout").onclick = () => signOut(fb.auth);
   $("who").textContent = user.displayName ? user.displayName : user.email || "";
+  const initials = (user.displayName || user.email || "").split(/[\s@.]+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+  $("avatar").textContent = initials || "•";
 }
 
 async function boot() {

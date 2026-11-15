@@ -1,37 +1,14 @@
-/* Медкартка — палітра «Клінічний синій». Один стовпчик як медична картка: компактний блок «Зараз», згорнутий список, окремі сторінки записів. */
+/* Медкартка — світла тема в стилі застосунку лабораторії: сталевий синій, білі картки з тонкою рамкою, системний шрифт. Один стовпчик як медична картка: компактний блок «Зараз», згорнутий список, окремі сторінки записів. */
 :root {
-  --bg: #f0f4f8;
-  --surface: #ffffff;
-  --surface-2: #e6ecf3;
-  --ink: #0b1f33;
-  --muted: #4f6275;
-  --line: #d2dbe5;
-  --accent: #005eb8;
-  --accent-ink: #ffffff;
-  --accent-soft: #dce9f7;
-  --ok: #007f3b;
-  --ok-soft: #dcefe4;
-  --warn: #a35c00;
-  --warn-soft: #fbeed9;
-  --alert: #c0262d;
-  --alert-soft: #fae1e2;
-  --info: #5a4bb7;
-  --info-soft: #e9e6f8;
-  --scrim: rgba(6, 14, 24, 0.92);
-  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-head: "IBM Plex Sans Condensed", "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  --r: 10px;
+  --bg: #ffffff; --surface: #ffffff; --surface-2: #f0f4f4; --ink: #1c1c1c; --ink-2: #384050; --muted: #6c7480; --line: #e8e8ec;
+  --accent: #4474a0; --accent-ink: #ffffff; --accent-soft: #e8f0f4; --accent-line: #94b8d4;
+  --ok: #2f8a5b; --ok-soft: #e3f2ea; --warn: #9a8a22; --warn-soft: #f5f1d6; --alert: #c04a4a; --alert-soft: #f8e7e7;
+  --info: #4474a0; --info-soft: #e8f0f4; --status: #c4b440; --scrim: rgba(12, 18, 24, 0.94);
+  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-head: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter Display", "Inter", system-ui, sans-serif;
+  --font-mono: var(--font-body);
+  --r: 20px;
   color-scheme: light;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0b1622; --surface: #112131; --surface-2: #17293b; --ink: #e6eef6; --muted: #93a6b8; --line: #24384c;
-    --accent: #5aa7f0; --accent-ink: #04203b; --accent-soft: #12304f;
-    --ok: #5cc98a; --ok-soft: #12301f; --warn: #e8a94e; --warn-soft: #3a2a12; --alert: #f08a8e; --alert-soft: #3f1b1d;
-    --info: #a99cf0; --info-soft: #241f45; --scrim: rgba(0, 0, 0, 0.94);
-    color-scheme: dark;
-  }
 }
 
 * { box-sizing: border-box; }
@@ -300,3 +277,61 @@ td.n { font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-
   .hl-row .x { justify-self: end; }
   .hl-head { display: none; }
 }
+
+/* ---------- Світла тема: шапка з аватаркою, картки, мітки ---------- */
+body { font-size: 16px; -webkit-font-smoothing: antialiased; }
+.mono, td.n, .tile-value .num, .row-date .dm, .count b { font-variant-numeric: tabular-nums; }
+h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.01em; }
+.eyebrow, .label { letter-spacing: 0.02em; text-transform: none; font-size: 13px; font-weight: 600; color: var(--muted); }
+
+/* Шапка з аватаркою */
+.masthead { border-bottom: 0; padding-bottom: 0; align-items: center; }
+.masthead .eyebrow { display: none; }
+.masthead > div:first-child { display: grid; grid-template-columns: 52px minmax(0, 1fr); column-gap: 14px; align-items: center; }
+.avatar { grid-row: 1 / span 2; width: 52px; height: 52px; border-radius: 999px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 19px; letter-spacing: 0.02em; }
+.masthead h1 { font-size: 22px; }
+.masthead .who { margin-top: 0; font-size: 15px; color: var(--ink-2); }
+.count b { font-size: 20px; font-weight: 700; }
+.count span { font-size: 12.5px; }
+.signout { text-decoration: none; color: var(--accent); font-weight: 600; }
+
+/* Кнопки й фільтри */
+.btn { border-radius: 14px; padding: 11px 18px; font-size: 15px; background: var(--accent); }
+.btn.ghost { border: 1.5px solid var(--accent); color: var(--accent); background: transparent; font-weight: 600; }
+.chip { border-radius: 999px; padding: 7px 14px; font-size: 14px; border-color: var(--line); color: var(--ink-2); }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* Картки */
+.panel, .box, .now, .list, .state, .tile, .thumb, .tablebox, .log, .drop, .fchip { border-radius: var(--r); border-color: var(--line); }
+.tile, .thumb, .tablebox { border-radius: 16px; }
+.cat { text-transform: none; letter-spacing: 0; font-size: 12.5px; border-radius: 999px; padding: 2px 9px; font-weight: 600; }
+.cat.doctor { background: var(--accent-soft); color: var(--accent); }
+.cat.labs { background: var(--warn-soft); color: var(--warn); }
+.cat.body { background: #eaf3ee; color: var(--ok); }
+.cat.skin { background: #f3ecf4; color: #8a4f8f; }
+.row-title { font-size: 17px; font-weight: 700; }
+.row-sum { color: var(--ink-2); }
+.chev { font-family: var(--font-body); color: var(--accent); }
+.row:hover { background: var(--surface-2); }
+
+/* Зараз */
+.now-head h2 { font-size: 20px; }
+.mini span { height: 5px; border-radius: 3px; }
+.mini .seg-now { background: var(--status); }
+.cur .k { color: var(--muted); font-weight: 600; }
+.more { color: var(--accent); }
+
+/* Сторінка запису */
+.back { color: var(--accent); }
+.rec-head { border-bottom: 0; padding-bottom: 4px; }
+.rec-head h2 { font-size: 28px; }
+.tile-value .num { font-weight: 700; font-size: 20px; }
+.range .band { background: var(--accent-line); opacity: 1; }
+.range .mark { background: var(--accent); width: 4px; }
+th { background: var(--surface-2); color: var(--muted); font-family: var(--font-body); }
+.sec { border-top: 0; padding-top: 0; }
+.foot { border-top: 0; }
+.gbtn { background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
+/* Поточний етап на сторінці лікування — смужка кольору статусу, без рамки картки «Зараз». */
+.stage.now { background: transparent; border: 0; border-top: 4px solid var(--status); border-radius: 0; padding: 8px 0 0; gap: 2px; }
+.stage.now .n { color: var(--warn); }
