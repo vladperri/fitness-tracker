@@ -1,6 +1,6 @@
 // Плаваюча кнопка «Запитати AI» і чат, який бачить усю картку: план лікування й усі записи.
 // Розмова живе лише в пам'яті сторінки: після перезавантаження чи виходу її немає.
-import { h, put, plural } from "./util.js";
+import { h, put, plural, inertOutside, focusEl } from "./util.js";
 import { S, findRecord, getToken } from "./data.js";
 import { AI_URL, MODEL, PROFILE } from "./config.js";
 import { kyivToday } from "./claude.js";
@@ -23,6 +23,8 @@ let focusBar;
 let sub;
 let seg;
 let liveEl = null;
+let title;
+let status;
 let raf = 0;
 
 const finePointer = () => window.matchMedia?.("(pointer: fine)").matches;
@@ -73,17 +75,21 @@ function open() {
   A.focusId = A.pageId && findRecord(A.pageId) ? A.pageId : null;
   if (!history.state?.mkAsk) history.pushState({ ...(history.state || {}), mkAsk: true }, "");
   root.hidden = false;
+  inertOutside(root, true);
   fab.hidden = true;
   document.body.classList.add("ask-open");
   draw();
   scrollEnd(true);
+  // На телефоні не викликаємо клавіатуру одразу, але фокус переходить у вікно (для VoiceOver).
   if (finePointer()) input.focus();
+  else focusEl(title);
 }
 
 function close(fromHistory = false) {
   if (!fromHistory && history.state?.mkAsk) { history.back(); return; }
   A.open = false;
   root.hidden = true;
+  inertOutside(null, false);
   document.body.classList.remove("ask-open");
   fab.hidden = !A.visible;
   if (A.visible) fab.focus({ preventScroll: true });
@@ -96,7 +102,9 @@ function buildSheet() {
   seg = h("div", { class: "seg", role: "group", "aria-label": "Як відповідати" },
     Object.entries(AUDIENCES).map(([k, label]) => h("button", { type: "button", "data-aud": k, text: label, onclick: () => setAudience(k) })));
   const reset = h("button", { class: "linkbtn", type: "button", id: "ask-reset", text: "Нова розмова", onclick: resetChat });
-  log = h("div", { class: "ask-log", id: "ask-log", "aria-live": "polite" });
+  // Журнал без aria-live: під час стріму відповідь перемальовується, тож оголошуємо лише готову відповідь через status.
+  log = h("div", { class: "ask-log", id: "ask-log" });
+  status = h("div", { class: "sr-only", id: "ask-status", role: "status" });
   focusBar = h("div", { class: "ask-focus", id: "ask-focus", hidden: true });
   input = h("textarea", { id: "ask-input", rows: 1, placeholder: "Питання до картки…", "aria-label": "Питання до картки", maxlength: 4000 });
   input.addEventListener("input", autosize);
@@ -106,12 +114,13 @@ function buildSheet() {
   sendBtn = h("button", { class: "ask-send", type: "submit", id: "ask-send" });
   const form = h("form", { class: "ask-form", onsubmit: (e) => { e.preventDefault(); submit(); } }, input, sendBtn);
   const panel = h("div", { class: "ask-panel" },
-    h("header", { class: "ask-head" }, h("div", null, h("h2", { id: "ask-title", text: "Запитати AI" }), sub), x),
+    h("header", { class: "ask-head" }, h("div", null, title = h("h2", { id: "ask-title", text: "Запитати AI" }), sub), x),
     h("div", { class: "ask-bar" }, seg, reset),
     log,
     focusBar,
     form,
-    h("p", { class: "ask-note", text: "AI може помилятися. Рішення щодо лікування приймає лікар." }));
+    h("p", { class: "ask-note", text: "AI може помилятися. Рішення щодо лікування приймає лікар." }),
+    status);
   root = h("div", { class: "ask", id: "ask", role: "dialog", "aria-modal": "true", "aria-labelledby": "ask-title", hidden: true }, panel);
   root.addEventListener("click", (e) => { if (e.target === root) close(); });
   document.body.append(root);
@@ -158,6 +167,9 @@ function drawLog() {
   }
   put(log, A.msgs.map((m, i) => msgNode(m, i === A.msgs.length - 1)));
 }
+
+/** Текст відповіді без розмітки — для оголошення читалкою. */
+const plainText = (text) => parseMd(text).map((b) => (b.t === "p" || b.t === "h" ? b.parts.map((p) => p.s).join("") : b.items.map((it) => it.map((p) => p.s).join("")).join(". "))).join(" ");
 
 function mdNodes(text) {
   const inl = (parts) => parts.map((p) => (p.b ? h("strong", { text: p.s }) : document.createTextNode(p.s)));
@@ -213,6 +225,7 @@ function setAudience(k) {
 function resetChat() {
   A.ctrl?.abort();
   A.msgs = [];
+  status.textContent = "Розмову очищено.";
   draw();
   if (finePointer()) input.focus();
 }
@@ -258,6 +271,8 @@ async function send(q, focusId = A.focusId) {
   const ctrl = new AbortController();
   A.ctrl = ctrl;
   A.busy = true;
+  log.setAttribute("aria-busy", "true");
+  status.textContent = "Claude відповідає…";
   drawLog();
   drawSend();
   scrollEnd(true);
@@ -282,12 +297,14 @@ async function send(q, focusId = A.focusId) {
     m.text = res.text;
     m.truncated = res.truncated;
     m.status = "done";
+    if (A.msgs.includes(m)) status.textContent = `Відповідь: ${plainText(res.text)}`;
   } catch (e) {
     if (e?.partial) m.text = e.partial;
     if (e?.code === "aborted" && m.text) { m.status = "done"; m.stopped = true; }
     else { m.status = "error"; m.error = e?.message || "Не вдалося отримати відповідь. Спробуй ще раз."; }
   } finally {
-    if (A.ctrl === ctrl) { A.ctrl = null; A.busy = false; }
+    if (A.ctrl === ctrl) { A.ctrl = null; A.busy = false; log.removeAttribute("aria-busy"); }
+    if (m.stopped) status.textContent = "Зупинено.";
     if (A.msgs.includes(m)) { drawLog(); scrollEnd(); }
     drawSend();
   }

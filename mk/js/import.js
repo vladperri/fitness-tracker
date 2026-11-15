@@ -22,7 +22,7 @@ export function renderImport(box) {
   btn.addEventListener("click", () => run([...input.files], btn, log, msg));
   put(box, 
     backBtn(),
-    h("header", { class: "rec-head" }, h("h2", { text: "Імпорт записів з claude.ai" }),
+    h("header", { class: "rec-head" }, h("h1", { text: "Імпорт записів з claude.ai" }),
       h("span", { class: "src", text: "Один раз переносить записи, план лікування і фото з попередньої версії медкартки." })),
     h("div", { class: "panel" },
       h("ol", { style: "margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px" },

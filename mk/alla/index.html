@@ -16,7 +16,8 @@
 </head>
 <body>
   <div class="wrap">
-    <section class="gate" id="gate" aria-live="polite">
+    <main id="main">
+    <section class="gate" id="gate">
       <div class="eyebrow">Медична картка</div>
       <h1>Медкартка</h1>
       <p>Завантажую…</p>
@@ -31,7 +32,7 @@
           <p class="who" id="who"></p>
         </div>
         <div class="head-side">
-          <div class="counts" aria-live="polite">
+          <div class="counts">
             <div class="count"><b id="n-rec">–</b><span>записів</span></div>
             <div class="count"><b id="n-img">–</b><span>файлів</span></div>
           </div>
@@ -46,12 +47,13 @@
         <a class="btn" href="#new" id="add-open">Додати запис</a>
       </div>
 
-      <main id="timeline" aria-live="polite"></main>
+      <div id="timeline"></div>
     </div>
 
-    <article class="view" id="page" hidden aria-live="polite"></article>
+    <article class="view" id="page" hidden></article>
+    </main>
 
-    <p class="foot">Особиста медкартка. Коментарі до результатів — не медичний висновок; рішення щодо лікування приймає лікар.</p>
+    <footer class="foot">Особиста медкартка. Коментарі до результатів — не медичний висновок; рішення щодо лікування приймає лікар.</footer>
   </div>
 
   <div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Перегляд фото">

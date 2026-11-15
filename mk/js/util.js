@@ -123,3 +123,31 @@ export function copyText(text, el) {
 export function put(el, ...kids) {
   el.replaceChildren(...kids.flat(Infinity).filter((k) => k != null && k !== false));
 }
+
+/* ---------- доступність ---------- */
+const inerted = new Set();
+/** Модальне вікно: усе на сторінці, крім keep, стає inert — фокус і читалка не виходять за межі вікна. */
+export function inertOutside(keep, on) {
+  if (!on) { inerted.forEach((el) => { el.inert = false; }); inerted.clear(); return; }
+  for (const el of document.body.children) {
+    if (el === keep || el.tagName === "SCRIPT" || el.inert) continue;
+    el.inert = true;
+    inerted.add(el);
+  }
+}
+
+/** Програмний фокус на заголовок чи інший неінтерактивний елемент (без появи в порядку Tab). */
+export function focusEl(el) {
+  if (!el) return;
+  if (!el.matches("a[href], button, input, select, textarea, [tabindex]")) el.setAttribute("tabindex", "-1");
+  el.focus({ preventScroll: true });
+}
+
+/** Помилка валідації: поле позначається як некоректне, пов'язується з текстом помилки й отримує фокус. */
+export function markInvalid(form, field, msg) {
+  form.querySelectorAll("[aria-invalid]").forEach((el) => { el.removeAttribute("aria-invalid"); el.removeAttribute("aria-describedby"); });
+  if (!field) return;
+  field.setAttribute("aria-invalid", "true");
+  if (msg?.id) field.setAttribute("aria-describedby", msg.id);
+  field.focus();
+}

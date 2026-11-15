@@ -1,7 +1,7 @@
 // Редактор плану лікування (#plan): діагноз, етапи з датами, догляд, правила, справи.
 // Можна заповнити з фото протоколу лікаря через Claude, а потім виправити вручну.
 // Фото протоколу не зберігаються: щоб лишити сам протокол у картці, його додають окремим записом.
-import { h, str, todayISO, prepareFile, blobToBase64, put } from "./util.js";
+import { h, str, todayISO, prepareFile, blobToBase64, put, markInvalid } from "./util.js";
 import { S, setStatus, removeStatus, getToken } from "./data.js";
 import { buildPlanRequest, normalizePlan, analyzeDocuments, kyivToday } from "./claude.js";
 import { AI_URL, MODEL, PROFILE } from "./config.js";
@@ -51,7 +51,7 @@ function leave() {
 function draw() {
   if (!BOX || !P) return;
   const head = h("header", { class: "rec-head" },
-    h("h2", { text: P.exists ? "Редагування плану" : "Новий план лікування" }),
+    h("h1", { text: P.exists ? "Редагування плану" : "Новий план лікування" }),
     h("span", { class: "src", text: "Сфотографуй протокол лікаря — Claude заповнить план, а ти перевіриш. Або заповни вручну." }));
   if (P.step === "work") {
     put(BOX, backLink(), head, h("div", { class: "panel", role: "status", "aria-live": "polite" },
@@ -79,7 +79,7 @@ function aiBox() {
   note.value = P.note;
   note.addEventListener("input", () => { P.note = note.value; });
   return h("div", { class: "panel" },
-    h("h3", { text: "Заповнити з протоколу лікаря" }),
+    h("h2", { text: "Заповнити з протоколу лікаря" }),
     h("label", { class: "drop", for: "plan-files" },
       h("strong", { text: P.files.length ? `Вибрано файлів: ${P.files.length}` : "Вибрати фото або PDF протоколу" }),
       h("span", { text: P.files.length ? P.files.map((f) => f.name).join(", ") : "Фото в картку не зберігаються — лише план." }), input),
@@ -156,7 +156,7 @@ function formView() {
         h("div", { class: "field" }, h("label", { for: "p-meta", text: "Хто й коли поставив" }), meta))),
 
     h("div", { class: "block" },
-      h("h3", { text: "Етапи лікування" }),
+      h("h2", { text: "Етапи лікування" }),
       h("p", { class: "src", text: "Засоби, схема яких змінюється в часі. Поточний етап на головній визначається за датою початку." }),
       h("div", { class: "ed-list" }, f.plan.map((p, i) => h("div", { class: "ed-row ed-stage" },
         cell("Препарат", bind(h("input", { type: "text", id: `st-${i}-title`, placeholder: "Елідел 2 р/день" }), p, "title"), true),
@@ -169,7 +169,7 @@ function formView() {
       f.plan.length ? h("div", { class: "field" }, h("label", { for: "p-plan-note", text: "Примітка до дат" }), planNote) : null),
 
     h("div", { class: "block" },
-      h("h3", { text: "Щоденний догляд" }),
+      h("h2", { text: "Щоденний догляд" }),
       h("div", { class: "ed-list" }, f.care.map((c, i) => h("div", { class: "ed-row ed-care" },
         cell("Коли", bind(h("input", { type: "text", id: `care-${i}-when`, placeholder: "Ранок" }), c, "when")),
         cell("Що", bind(h("input", { type: "text", id: `care-${i}-what`, placeholder: "Зволожувальний крем" }), c, "what"), true),
@@ -177,7 +177,7 @@ function formView() {
       addBtn("Додати пункт", f.care, blankCare)),
 
     h("div", { class: "block" },
-      h("h3", { text: "Правила" }),
+      h("h2", { text: "Правила" }),
       h("div", { class: "ed-list" }, f.rules.map((_, i) => {
         const inp = h("input", { type: "text", id: `rule-${i}`, placeholder: "Наносити тонким шаром" });
         inp.value = str(f.rules[i]);
@@ -187,7 +187,7 @@ function formView() {
       addBtn("Додати правило", f.rules, () => "")),
 
     h("div", { class: "block" },
-      h("h3", { text: "Справи" }),
+      h("h2", { text: "Справи" }),
       h("div", { class: "ed-list" }, f.todo.map((t, i) => h("div", { class: "ed-row ed-todo" },
         cell("Зроблено", bind(h("input", { type: "checkbox", id: `todo-${i}-done` }), t, "done")),
         cell("Справа", bind(h("input", { type: "text", id: `todo-${i}-text`, placeholder: "Здати аналізи" }), t, "text"), true),
@@ -225,10 +225,17 @@ async function save(btn, msg) {
   clean.todo.forEach((t, i) => { let id = t.id || `t${i + 1}`; while (used.has(id)) id = `${id}x`; used.add(id); t.id = id; });
   if (!clean.diagnosis && !clean.diagnosis_short && !clean.plan.length && !clean.care.length && !clean.todo.length) {
     msg.textContent = "План порожній: додай діагноз, етап, догляд або справу.";
+    markInvalid(BOX, document.getElementById("p-diag"), msg);
     return;
   }
   const bad = clean.plan.find((p) => p.start && p.end && p.end < p.start);
-  if (bad) { msg.textContent = `У етапі «${bad.title}» кінець раніше за початок.`; return; }
+  if (bad) {
+    msg.textContent = `У етапі «${bad.title}» кінець раніше за початок.`;
+    const bi = P.form.plan.findIndex((p) => p.start && p.end && p.end < p.start);
+    markInvalid(BOX, document.getElementById(`st-${bi}-end`), msg);
+    return;
+  }
+  markInvalid(BOX, null);
   btn.disabled = true;
   btn.textContent = "Зберігаю…";
   try {
