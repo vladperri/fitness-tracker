@@ -1,5 +1,5 @@
 // Точка входу: вхід через Google, маршрути, підписка на дані.
-import { initFirebase, fb, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "./fb.js";
+import { initFirebase, fb, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "./fb.js";
 import { h, put } from "./util.js";
 import { S, onChange, subscribe, unsubscribe } from "./data.js";
 import { renderChips, renderList, renderNowPanel, renderNowPage, renderRecord, initLightbox, closeLb } from "./render.js";
@@ -108,17 +108,30 @@ function showDenied() {
   $("gate").hidden = false;
 }
 
-async function signIn() {
+// Лише вікно входу (popup), як у трекерах. Перехід на сторінку входу (redirect) не працює в Safari й iOS:
+// вони ізолюють сховище firebaseapp.com від github.io, і після входу сторінка показує «missing initial state».
+let signingIn = false;
+async function signIn(e) {
+  if (signingIn) return; // подвійне натискання не запускає другий вхід
+  signingIn = true;
+  const btn = e?.currentTarget;
+  if (btn) btn.disabled = true;
   const provider = new GoogleAuthProvider();
   provider.setCustomParameters({ prompt: "select_account" });
   try {
     await signInWithPopup(fb.auth, provider);
-  } catch (e) {
-    if (["auth/popup-blocked", "auth/operation-not-supported-in-this-environment", "auth/cancelled-popup-request"].includes(e.code)) {
-      await signInWithRedirect(fb.auth, provider);
-    } else if (e.code !== "auth/popup-closed-by-user") {
-      showGate("Не вдалося увійти. Спробуй ще раз.");
-    }
+  } catch (err) {
+    const code = err?.code || "";
+    if (code === "auth/popup-closed-by-user" || code === "auth/cancelled-popup-request") showGate();
+    else if (code === "auth/popup-blocked") showGate("Браузер не відкрив вікно входу. Натисни «Увійти через Google» ще раз.");
+    else if (code === "auth/operation-not-supported-in-this-environment" || code === "auth/web-storage-unsupported") {
+      showGate("Тут вхід не працює. Відкрий сторінку в Safari або Chrome (не у вбудованому браузері Telegram чи Instagram).");
+    } else if (code === "auth/unauthorized-domain") showGate("Цей домен ще не додано в Firebase Authentication → Settings → Authorized domains.");
+    else if (code === "auth/network-request-failed") showGate("Немає зв'язку. Перевір інтернет і спробуй ще раз.");
+    else showGate("Не вдалося увійти. Спробуй ще раз.");
+  } finally {
+    signingIn = false;
+    if (btn?.isConnected) btn.disabled = false;
   }
 }
 
@@ -139,9 +152,6 @@ async function boot() {
     showGate("Не вдалося підключитися. Онови сторінку.");
     return;
   }
-  getRedirectResult(fb.auth).catch((e) => showGate(e.code === "auth/unauthorized-domain"
-    ? "Цей домен ще не додано в Firebase Authentication → Settings → Authorized domains."
-    : "Не вдалося увійти. Спробуй ще раз."));
   onAuthStateChanged(fb.auth, (user) => {
     S.user = user;
     if (!user) {
