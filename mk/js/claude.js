@@ -348,29 +348,33 @@ export function createSseParser(onEvent) {
 
 /* ---------- помилки ---------- */
 export class AIError extends Error {
-  constructor(code, message) {
+  constructor(code, message, partial = "") {
     super(message);
     this.code = code;
+    this.partial = partial; // що Claude встиг написати до обриву
   }
 }
 
-/** Перекладає помилку Anthropic (type + message) у зрозумілий текст. */
-function anthropicError(type, message, status) {
+/** Перекладає помилку Anthropic (type + message) у зрозумілий текст. what: "doc" — розпізнавання, "chat" — питання до картки. */
+export function anthropicError(type, message, status, what = "doc") {
   const msg = typeof message === "string" ? message : "";
+  const chat = what === "chat";
   if (/credit balance/i.test(msg)) return new AIError("billing", "На рахунку Anthropic закінчились кошти. Поповни баланс у console.anthropic.com.");
   if (status === 401 || status === 403 || type === "authentication_error" || type === "permission_error") {
     return new AIError("api_key", "Ключ Anthropic не працює. Перевір секрет ANTHROPIC_API_KEY у воркері.");
   }
   if (status === 429 || type === "rate_limit_error") return new AIError("rate_limit", "Забагато запитів до Claude. Спробуй за хвилину.");
   if (status === 529 || type === "overloaded_error") return new AIError("overloaded", "Claude зараз перевантажений. Спробуй за хвилину.");
-  if (status === 413 || type === "request_too_large") return new AIError("too_large", "Файли завеликі для одного запиту. Спробуй менше файлів за раз.");
-  if (status === 400 || type === "invalid_request_error") {
-    return new AIError("invalid", `Claude не прийняв запит${msg ? `: ${msg}` : "."} Спробуй інші фото або менший PDF.`);
+  if (status === 413 || type === "request_too_large") {
+    return new AIError("too_large", chat ? "Запит завеликий для Claude. Почни нову розмову." : "Файли завеликі для одного запиту. Спробуй менше файлів за раз.");
   }
-  return new AIError("api", `Не вдалося розпізнати документ${status ? ` (помилка ${status})` : ""}. Спробуй ще раз.`);
+  if (status === 400 || type === "invalid_request_error") {
+    return new AIError("invalid", `Claude не прийняв запит${msg ? `: ${msg}` : "."}${chat ? "" : " Спробуй інші фото або менший PDF."}`);
+  }
+  return new AIError("api", `${chat ? "Не вдалося отримати відповідь" : "Не вдалося розпізнати документ"}${status ? ` (помилка ${status})` : ""}. Спробуй ще раз.`);
 }
 
-async function httpError(res) {
+async function httpError(res, what) {
   let j = null;
   try { j = await res.json(); } catch { /* не JSON */ }
   // Помилки самого воркера мають поле code.
@@ -378,17 +382,19 @@ async function httpError(res) {
   if (code === "auth") return new AIError("auth", "Сесія застаріла. Вийди й увійди ще раз.");
   if (code === "forbidden") return new AIError("forbidden", "Цей акаунт не має доступу до AI.");
   if (code === "config") return new AIError("config", "Воркер не налаштований: немає ключа Anthropic.");
-  if (code === "too_large") return new AIError("too_large", "Файли завеликі. Спробуй менше або менші файли.");
+  if (code === "too_large") return new AIError("too_large", what === "chat" ? "Запит завеликий. Почни нову розмову." : "Файли завеликі. Спробуй менше або менші файли.");
   if (code === "origin") return new AIError("origin", "Воркер не приймає запити з цієї адреси (ALLOWED_ORIGIN).");
-  return anthropicError(j?.error?.type, j?.error?.message, res.status);
+  return anthropicError(j?.error?.type, j?.error?.message, res.status, what);
 }
 
 /**
- * Надсилає запит через воркер і збирає відповідь зі стріму.
- * onProgress({ chars }) — скільки символів відповіді вже прийшло.
- * Повертає { data (розібраний JSON), model, usage }.
+ * Надсилає запит через воркер і читає відповідь зі стріму.
+ * onText(text) — уся відповідь, що вже прийшла (після кожного шматка).
+ * what: "doc" або "chat" — від цього залежать тексти помилок.
+ * Повертає { text, model, stop, error, usage }; помилки HTTP і мережі кидає як AIError.
  */
-export async function analyzeDocuments({ url, token, body, fetchImpl = globalThis.fetch, onProgress, signal }) {
+export async function streamMessage({ url, token, body, fetchImpl = globalThis.fetch, onText, signal, what = "doc" }) {
+  const aborted = what === "chat" ? "Зупинено." : "Розпізнавання скасовано.";
   if (!url) throw new AIError("no_url", "AI ще не налаштовано: немає адреси воркера.");
   let res;
   try {
@@ -399,10 +405,10 @@ export async function analyzeDocuments({ url, token, body, fetchImpl = globalThi
       signal,
     });
   } catch (e) {
-    if (e?.name === "AbortError") throw new AIError("aborted", "Розпізнавання скасовано.");
+    if (e?.name === "AbortError") throw new AIError("aborted", aborted);
     throw new AIError("network", "Немає зв'язку з сервером AI. Перевір інтернет і спробуй ще раз.");
   }
-  if (!res.ok) throw await httpError(res);
+  if (!res.ok) throw await httpError(res, what);
 
   const st = { text: "", model: body?.model || "", stop: null, error: null, usage: { input_tokens: 0, output_tokens: 0 } };
   const parser = createSseParser((type, ev) => {
@@ -429,7 +435,7 @@ export async function analyzeDocuments({ url, token, body, fetchImpl = globalThi
         const { value, done } = await reader.read();
         if (done) break;
         parser.push(decoder.decode(value, { stream: true }));
-        if (onProgress) onProgress({ chars: st.text.length });
+        if (onText) onText(st.text);
       }
     } else {
       parser.push(await res.text());
@@ -437,10 +443,20 @@ export async function analyzeDocuments({ url, token, body, fetchImpl = globalThi
     parser.push(decoder.decode());
     parser.end();
   } catch (e) {
-    if (e?.name === "AbortError") throw new AIError("aborted", "Розпізнавання скасовано.");
-    throw new AIError("network", "З'єднання обірвалось, поки Claude відповідав. Спробуй ще раз.");
+    if (e?.name === "AbortError") throw new AIError("aborted", aborted, st.text);
+    throw new AIError("network", "З'єднання обірвалось, поки Claude відповідав. Спробуй ще раз.", st.text);
   }
+  if (onText) onText(st.text);
+  return st;
+}
 
+/**
+ * Розпізнає документи: стрім відповіді у форматі JSON за схемою.
+ * onProgress({ chars }) — скільки символів відповіді вже прийшло.
+ * Повертає { data (розібраний JSON), model, usage }.
+ */
+export async function analyzeDocuments({ url, token, body, fetchImpl = globalThis.fetch, onProgress, signal }) {
+  const st = await streamMessage({ url, token, body, fetchImpl, signal, onText: onProgress ? (t) => onProgress({ chars: t.length }) : undefined });
   if (st.error) throw anthropicError(st.error.type, st.error.message, 0);
   if (st.stop === "refusal") throw new AIError("refusal", "Claude відмовився обробляти ці файли.");
   if (st.stop === "max_tokens") throw new AIError("max_tokens", "Відповідь вийшла задовгою. Спробуй менше файлів за раз.");
