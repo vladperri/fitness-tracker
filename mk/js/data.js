@@ -31,6 +31,14 @@ export const onChange = (fn) => listeners.add(fn);
 const emit = (what) => listeners.forEach((fn) => fn(what));
 
 const ROOT = ["medkartka", "data"];
+
+// Firestore не зберігає масиви в масивах, тому рядки таблиць лежать у базі як { c: [...] }.
+const packSections = (secs) => (Array.isArray(secs)
+  ? secs.map((x) => (x && Array.isArray(x.rows) ? { ...x, rows: x.rows.map((r) => ({ c: Array.isArray(r) ? r : [] })) } : x))
+  : secs);
+const unpackSections = (secs) => (Array.isArray(secs)
+  ? secs.map((x) => (x && Array.isArray(x.rows) ? { ...x, rows: x.rows.map((r) => (Array.isArray(r) ? r : Array.isArray(r?.c) ? r.c : [])) } : x))
+  : secs);
 const col = (...segs) => collection(fb.db, ...ROOT, ...segs);
 const ref = (...segs) => doc(fb.db, ...ROOT, ...segs);
 
@@ -42,7 +50,11 @@ export function subscribe() {
     else S.error = err.message;
   };
   unsubs.push(onSnapshot(query(col("records"), orderBy("sort", "desc")), (snap) => {
-    S.records = snap.docs.map((d) => ({ _id: d.id, ...d.data() }));
+    S.records = snap.docs.map((d) => {
+      const r = { _id: d.id, ...d.data() };
+      if (r.sections) r.sections = unpackSections(r.sections);
+      return r;
+    });
     S.loaded = true;
     S.error = null;
     emit("records");
@@ -157,6 +169,7 @@ export async function deleteFile(id) {
 /* ---------- записи ---------- */
 export async function saveRecord(id, data, { isNew }) {
   const body = { ...data, updated: serverTimestamp() };
+  if ("sections" in body) body.sections = packSections(body.sections);
   if (isNew) body.created = serverTimestamp();
   await setDoc(ref("records", id), body, { merge: !isNew });
 }
