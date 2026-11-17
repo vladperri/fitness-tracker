@@ -511,13 +511,13 @@
   .mn-note{font-size:12.5px;color:#FFC861;font-weight:600;line-height:1.45;
     padding:11px 13px;background:rgba(255,200,97,.09);border-radius:13px;margin-bottom:9px}
 
-  .mn-acts{display:flex;gap:8px;margin-top:2px}
-  .mn-btn{flex:1;background:var(--card);border:1px solid var(--line);color:var(--ink2);
+  .mn-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
+  .mn-btn{flex:1 1 calc(50% - 4px);min-width:0;background:var(--card);border:1px solid var(--line);color:var(--ink2);
     font-family:inherit;font-size:13.5px;font-weight:700;padding:13px 8px;border-radius:14px;
     cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px}
   .mn-btn:active{background:var(--card2)}
   .mn-btn svg{width:16px;height:16px;flex:none}
-  .mn-btn.main{background:var(--accent);color:#0B0B0D;border-color:var(--accent)}
+  .mn-btn.main{flex-basis:100%;background:var(--accent);color:#0B0B0D;border-color:var(--accent)}
   .mn-empty{font-size:13.5px;color:var(--muted);font-weight:600;line-height:1.5;
     text-align:center;padding:18px 10px 14px}
 
@@ -562,7 +562,8 @@
     padding:15px;margin-bottom:9px}
   .fr-ask-n{font-size:16px;font-weight:800;letter-spacing:-.01em;margin-bottom:3px}
   .fr-ask-m{font-size:13px;color:var(--ink2);font-weight:600;font-variant-numeric:tabular-nums}
-  .fr-ask-w{font-size:12.5px;color:#FFC861;font-weight:600;line-height:1.4;margin-top:7px}
+  .fr-ask-w{font-size:12.5px;color:#FFC861;font-weight:600;line-height:1.4;margin-top:7px;
+    white-space:pre-wrap;word-break:break-word}
   .fr-ask-b{display:flex;gap:8px;margin-top:12px}
   .fr-ask-b button{flex:1;font-family:inherit;font-size:13.5px;font-weight:700;padding:11px 8px;
     border-radius:12px;cursor:pointer;border:1px solid var(--line);background:var(--card2);color:var(--ink2)}
@@ -582,7 +583,7 @@
   .fr-one-f{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px}
   .fr-one-f textarea{flex:1;width:100%;min-height:74px;resize:none;background:var(--card2);
     border:1px solid var(--line);border-radius:13px;padding:10px 12px;color:var(--ink);
-    font-family:inherit;font-size:14px;font-weight:600;line-height:1.35;outline:none}
+    font-family:inherit;font-size:16px;font-weight:600;line-height:1.35;outline:none}
   .fr-one-f textarea::placeholder{color:var(--muted);font-weight:500}
   .fr-one-b{display:flex;gap:8px;margin-top:10px}
   .fr-one-b button{flex:1;font-family:inherit;font-size:13.5px;font-weight:700;padding:11px 8px;
@@ -590,6 +591,96 @@
   .fr-one-b button.ok{background:var(--accent);color:#0B0B0D;border-color:var(--accent)}
   .fr-one-b button[disabled]{opacity:.5}
   .fr-foot-r{display:flex;gap:8px}
+
+  /* ── 16px на полях вводу ───────────────────────────────────────
+     Safari на iOS зумить сторінку при фокусі в поле зі шрифтом
+     меншим за 16px. Поріг саме 16 — рівно 16 вже не зумить.
+     Кнопок це не стосується, вони не зумлять ніколи, тож нижче
+     вони збільшені лише там, де зручніше пальцю, і рівно
+     настільки, щоб ряди з трьох кнопок не розʼїхались. */
+  .ai-ta{font-size:16px}
+
+  .tmr-btn{font-size:15.5px}
+  .mn-btn{font-size:15px}
+  .fr-ask-b button,.fr-one-b button{font-size:15.5px}
+  .mn-snack button,.fr-del{font-size:15px}
+  .auth-btn{font-size:14px}
+  .ai-chip{font-size:14px}
+  .mn-day{font-size:13px}
+
+  /* гіфка з кільцем: display:contents робить обгортку невидимою для
+     розкладки, тож у портреті нічого не змінюється */
+  .tmr-vis{display:contents}
+
+  /* обгортка списку: у портреті прозора, у ландскейпі стає рядом із двох колонок */
+  .tmr-main{display:flex;flex-direction:column;flex:1;min-height:0}
+
+  /* активна вправа в списку — у ландскейпі картка стоїть окремо,
+     тож рядок лишається на місці й підсвічується */
+  .tl-row.now{background:var(--accent-dim);border:1px solid rgba(95,211,230,.35)}
+  .tl-row.now b{color:var(--ink)}
+
+  /* ── ландскейп на телефоні ─────────────────────────────────────
+     Ширини тут удосталь, висоти катма: 400px на все. Тому аркуш
+     розтягуємо на всю ширину, картку й список ставимо поруч, а
+     всередині картки гіфку виносимо ліворуч від решти. */
+  @media (orientation:landscape) and (max-height:540px){
+    .tmr.open:not(.mini){max-width:none;top:calc(env(safe-area-inset-top) + 4px);
+      padding-top:8px;
+      padding-left:calc(16px + env(safe-area-inset-left));
+      padding-right:calc(16px + env(safe-area-inset-right));
+      padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+    .tmr-grab{display:none}            /* згортання лишається кнопкою ⌄ */
+
+    .tmr-main{flex-direction:row;gap:14px}
+
+    .tl-card{flex:0 0 54%;min-width:0;margin:0;overflow-y:auto;padding:12px 13px;
+      display:grid;grid-template-columns:auto 1fr;grid-template-rows:repeat(7,min-content);
+      column-gap:13px;row-gap:1px;align-content:center;text-align:left}
+    .tl-card > *{grid-column:2;justify-self:start;max-width:100%}
+    .tmr-vis{display:flex;flex-direction:column;align-items:center;gap:7px;
+      grid-column:1;grid-row:1 / -1;align-self:center}
+    .tmr-gif{margin-top:0;width:116px;height:116px;border-radius:18px}
+    /* смуга спрайта = плитка × 12 кадрів, тож під інший розмір потрібні свої кадри */
+    .tmr-gif i{background-size:1392px 116px;animation-name:exrunL}
+    @keyframes exrunL{from{background-position:0 0}to{background-position:-1392px 0}}
+
+    .tmr-name{font-size:18.5px;margin-top:2px;max-width:none;line-height:1.12}
+    .tmr-meta{font-size:14px;margin-top:3px;max-width:none;line-height:1.25}
+    .tmr-ring{width:92px;margin:0}
+    .tmr-time{font-size:22px}
+    .tmr-total{font-size:12.5px}
+    .tmr-next{font-size:12px;max-width:none}
+    .tmr-watch,.tmr-eq{font-size:12.5px;margin-top:5px;padding:7px 10px}
+    .tmr-watch svg{width:14px;height:14px}
+    .tmr-eq svg{width:17px;height:17px}
+
+    .tmr-list{flex:1 1 0;min-width:0;margin:0;padding:2px 2px 6px}
+    .tl-sec{margin:8px 2px 5px}
+    .tl-sec:first-child{margin-top:0}
+    .tl-row{padding:8px 11px;margin-bottom:5px}
+    .tl-row b{font-size:13.5px}
+
+    .tmr-ctl{padding-top:8px}
+    .tmr-btn{padding:11px 8px;font-size:15px}
+
+    /* головна: 480px посередині й два порожні поля по боках — марнотратно,
+       тож секції лягають у дві колонки, а шапка й підвал їх перекривають.
+       Фіксовані шари (таймер, чат, холодильник, модалка) поза потоком,
+       тож сітка їх не чіпає. */
+    body{max-width:none;display:grid;grid-template-columns:1fr 1fr;
+      column-gap:18px;align-items:start;align-content:start;
+      padding-left:calc(16px + env(safe-area-inset-left));
+      padding-right:calc(16px + env(safe-area-inset-right))}
+    body > header,body > footer{grid-column:1 / -1}
+    header{padding-bottom:10px}
+    section{margin-bottom:12px}
+
+    /* решта повноекранних панелей теж не мають тулитися в 480px */
+    .ai,.fr{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+    .fr-body,.fr-foot{max-width:none}
+    .ai-log,.ai-ft{max-width:none}
+  }
 
 </style>
 </head>
@@ -690,20 +781,24 @@
       <button class="tmr-mini-btn" id="tmrMiniPause" aria-label="Пауза"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="5" width="3.6" height="14" rx="1.2"/><rect x="13.4" y="5" width="3.6" height="14" rx="1.2"/></svg></button>
     </div>
   </div>
+  <div class="tmr-main" id="tmrMain">
   <div class="tmr-list" id="tmrList">
   <div class="tl-card" id="tlCard">
     <div class="tmr-phase" id="tmrPhase">—</div>
     <div class="tmr-name" id="tmrName">—</div>
     <div class="tmr-meta" id="tmrMeta"></div>
+    <div class="tmr-vis">
     <div class="tmr-gif" id="tmrGif"><i></i></div>
     <div class="tmr-ring">
       <svg viewBox="0 0 240 240"><circle class="trk" cx="120" cy="120" r="110"/><circle class="bar" id="tmrArc" cx="120" cy="120" r="110"/></svg>
       <div class="tmr-time" id="tmrTime">0:00</div>
     </div>
+    </div>
     <div class="tmr-total" id="tmrTotal">0:00 / 0:00</div>
     <div class="tmr-next" id="tmrNext"></div>
     <div class="tmr-watch" id="tmrW"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="6" width="10" height="12" rx="3"/><path d="M9 6V3.6h6V6M9 18v2.4h6V18M12 10v2.4l1.6 1.2"/></svg><span id="tmrWT"></span></div>
     <div class="tmr-eq" id="tmrEq"><i id="tmrEqI"></i><span id="tmrEqT"></span></div>
+  </div>
   </div>
   </div>
   <div class="tmr-ctl">
@@ -1348,7 +1443,21 @@
     placeCard(0);
   }
 
+  // У ландскейпі картка живе поруч зі списком, а не в його потоці:
+  // 400px висоти не вміщають ні картку, ні бодай один рядок під нею.
+  var mainEl = document.getElementById("tmrMain");
+  var LAND = window.matchMedia("(orientation:landscape) and (max-height:540px)");
+  function isLand(){ return LAND.matches; }
+
   function placeCard(ei){
+    if(isLand()){
+      if(tlCard.parentElement !== mainEl){
+        mainEl.insertBefore(tlCard, listEl);
+        tlRows.forEach(function(x){ x.el.style.display = ""; });
+      }
+      cardAt = -1;
+      return;
+    }
     if(cardAt === ei && tlCard.parentElement === listEl) return;
     cardAt = ei;
     var r = tlRows[ei];
@@ -1361,6 +1470,7 @@
     tlRows.forEach(function(r){
       var d = doneSets(r.ei);
       r.el.classList.toggle("done", d >= r.sets && r.ei < now);
+      r.el.classList.toggle("now", r.ei === now);
       var dots = r.el.querySelectorAll(".tl-dots i");
       for(var k = 0; k < dots.length; k++) dots[k].classList.toggle("on", k < d);
     });
@@ -1368,19 +1478,34 @@
 
   // Якір: активна картка сама вертається в центр на кожній зміні фази.
   function tlAnchor(){
-    if(!tlCard.parentElement || tmr.classList.contains("mini")) return;
-    try{ tlCard.scrollIntoView({block:"center", behavior:"smooth"}); }
-    catch(e){ tlCard.scrollIntoView(); }
+    if(tmr.classList.contains("mini")) return;
+    // у ландскейпі картка нерухома, тож якір чіпляємо за активний рядок
+    var el = isLand() ? (tlRows[curEi()] || {}).el : tlCard;
+    if(!el || !el.parentElement) return;
+    try{ el.scrollIntoView({block:"center", behavior:"smooth"}); }
+    catch(e){ el.scrollIntoView(); }
   }
 
   // Картку прогортали геть — відлік переїжджає в шапку, щоб не губитись.
   function checkAway(){
+    // у ландскейпі картка завжди на екрані — переносити відлік нікуди не треба
+    if(isLand() || tlCard.parentElement !== listEl){ tmr.classList.remove("away"); return; }
     if(!tlCard.parentElement){ tmr.classList.remove("away"); return; }
     var cb = tlCard.getBoundingClientRect(), lb = listEl.getBoundingClientRect();
     var seen = Math.min(cb.bottom, lb.bottom) - Math.max(cb.top, lb.top);
     tmr.classList.toggle("away", seen < cb.height * 0.25);
   }
   listEl.addEventListener("scroll", checkAway, {passive:true});
+
+  // поворот телефона — картка переїжджає між списком і сусідньою колонкою
+  function onTurn(){
+    if(!T.on) return;
+    placeCard(curEi());
+    tmrPaint();
+    requestAnimationFrame(tlAnchor);
+  }
+  if(LAND.addEventListener) LAND.addEventListener("change", onTurn);
+  else if(LAND.addListener) LAND.addListener(onTurn);
 
   function tmrPaint(){
     var p = T.ph[T.i]; if(!p) return;
@@ -2144,7 +2269,8 @@
 
     askWorker(payload).then(function(j){
       if(j.product) frAsk.push(j.product);
-      else frAsk.push({ bad:true, err:j.error || "модель не розпізнала продукт" });
+      else frAsk.push({ bad:true, err:(j.error || "модель не розпізнала продукт")
+                               + (j.debug ? "\n\nВідповідь моделі:\n" + j.debug : "") });
       frOne = null;                       // вийшло — комірку закриваємо
     }).catch(function(err){
       frAsk.push({ bad:true, err:err.message });
@@ -2162,7 +2288,8 @@
         .then(function(img){ return askWorker({ kind:"product", img:img }); })
         .then(function(j){
           if(j.product) frAsk.push(j.product);
-          else frAsk.push({ bad:true, err:j.error || "модель не розпізнала продукт" });
+          else frAsk.push({ bad:true, err:(j.error || "модель не розпізнала продукт")
+                                   + (j.debug ? "\n\nВідповідь моделі:\n" + j.debug : "") });
         })
         .catch(function(err){
           frAsk.push({ bad:true, err:err.message });
@@ -2309,7 +2436,8 @@
       day:    dayType(),
       avoid:  prev ? prev.meals.map(function(m){ return m.title; }).join(", ") : ""
     }).then(function(j){
-      if(!j.menu) throw new Error(j.error || "порожня відповідь");
+      if(!j.menu) throw new Error((j.error || "порожня відповідь")
+                   + (j.debug ? "\n\nВідповідь моделі:\n" + j.debug : ""));
       // Індекси перетворюємо на знімок продукту ОДРАЗУ: інакше видалення
       // продукту з холодильника зсуне індекси, і меню показуватиме не те.
       var meals = j.menu.meals.map(function(m){
