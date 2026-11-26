@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#140708">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="Журнал обслуговування, нагадування й каталог запчастин для Audi A6 C7 2.0 TFSI quattro.">
+<title>Моя Audi A6 C7</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@200;300;500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="css/app.css">
+<script defer src="js/info.js"></script>
+<script defer src="js/app.js"></script>
+<script defer src="js/catalog.js"></script>
+<script type="module" src="js/fb.js"></script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-nut" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="currentColor"/></symbol>
+    <symbol id="i-rivet" viewBox="0 0 16 16"><polygon points="8,1.5 14.5,8 8,14.5 1.5,8" fill="currentColor"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 16 16"><rect x="2.5" y="2.5" width="11" height="11" fill="currentColor"/></symbol>
+    <symbol id="i-qr" viewBox="0 0 16 16"><polygon points="8,1.5 15,14 1,14" fill="currentColor"/></symbol>
+    <symbol id="i-clip" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.2" fill="none" stroke="currentColor" stroke-width="2.8"/></symbol>
+    <symbol id="i-spring" viewBox="0 0 16 16"><rect x="1.5" y="4.5" width="13" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="2.4"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></g></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></g></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+<div class="toast-live" id="live" aria-live="polite"></div>
+
+<nav class="tabs" aria-label="Розділи">
+  <div class="container tabs-in">
+    <div class="tabs-links">
+      <a href="#home" data-tab="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>Головна</a>
+      <a href="#records" data-tab="records"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>Записи</a>
+      <a href="#reminders" data-tab="reminders"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21h4"/></svg>Нагадування</a>
+      <a href="#car" data-tab="car"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16v-4l2-5h12l2 5v4"/><path d="M3 16h18v3H3z"/><circle cx="7.5" cy="13" r="1"/><circle cx="16.5" cy="13" r="1"/></svg>Авто</a>
+      <a href="#catalog" data-tab="catalog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>Каталог</a>
+    </div>
+    <button class="btn btn-primary tabs-cta" type="button" data-add-record>Додати запис</button>
+  </div>
+</nav>
+
+<main>
+<!-- ===== Головна ===== -->
+<div data-view="home" id="home">
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="container hero-grid">
+      <div class="hero-head">
+        <p class="eyebrow-s">Моя A6 · 2.0 TFSI quattro · Phantom Black</p>
+        <h1 class="hero-title" id="hero-title">Завантажуємо журнал…</h1>
+        <p class="hero-sub" id="hero-sub">&nbsp;</p>
+      </div>
+      <div class="hero-car"><img class="car-photo" src="img/car.jpg" alt="Чорна Audi A6 C7, вигляд спереду" width="800" height="519" decoding="async"></div>
+      <div class="stats">
+        <div class="stat"><span class="stat-v"><span id="st-oil">—</span><wbr><span class="unit" id="st-oil-unit"></span></span><span class="stat-k" id="st-oil-sub">до заміни мастила в двигуні</span></div>
+        <div class="stat"><span class="stat-v"><span id="st-km">—</span><wbr><span class="unit" id="st-km-unit"></span></span><span class="stat-k" id="st-km-sub">пробіг</span></div>
+      </div>
+      <div class="tiles">
+        <a class="tile" href="#records"><span class="tile-k">Записів</span><span class="tile-v" id="st-count">—</span></a>
+        <a class="tile" href="#reminders"><span class="tile-k">Нагадувань</span><span class="tile-v" id="st-rem">—</span></a>
+        <a class="tile" href="#h-year-box"><span class="tile-k"><span class="dot" aria-hidden="true"></span>Без запису</span><span class="tile-v" id="st-miss">—</span></a>
+      </div>
+      <button class="btn btn-primary hero-cta" type="button" data-add-record>Додати запис</button>
+      <p class="hero-note" id="db-note" hidden></p>
+    </div>
+  </section>
+
+  <div class="container home-grid">
+    <section class="panel p-year" id="h-year-box" aria-labelledby="c-year">
+      <div class="panel-head"><h2 id="c-year">Раз на рік</h2><a class="more" href="#where">Що і де міняти</a></div>
+      <p class="panel-sub" id="h-year-sub">Рідини й фільтри: коли міняли востаннє.</p>
+      <ul class="plain" id="h-year"></ul>
+    </section>
+    <div class="home-left">
+    <section class="panel p-rem" aria-labelledby="c-rem">
+      <div class="panel-head"><h2 id="c-rem">Нагадування</h2><a class="more" href="#reminders">Усі</a></div>
+      <ul class="plain" id="h-rem"></ul>
+    </section>
+    <section class="panel p-last" aria-labelledby="c-last">
+      <div class="panel-head"><h2 id="c-last">Останні записи</h2><a class="more" href="#records">Усі записи</a></div>
+      <ul class="plain" id="h-last"></ul>
+    </section>
+    </div>
+  </div>
+
+  <section class="container account" aria-labelledby="c-acc">
+    <div class="panel">
+      <div class="panel-head"><h2 id="c-acc">Обліковий запис</h2></div>
+      <p class="acc-who" id="acc-who">Перевіряємо вхід…</p>
+      <div class="acc-actions">
+        <button class="btn btn-primary" type="button" id="acc-signin" hidden>Увійти через Google</button>
+        <button class="btn btn-ghost" type="button" id="acc-export" hidden>Зберегти резервну копію</button>
+        <button class="btn btn-ghost" type="button" id="acc-import" hidden>Відновити з файлу</button>
+        <button class="btn btn-ghost" type="button" id="acc-signout" hidden>Вийти</button>
+        <input class="vh" type="file" id="acc-file" accept="application/json,.json" tabindex="-1" aria-hidden="true">
+      </div>
+      <p class="status" id="acc-status" role="status"></p>
+    </div>
+  </section>
+</div>
+
+<!-- ===== Записи ===== -->
+<section data-view="records" id="records" aria-labelledby="rec-title" hidden>
+  <div class="container view-in">
+    <div class="view-top">
+      <div class="view-head">
+        <h1 class="view-title" id="rec-title">Записи</h1>
+        <button class="btn btn-primary" type="button" id="rec-add-toggle" aria-expanded="false" aria-controls="rec-form">Додати запис</button>
+      </div>
+      <p class="view-sub" id="rec-count">ТО, ремонти й огляди, нові зверху.</p>
+    </div>
+
+    <form class="form" id="rec-form" hidden novalidate>
+      <h3 id="rec-form-title">Новий запис</h3>
+      <div class="fields">
+        <label class="field">Дата<input type="date" name="date" required></label>
+        <label class="field">Пробіг, км<input type="number" name="km" inputmode="numeric" min="0" step="1" placeholder="188054"></label>
+        <label class="field">Тип
+          <select name="type">
+            <option value="to">ТО</option>
+            <option value="repair">Ремонт</option>
+            <option value="inspect">Огляд / діагностика</option>
+            <option value="other">Інше</option>
+          </select>
+        </label>
+        <label class="field">Сума, грн<input type="number" name="total" inputmode="decimal" min="0" step="any"></label>
+      </div>
+      <label class="field">Що зробили<input type="text" name="title" required maxlength="160" placeholder="Заміна гальмівних колодок"></label>
+      <label class="field">Деталі й роботи: кожна з нового рядка, у форматі «назва | код | ціна»<textarea name="items" maxlength="2000" placeholder="Колодки передні TRW | GDB1955 | 1800"></textarea></label>
+      <fieldset class="checks" id="svc-checks">
+        <legend>Що міняли (для нагадувань і списку «Раз на рік»)</legend>
+      </fieldset>
+      <label class="field">Примітка<input type="text" name="note" maxlength="300"></label>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit" id="rec-submit">Зберегти</button>
+        <button class="btn btn-ghost" type="button" data-close="rec-form">Скасувати</button>
+        <button class="btn btn-ghost btn-danger" type="button" id="rec-del-in-form" hidden>Видалити запис</button>
+        <span class="status" id="rec-status" role="status"></span>
+      </div>
+    </form>
+
+    <div class="filters" role="group" aria-label="Тип запису">
+      <button class="fchip" type="button" data-filter="all" aria-pressed="true">Усі</button>
+      <button class="fchip" type="button" data-filter="to" aria-pressed="false">ТО</button>
+      <button class="fchip" type="button" data-filter="repair" aria-pressed="false">Ремонт</button>
+      <button class="fchip" type="button" data-filter="inspect" aria-pressed="false">Огляд</button>
+      <button class="fchip" type="button" data-filter="other" aria-pressed="false">Інше</button>
+    </div>
+    <div id="rec-list" class="rec-grid"><p class="empty">Завантажуємо записи…</p></div>
+  </div>
+</section>
+
+<!-- ===== Нагадування ===== -->
+<section data-view="reminders" id="reminders" aria-labelledby="rem-title" hidden>
+  <div class="container view-in">
+    <div class="view-top">
+      <div class="view-head">
+        <h1 class="view-title" id="rem-title">Нагадування</h1>
+        <button class="btn btn-primary" type="button" id="rem-add-toggle" aria-expanded="false" aria-controls="rem-form">Додати</button>
+      </div>
+      <p class="view-sub">Заміну мастила в двигуні застосунок рахує сам, інші нагадування додаєте вручну.</p>
+    </div>
+
+    <form class="form" id="rem-form" hidden novalidate>
+      <h3>Нове нагадування</h3>
+      <label class="field">Що зробити<input type="text" name="title" required maxlength="160" placeholder="Запис на СТО: задні амортизатори"></label>
+      <div class="fields">
+        <label class="field">Дата<input type="date" name="date"></label>
+        <label class="field">Або на пробігу, км<input type="number" name="km" inputmode="numeric" min="0" step="1"></label>
+      </div>
+      <label class="field">Примітка<input type="text" name="note" maxlength="300" placeholder="Адреса, телефон, що взяти з собою"></label>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Зберегти</button>
+        <button class="btn btn-ghost" type="button" data-close="rem-form">Скасувати</button>
+        <span class="status" id="rem-status" role="status"></span>
+      </div>
+    </form>
+
+    <div class="two-col">
+      <article class="card" aria-labelledby="r-oil">
+        <div class="card-head">
+          <h3 id="r-oil">Мастило в двигуні</h3>
+          <button class="icon-btn" type="button" data-info="engine_oil" aria-label="Що купити: мастило в двигуні"><svg aria-hidden="true"><use href="#i-info"/></svg></button>
+        </div>
+        <div class="big"><span id="r-oil-km">—</span><span class="unit" id="r-oil-unit"></span></div>
+        <div class="bar" id="r-oil-bar" role="img" aria-label="Інтервал заміни ще не розраховано"><i style="width:0%"></i></div>
+        <div class="bar-ends"><span id="r-oil-from"></span><span id="r-oil-to"></span></div>
+        <p class="sub" id="r-oil-sub">&nbsp;</p>
+        <p class="warnline" id="r-oil-warn" hidden></p>
+        <form id="oil-set" aria-label="Інтервал заміни мастила в двигуні" novalidate>
+          <div class="fields">
+            <label class="field">Інтервал, км<input type="number" name="km" inputmode="numeric" min="1000" step="500"></label>
+            <label class="field">або місяців<input type="number" name="months" inputmode="numeric" min="1" max="36" step="1"></label>
+          </div>
+          <div class="form-actions" style="margin-top: var(--s3)"><button class="btn btn-ghost" type="submit">Зберегти інтервал</button><span class="status" id="oil-status" role="status"></span></div>
+        </form>
+      </article>
+      <article class="card" aria-labelledby="r-mine">
+        <h3 id="r-mine">Мої нагадування</h3>
+        <div id="rem-list"><p class="sub">Завантажуємо…</p></div>
+      </article>
+    </div>
+
+    <div class="section-head" id="where">
+      <h2>Що і де міняти</h2>
+      <p class="view-sub">Кнопка «i» біля заміни покаже, що купити. Об’єми й допуски — з офіційної таблиці рідин Audi of America для A6 quattro 2015, тип 4G25MA, як на вашій наклейці.</p>
+    </div>
+    <ul class="plain panel where-list" id="where-list"></ul>
+  </div>
+</section>
+
+<!-- ===== Авто ===== -->
+<section data-view="car" id="car" aria-labelledby="car-title" hidden>
+  <div class="container view-in">
+    <div class="view-top"><h1 class="view-title" id="car-title">Авто</h1><p class="view-sub">Дані з наклейки в багажнику, у ніші запаски. Усі коди розшифровано за базами PR-кодів VW Group і дилерськими довідками Audi.</p></div>
+    <div class="vin-plate">
+      <span class="label-s">VIN</span>
+      <button class="code code-lg" type="button" data-code="WAUGFAFC5FN016207" aria-label="Скопіювати VIN WAUGFAFC5FN016207">WAUGFAFC5FN016207<svg aria-hidden="true"><use href="#i-copy"/></svg></button>
+    </div>
+    <div class="kv-grid">
+      <div class="kv"><span class="label-s">Тип</span><b>4G25MA</b><small>A6 Limousine quattro</small></div>
+      <div class="kv"><span class="label-s">Двигун</span><b>CAED</b><small>2.0 TFSI R4, 162 кВт (220 к.с.)</small></div>
+      <div class="kv"><span class="label-s">Коробка передач</span><b>A8</b><small>8-ступ. автомат Tiptronic (0BK)</small></div>
+      <div class="kv"><span class="label-s">Агрегати</span><b>QCU · NPR</b><small>QCU — коробка 0BK (ZF 8HP55A) з Torsen; NPR — задній редуктор 0BC, відкритий</small></div>
+      <div class="kv"><span class="label-s">Виробничий номер</span><b>3742143</b><small>заводський номер кузова</small></div>
+      <div class="kv"><span class="label-s">Виготовлено</span><b>09/2014</b><small>модельний рік 2015</small></div>
+      <div class="kv"><span class="label-s">Колір кузова / даху</span><b>LZ9Y / LZ9Y</b><small>Phantom Black, перламутр</small></div>
+      <div class="kv"><span class="label-s">Салон</span><b>N1F / VB</b><small>шкіра / шкірозамінник</small></div>
+    </div>
+
+    <section class="callout" aria-labelledby="car-parts">
+      <h3 id="car-parts">Що з цього важливо для запчастин</h3>
+      <dl class="codes-dl">
+        <dt>1BA</dt><dd>Стандартна підвіска. Амортизатори беріть саме для неї: Bilstein B4 19-226897, Sachs 315090, Monroe 376025SP, Meyle 1267250036.</dd>
+        <dt>U1B</dt><dd>Щиток зі спідометром у милях. Якщо щиток не перепрошивали, пробіги в журналі — у милях (188 054 милі ≈ 302 600 км). Інтервал Audi для США на мастило в двигуні — 10 000 миль або рік.</dd>
+        <dt>5D2</dt><dd>Радіоключ 315 МГц (США). Новий ключ потрібен саме на цю частоту.</dd>
+        <dt>8EH</dt><dd>Біксенонові фари американського виконання.</dd>
+        <dt>J0Z</dt><dd>Акумулятор 110 А·год, 520 А. Під такий і підбирати заміну.</dd>
+        <dt>1LJ / 2EA</dt><dd>Коди гальм для підбору колодок і дисків. 0JJ — вагова категорія передньої осі, її питають при підборі пружин.</dd>
+        <dt>5SG / 5RW</dt><dd>Дзеркала американського виконання: ліве пласке, праве опукле. Важливо при купівлі дзеркальних елементів.</dd>
+        <dt>1XT</dt><dd>Кермо з підігрівом і пелюстками перемикання.</dd>
+      </dl>
+    </section>
+
+    <div class="table-box">
+    <table class="prtable">
+      <thead><tr><th scope="col">Код</th><th scope="col">Що означає</th></tr></thead>
+      <tbody>
+        <tr><td>1X1</td><td>Повний привід quattro, постійний; муфти Haldex немає</td></tr>
+        <tr><td>1BA</td><td>Підвіска й амортизатори стандартні</td></tr>
+        <tr><td>8EH</td><td>Біксенонові (газорозрядні) фари, виконання США</td></tr>
+        <tr><td>3FE</td><td>Скляний люк, зсувний і підйомний, зі шторкою</td></tr>
+        <tr><td>3L4</td><td>Електрорегулювання передніх сидінь, водійське з пам'яттю</td></tr>
+        <tr><td>6XL</td><td>Дзеркала з пам'яттю, автозатемненням, електроскладанням і підігрівом</td></tr>
+        <tr><td>7X2</td><td>Парктронік спереду й ззаду</td></tr>
+        <tr><td>7K6</td><td>Контроль тиску в шинах</td></tr>
+        <tr><td>4UH</td><td>Подушки водія й пасажира, колінна подушка</td></tr>
+        <tr><td>4X3</td><td>Бічні передні подушки й шторки</td></tr>
+        <tr><td>4KC</td><td>Бічні й заднє скло з теплоізоляцією</td></tr>
+        <tr><td>4GQ</td><td>Теплоідбивне лобове скло</td></tr>
+        <tr><td>4I3</td><td>Безключовий доступ Keyless Entry, без SAFELOCK</td></tr>
+        <tr><td>5D2</td><td>Частота радіоключа 315 МГц</td></tr>
+        <tr><td>U1B</td><td>Щиток приладів: спідометр у милях, годинник, тахометр, добовий лічильник</td></tr>
+        <tr><td>QZ7</td><td>Електропідсилювач керма</td></tr>
+        <tr><td>3NZ</td><td>Задній диван суцільний, спинка складається частинами</td></tr>
+        <tr><td>N1F</td><td>Оббивка сидінь: шкіра з тисненням / шкірозамінник</td></tr>
+        <tr><td>0YM</td><td>Вагова категорія 12</td></tr>
+        <tr><td>S0B</td><td>Модельний рік продажу не збігається з роком виробництва</td></tr>
+        <tr><td>E0A</td><td>Без спецверсії</td></tr>
+        <tr><td>F0A</td><td>Не спецавтомобіль, стандартне оснащення</td></tr>
+        <tr><td>D60</td><td>Двигун 4-цил. 2.0 TFSI, 162 кВт, турбо FSI</td></tr>
+        <tr><td>TG6</td><td>Базовий агрегат двигуна 2.0, серія 06H.G</td></tr>
+        <tr><td>0G7</td><td>Коробка Tiptronic</td></tr>
+        <tr><td>9G3</td><td>Генератор 120–180 А</td></tr>
+        <tr><td>J0Z</td><td>Акумулятор 520 А (110 А·год)</td></tr>
+        <tr><td>8Z6</td><td>Система охолодження для жарких країн</td></tr>
+        <tr><td>7GB</td><td>Екологічна норма ULEV 2 (США)</td></tr>
+        <tr><td>1LJ</td><td>Передні дискові гальма (код для підбору колодок і дисків)</td></tr>
+        <tr><td>2EA</td><td>Задні дискові гальма (код для підбору колодок і дисків)</td></tr>
+        <tr><td>1AS</td><td>Система стабілізації ESP</td></tr>
+        <tr><td>0JJ</td><td>Вагова категорія передньої осі: 9 (для підбору пружин)</td></tr>
+        <tr><td>C0J</td><td>Легкосплавні диски 8J × 18</td></tr>
+        <tr><td>8Q3</td><td>Автоматичний динамічний коректор фар</td></tr>
+        <tr><td>1XT</td><td>Шкіряне мультикермо, спортивне, з пелюстками Tiptronic, з підігрівом</td></tr>
+        <tr><td>9Q8</td><td>Мультифункціональний дисплей / бортовий комп’ютер</td></tr>
+        <tr><td>7T6</td><td>Навігаційна система</td></tr>
+        <tr><td>5MG</td><td>Декоративні вставки: горіх (корінь)</td></tr>
+        <tr><td>Q1A</td><td>Стандартні передні сидіння</td></tr>
+        <tr><td>5SG</td><td>Ліве зовнішнє дзеркало: пласке</td></tr>
+        <tr><td>5RW</td><td>Праве зовнішнє дзеркало: опукле, широкий огляд (США)</td></tr>
+        <tr><td>2K2</td><td>Посилені бампери</td></tr>
+        <tr><td>3Y0</td><td>Без шторки заднього скла</td></tr>
+        <tr><td>1SA</td><td>Без додаткового захисту двигуна знизу</td></tr>
+        <tr><td>X9A</td><td>Національна програма продажу: США</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="view-sub">Рядок «99.9 99.9 99.9 9999» внизу наклейки — незаповнені службові поля.</p>
+  </div>
+</section>
+
+<div class="wrap" data-view="catalog" id="catalog" hidden>
+  <header class="plate">
+    <div class="eyebrow">Мій каталог запчастин</div>
+    <h1>Audi A6 C7 · 2015</h1>
+    <p class="spec"><b>2.0 TFSI quattro</b> · седан · авто для ринку США</p>
+    <div class="vin">
+      <span class="eyebrow">VIN</span>
+      <button class="codebtn big" type="button" data-code="WAUGFAFC5FN016207" aria-label="Копіювати VIN WAUGFAFC5FN016207">WAUGFAFC5FN016207</button>
+    </div>
+    <p class="disclaimer">Коди деталей — з дилерських каталогів США і ETKA. Кількість і розташування кріплень перемальовані з малюнків заводського посібника з ремонту A6 4G і вказані на одну деталь. Коди й ціни MAK — з каталогу mak.parts. Торкніться будь-якого коду, щоб скопіювати його.</p>
+    <ul class="legend" aria-label="Позначки">
+      <li><span class="chip ok">Каталог США</span>номер з американського каталогу під ваш рік і двигун</li>
+      <li><span class="chip warn">Найімовірніше</span>номер з каталогу C7, але не з карти саме вашого авто, звірте зі старою деталлю</li>
+      <li><span class="chip warn">Перевірити за VIN</span>існує кілька версій деталі</li>
+      <li><span class="chip warn">Підібрано за типом</span>номера в каталозі немає, кріплення підібране за розміром і застосуванням у MAK</li>
+    </ul>
+  </header>
+
+  <nav aria-label="Розділи каталогу">
+    <ul class="groups">
+      <li class="on"><span class="n">1</span>Двигун · Планове ТО<span class="done-tag">заповнено</span></li>
+      <li><span class="n">2</span>Паливо й вихлоп</li>
+      <li><span class="n">3</span>КПП</li>
+      <li><span class="n">4</span>Передня підвіска й кермо</li>
+      <li><span class="n">5</span>Задня підвіска</li>
+      <li><span class="n">6</span>Колеса й гальма</li>
+      <li class="on"><span class="n">8</span>Кузов · Захист днища й підкрилки<span class="done-tag">заповнено</span></li>
+      <li><span class="n">9</span>Електрика</li>
+    </ul>
+    <p class="groups-note">Номери — головні групи заводського каталогу. Це не кнопки, а перелік розділів: поки заповнені 1 (мастило в двигуні й фільтри) і 8 (захист днища й підкрилки). Інші додамо пізніше.</p>
+  </nav>
+
+  <!-- ===== Service ===== -->
+  <section class="group service" id="service" aria-labelledby="g-service">
+    <div class="group-head">
+      <span class="eyebrow">Група 1 · Двигун 2.0 TFSI, код CAED (EA888 2-го покоління)</span>
+      <h2 id="g-service">Планове ТО: мастило в двигуні й фільтри</h2>
+    </div>
+    <p class="lead">Номери взято з офіційної сервісної таблиці Audi of America для A6 2015 з цим двигуном. Аналоги — з каталогів виробників фільтрів. Код двигуна можна звірити на наклейці з даними авто (у багажнику, у ніші запаски) або в сервісній книжці.</p>
+
+    <div class="buy svc-list">
+      <h3 class="buy-sub" style="margin-top:0">Що купити на одну заміну</h3>
+      <ul class="rows">
+        <li class="frow"><span class="qty">5 л</span><span class="f-text"><span class="f-name">Мастило для двигуна з допуском VW 502 00</span><span class="f-desc">Синтетика 5W-40, 5W-30 або 0W-40. Заливається 4,6 л.</span></span></li>
+        <li class="frow"><span class="qty">1</span><span class="f-text"><span class="f-name">Фільтр мастила в двигуні</span><span class="codes"><button class="codebtn" type="button" data-code="06J115403Q">06J 115 403 Q</button></span></span></li>
+        <li class="frow"><span class="qty">1</span><span class="f-text"><span class="f-name">Кільце зливної пробки</span><span class="codes"><button class="codebtn" type="button" data-code="N0138157">N 013 815 7</button></span></span></li>
+        <li class="frow"><span class="qty">1</span><span class="f-text"><span class="f-name">Повітряний фільтр</span><span class="codes"><button class="codebtn" type="button" data-code="4G0133843K">4G0 133 843 K</button></span></span></li>
+        <li class="frow"><span class="qty">1</span><span class="f-text"><span class="f-name">Салонний фільтр</span><span class="codes"><button class="codebtn" type="button" data-code="4H0819439">4H0 819 439</button></span></span></li>
+      </ul>
+    </div>
+
+    <article class="part" id="s-oil">
+      <div class="part-head">
+        <span class="callout ghost">1</span>
+        <div>
+          <h3>Мастило в двигуні</h3>
+          <p class="where">Головне — допуск <b>VW 502 00</b> на каністрі. В'язкість за таблицею Audi: SAE 5W-40, 5W-30 або 0W-40, тільки синтетика.</p>
+        </div>
+      </div>
+      <ul class="rows">
+        <li class="prow"><button class="codebtn" type="button" data-code="VW 502 00">VW 502 00</button><span class="chip ok">Каталог США</span></li>
+        <li class="prow"><span class="f-name">Об'єм із заміною фільтра</span><span class="spec-val">4,6 л</span></li>
+      </ul>
+      <p class="note">Цей допуск мають, наприклад, Castrol EDGE 5W-40, Mobil 1 FS 0W-40, Liqui Moly Top Tec 4100 5W-40, Motul 8100 X-cess 5W-40. Допуски в лінійках інколи змінюються, тож перевірте напис на каністрі перед покупкою.</p>
+      <p class="note">Приклад: на нинішній каністрі <b>Aral HighTronic 5W-40</b> (ACEA C3) вказано лише VW 505 00 / 505 01, без 502 00, тож вона не підходить. А <b>Aral HighTronic M 5W-40</b> (ACEA A3/B4) має VW 502 00.</p>
+      <p class="note">Спершу залийте на ~0,5 л менше, прогрійте двигун, зачекайте кілька хвилин і долийте до норми.</p>
+      <p class="note">Інтервал Audi для США — кожні 10 000 миль (~16 000 км) або раз на рік, що настане раніше. Якщо багато їздите містом і на короткі відстані, міняйте частіше.</p>
+    </article>
+
+    <article class="part" id="s-oilfilter">
+      <div class="part-head">
+        <span class="callout ghost">2</span>
+        <div>
+          <h3>Фільтр мастила в двигуні</h3>
+          <p class="where">Накручуваний, Ø76 мм. Знімається ключем-чашкою на 76 мм з 15 гранями. Гумове кільце нового фільтра перед встановленням змастіть свіжим мастилом.</p>
+        </div>
+      </div>
+      <ul class="rows">
+        <li class="prow"><button class="codebtn" type="button" data-code="06J115403Q">06J 115 403 Q</button><span class="chip ok">Каталог США</span><span class="f-desc">старий номер 06J 115 403 C</span></li>
+        <li class="prow"><span class="alt-lbl">Аналог</span><button class="codebtn" type="button" data-code="W 719/45">MANN W 719/45</button><span class="f-desc">MANN вказує його для A6 2015 з CAED</span></li>
+        <li class="prow"><span class="alt-lbl">Аналог</span><button class="codebtn" type="button" data-code="OC 456">Mahle OC 456</button><span class="f-desc">для A6 C7 2.0T 2012–2015</span></li>
+      </ul>
+      <p class="note">Не плутайте з фільтром-вставкою 06L 115 562: він для двигунів 2016+ (EA888 3-го покоління) і сюди не підходить.</p>
+    </article>
+
+    <article class="part" id="s-drain">
+      <div class="part-head">
+        <span class="callout ghost">3</span>
+        <div>
+          <h3>Кільце зливної пробки</h3>
+          <p class="where">Ущільнювальне кільце 14×20 мм. Міняйте при кожній заміні мастила в двигуні, саму пробку міняти не треба.</p>
+        </div>
+      </div>
+      <ul class="rows">
+        <li class="prow"><button class="codebtn" type="button" data-code="N0138157">N 013 815 7</button><span class="chip ok">Каталог США</span></li>
+      </ul>
+    </article>
+
+    <article class="part" id="s-air">
+      <div class="part-head">
+        <span class="callout ghost">4</span>
+        <div>
+          <h3>Повітряний фільтр</h3>
+          <p class="where">Літера K у номері — саме для 2.0 TFSI. В інших двигунів A6 C7 номер без літери, і він не підходить.</p>
+        </div>
+      </div>
+      <ul class="rows">
+        <li class="prow"><button class="codebtn" type="button" data-code="4G0133843K">4G0 133 843 K</button><span class="chip ok">Каталог США</span><span class="f-desc">старий номер 4G0 133 843 H</span></li>
+        <li class="prow"><span class="alt-lbl">Аналоги</span><button class="codebtn" type="button" data-code="C 15 010">MANN C 15 010</button><button class="codebtn" type="button" data-code="LX 2607/2">Mahle LX 2607/2</button></li>
+      </ul>
+    </article>
+
+    <article class="part" id="s-cabin">
+      <div class="part-head">
+        <span class="callout ghost">5</span>
+        <div>
+          <h3>Салонний фільтр</h3>
+          <p class="where">Вугільний. Audi в США міняє його на ТО через кожні 20 000 миль (~32 000 км).</p>
+        </div>
+      </div>
+      <ul class="rows">
+        <li class="prow"><button class="codebtn" type="button" data-code="4H0819439">4H0 819 439</button><span class="chip ok">Каталог США</span></li>
+        <li class="prow"><span class="alt-lbl">Аналоги</span><button class="codebtn" type="button" data-code="CUK 2641">MANN CUK 2641</button><button class="codebtn" type="button" data-code="LAK 667">Mahle LAK 667</button><button class="codebtn" type="button" data-code="E2996LC">Hengst E2996LC</button></li>
+      </ul>
+    </article>
+  </section>
+
+  <section class="schema" aria-label="Схема днища">
+    <div class="eyebrow">Схема днища · нумерація як у продавця</div>
+    <svg viewBox="0 0 600 310" role="img" aria-labelledby="schema-title">
+      <title id="schema-title">Днище авто знизу, перед ліворуч, ліва сторона (водія) вгорі. Сегменти захисту 1–9, 12 і 13, підкрилки 14–17 у колісних арках.</title>
+      <text class="lbl-side" x="330" y="18" text-anchor="middle">Л · сторона водія</text>
+      <text class="lbl-side" x="330" y="304" text-anchor="middle">П · сторона пасажира</text>
+      <text class="lbl" x="14" y="155" text-anchor="middle" transform="rotate(-90 14 155)">ПЕРЕД</text>
+      <rect class="car" x="28" y="44" width="556" height="222" rx="70"/>
+      <a class="zone zone-arch" href="#p14" data-zone="14" aria-label="14 — передній лівий підкрилок"><rect x="112" y="28" width="82" height="30" rx="10"/><circle cx="153" cy="43" r="13"/><text x="153" y="48.5" text-anchor="middle" style="font-size:14px">14</text></a>
+      <a class="zone zone-arch" href="#p15" data-zone="15" aria-label="15 — передній правий підкрилок"><rect x="112" y="252" width="82" height="30" rx="10"/><circle cx="153" cy="267" r="13"/><text x="153" y="272.5" text-anchor="middle" style="font-size:14px">15</text></a>
+      <a class="zone zone-arch" href="#p16" data-zone="16" aria-label="16 — задній лівий підкрилок"><rect x="458" y="28" width="82" height="30" rx="10"/><circle cx="499" cy="43" r="13"/><text x="499" y="48.5" text-anchor="middle" style="font-size:14px">16</text></a>
+      <a class="zone zone-arch" href="#p17" data-zone="17" aria-label="17 — задній правий підкрилок"><rect x="458" y="252" width="82" height="30" rx="10"/><circle cx="499" cy="267" r="13"/><text x="499" y="272.5" text-anchor="middle" style="font-size:14px">17</text></a>
+      <rect class="tunnel" x="214" y="122" width="232" height="66" rx="12"/>
+      <text class="lbl" x="330" y="160" text-anchor="middle">тунель (вихлоп, кардан)</text>
+      <a class="zone" href="#p1" data-zone="1" aria-label="1 — нижня накладка бампера"><rect x="38" y="92" width="30" height="126" rx="8"/><circle cx="53" cy="155" r="14"/><text x="53" y="161.5" text-anchor="middle">1</text></a>
+      <a class="zone" href="#p2" data-zone="2" aria-label="2 — передній захист двигуна"><rect x="74" y="72" width="62" height="166" rx="10"/><circle cx="105" cy="155" r="16"/><text x="105" y="161.5" text-anchor="middle">2</text></a>
+      <a class="zone" href="#p3" data-zone="3" aria-label="3 — задній захист двигуна"><rect x="142" y="66" width="66" height="178" rx="10"/><circle cx="175" cy="155" r="16"/><text x="175" y="161.5" text-anchor="middle">3</text></a>
+      <a class="zone" href="#p12" data-zone="12" aria-label="12 — колісний спойлер лівий"><rect x="70" y="50" width="38" height="18" rx="6"/><circle cx="89" cy="59" r="14"/><text x="89" y="65.5" text-anchor="middle" style="font-size:15px">12</text></a>
+      <a class="zone" href="#p13" data-zone="13" aria-label="13 — колісний спойлер правий"><rect x="70" y="242" width="38" height="18" rx="6"/><circle cx="89" cy="251" r="14"/><text x="89" y="257.5" text-anchor="middle" style="font-size:15px">13</text></a>
+      <a class="zone" href="#p4" data-zone="4" aria-label="4 — передня накладка днища ліва"><rect x="214" y="52" width="52" height="64" rx="8"/><circle cx="240" cy="84" r="16"/><text x="240" y="90.5" text-anchor="middle">4</text></a>
+      <a class="zone" href="#p5" data-zone="5" aria-label="5 — передня накладка днища права"><rect x="214" y="194" width="52" height="64" rx="8"/><circle cx="240" cy="226" r="16"/><text x="240" y="232.5" text-anchor="middle">5</text></a>
+      <a class="zone" href="#p6" data-zone="6" aria-label="6 — центральна накладка днища ліва"><rect x="272" y="52" width="128" height="64" rx="8"/><circle cx="336" cy="84" r="16"/><text x="336" y="90.5" text-anchor="middle">6</text></a>
+      <a class="zone" href="#p7" data-zone="7" aria-label="7 — центральна накладка днища права"><rect x="272" y="194" width="128" height="64" rx="8"/><circle cx="336" cy="226" r="16"/><text x="336" y="232.5" text-anchor="middle">7</text></a>
+      <a class="zone" href="#p8" data-zone="8" aria-label="8 — задня накладка днища ліва"><rect x="406" y="52" width="46" height="64" rx="8"/><circle cx="429" cy="84" r="16"/><text x="429" y="90.5" text-anchor="middle">8</text></a>
+      <a class="zone" href="#p9" data-zone="9" aria-label="9 — задня накладка днища права"><rect x="406" y="194" width="46" height="64" rx="8"/><circle cx="429" cy="226" r="16"/><text x="429" y="232.5" text-anchor="middle">9</text></a>
+    </svg>
+    <p class="cap">Вид знизу, як на схемі продавця: перед ліворуч, сторона водія вгорі. 14–17 — підкрилки в колісних арках. Щитків №18–23 на схемі немає, бо їхнє точне місце залежить від комплектації. Торкніться номера, щоб перейти до деталі.</p>
+    <ul class="jump" aria-label="Перейти до сегмента">
+      <li><a href="#p1"><span class="num">1</span>Бампер</a></li>
+      <li><a href="#p2"><span class="num">2</span>Захист двигуна передній</a></li>
+      <li><a href="#p3"><span class="num">3</span>Захист двигуна задній</a></li>
+      <li><a href="#p4"><span class="num">4</span>Передня Л</a></li>
+      <li><a href="#p5"><span class="num">5</span>Передня П</a></li>
+      <li><a href="#p6"><span class="num">6</span>Центральна Л</a></li>
+      <li><a href="#p7"><span class="num">7</span>Центральна П</a></li>
+      <li><a href="#p8"><span class="num">8</span>Задня Л</a></li>
+      <li><a href="#p9"><span class="num">9</span>Задня П</a></li>
+      <li><a href="#p12"><span class="num">12</span>Спойлер Л</a></li>
+      <li><a href="#p13"><span class="num">13</span>Спойлер П</a></li>
+      <li><a href="#p14"><span class="num">14</span>Підкрилок ПЛ</a></li>
+      <li><a href="#p15"><span class="num">15</span>Підкрилок ПП</a></li>
+      <li><a href="#p16"><span class="num">16</span>Підкрилок ЗЛ</a></li>
+      <li><a href="#p17"><span class="num">17</span>Підкрилок ЗП</a></li>
+      <li><a href="#p-other"><span class="num">18–23</span>Інші щитки</a></li>
+    </ul>
+  </section>
+
+  <main class="list">
+
+    <!-- ===== Shopping list ===== -->
+    <section class="buy" aria-labelledby="g-buy">
+      <h2 id="g-buy">Скільки кріплень купити</h2>
+      <h3 class="buy-sub" style="margin-top:2px">Захист днища №1–13</h3>
+      <p class="lead">Загальна кількість на всі сегменти, під нею — скільки йде на кожен номер. Додайте 20–30 % запасу: пістони й пластикові гайки при знятті часто ламаються.</p>
+      <ul class="rows">
+        <li class="frow">
+          <span class="qty">25</span>
+          <span class="f-text">
+            <span class="f-name"><svg class="ico t-nut" aria-hidden="true"><use href="#i-nut"/></svg>Пластикова гайка з буртом</span>
+            <span class="codes"><button class="codebtn" type="button" data-code="8E0825265C">8E0 825 265 C</button><span class="chip warn">Найімовірніше</span><button class="codebtn mak" type="button" data-code="20030">20030</button></span>
+            <span class="f-desc">№4 — 1 · №5 — 1 · №6 — 10 · №7 — 10 · №8 — 1 · №9 — 2. У MAK під цей номер ще 20036 і 20055, трохи інші за розміром.</span>
+            <span class="f-price">33,60 грн × 25 = <b>840 грн</b></span>
+          </span>
+        </li>
+        <li class="frow">
+          <span class="qty">14</span>
+          <span class="f-text">
+            <span class="f-name"><svg class="ico t-qr" aria-hidden="true"><use href="#i-qr"/></svg>Поворотний фіксатор (на чверть оберту)</span>
+            <span class="codes"><button class="codebtn" type="button" data-code="8W0805121">8W0 805 121</button><span class="chip ok">Каталог США</span><button class="codebtn mak" type="button" data-code="19982">19982</button></span>
+            <span class="f-desc">№2 — 3 · №3 — 7 · №12 — 2 · №13 — 2. Старий номер 8K0 805 121. MAK 19982 у них вказаний саме для C7; 19988 — новіша версія під 8W0.</span>
+            <span class="f-price">58,20 грн × 14 = <b>814,80 грн</b></span>
+          </span>
+        </li>
+        <li class="frow">
+          <span class="qty">9</span>
+          <span class="f-text">
+            <span class="f-name"><svg class="ico t-bolt" aria-hidden="true"><use href="#i-bolt"/></svg>Гвинт Torx M5×16, T25</span>
+            <span class="codes"><button class="codebtn" type="button" data-code="N90974701">N 909 747 01</button><span class="chip warn">Підібрано за типом</span><button class="codebtn mak" type="button" data-code="18639">18639</button></span>
+            <span class="f-desc">№1 — 9 (5 спереду, 4 ззаду). Номера немає ні в посібнику, ні в каталозі США. MAK вказує 18639 для C7: захист днища й передній бампер. Перед покупкою порівняйте зі старим гвинтом.</span>
+            <span class="f-price">24,40 грн × 9 = <b>219,60 грн</b></span>
+          </span>
+        </li>
+        <li class="frow">
+          <span class="qty">8</span>
+          <span class="f-text">
+            <span class="f-name"><svg class="ico t-bolt" aria-hidden="true"><use href="#i-bolt"/></svg>Болт-саморіз 4,8×16, Torx</span>
+            <span class="codes"><button class="codebtn" type="button" data-code="N90775001">N 907 750 01</button><span class="chip warn">Найімовірніше</span><button class="codebtn mak" type="button" data-code="18641">18641</button></span>
+            <span class="f-desc">№8 — 5 · №9 — 3. Варіант із пресшайбою — MAK 18631.</span>
+            <span class="f-price">20,20 грн × 8 = <b>161,60 грн</b></span>
+          </span>
+        </li>
+        <li class="frow">
+          <span class="qty">7</span>
+          <span class="f-text">
+            <span class="f-name"><svg class="ico t-qr" aria-hidden="true"><use href="#i-qr"/></svg>Гумова шайба під фіксатор</span>
+            <span class="codes"><button class="codebtn" type="button" data-code="WHT002227">WHT 002 227</button><span class="chip warn">Найімовірніше</span><span class="chip none">у MAK немає</span></span>
+            <span class="f-desc">№3 — 7. Розмір у каталозі 3×25×1,5 мм. Замість оригіналу підійде будь-яка гумова шайба Ø25 мм завтовшки 1,5 мм.</span>
+          </span>
+        </li>
+        <li class="frow">
+          <span class="qty">6</span>
+          <span class="f-text">
+            <span class="f-name"><svg class="ico t-rivet" aria-hidden="true"><use href="#i-rivet"/></svg>Пістон розпірний, під отвір Ø9</span>
+            <span class="codes"><button class="codebtn" type="button" data-code="8E0825267">8E0 825 267</button><span class="chip ok">Каталог США</span><button class="codebtn mak" type="button" data-code="11828">11828</button></span>
+            <span class="f-desc">№4 — 1 · №5 — 1 · №6 — 2 · №7 — 2</span>
+            <span class="f-price">25,80 грн × 6 = <b>154,80 грн</b></span>
+          </span>
+        </li>
+        <li class="frow">
+          <span class="qty">4</span>
+          <span class="f-text">
+            <span class="f-name"><svg class="ico t-bolt" aria-hidden="true"><use href="#i-bolt"/></svg>Болт M8, 20 Нм</span>
+            <span class="codes"><span class="chip none">Номер не знайдено</span><span class="chip none">у MAK немає</span></span>
+            <span class="f-desc">№2 — 4, по 2 на кожному вусі щита. Оригінального номера для цього болта в доступних каталогах немає. Підійде звичайний болт M8 із фланцем. Довжину й тип головки візьміть зі старого.</span>
+          </span>
+        </li>
+        <li class="frow">
+          <span class="qty">4</span>
+          <span class="f-text">
+            <span class="f-name"><svg class="ico t-spring" aria-hidden="true"><use href="#i-spring"/></svg>Гайка-скоба 5 мм під фіксатор</span>
+            <span class="codes"><button class="codebtn" type="button" data-code="8K0805922A">8K0 805 922 A</button><span class="chip ok">Каталог США</span><button class="codebtn mak" type="button" data-code="16282">16282</button></span>
+            <span class="f-desc">№12 — 2 · №13 — 2</span>
+            <span class="f-price">34,00 грн × 4 = <b>136 грн</b></span>
+          </span>
+        </li>
+        <li class="frow">
+          <span class="qty">4</span>
+          <span class="f-text">
+            <span class="f-name"><svg class="ico t-clip" aria-hidden="true"><use href="#i-clip"/></svg>Кліпса спойлера</span>
+            <span class="codes"><button class="codebtn" type="button" data-code="8K0821213A">8K0 821 213 A</button><span class="chip warn">Найімовірніше</span><button class="codebtn mak" type="button" data-code="14724">14724</button></span>
+            <span class="f-desc">№12 — 2 · №13 — 2</span>
+            <span class="f-price">32,60 грн × 4 = <b>130,40 грн</b></span>
+          </span>
+        </li>
+        <li class="frow">
+          <span class="qty">3</span>
+          <span class="f-text">
+            <span class="f-name"><svg class="ico t-bolt" aria-hidden="true"><use href="#i-bolt"/></svg>Болт M6×18, 3,5 Нм</span>
+            <span class="codes"><button class="codebtn" type="button" data-code="N91140701">N 911 407 01</button><span class="chip ok">Каталог США</span><span class="chip none">у MAK немає</span></span>
+            <span class="f-desc">Стик щитів №2 і №3 — 3. Це болт із напівкруглою головкою під шестигранник і фланцем. Аналог з магазину кріплень — M6×18 ISO 7380-2.</span>
+          </span>
+        </li>
+        <li class="frow">
+          <span class="qty">2</span>
+          <span class="f-text">
+            <span class="f-name"><svg class="ico t-spring" aria-hidden="true"><use href="#i-spring"/></svg>Гайка-скоба 5×16,5 під болт</span>
+            <span class="codes"><button class="codebtn" type="button" data-code="N90959101">N 909 591 01</button><span class="chip warn">Найімовірніше</span><button class="codebtn mak" type="button" data-code="16132">16132</button></span>
+            <span class="f-desc">№12 — 1 · №13 — 1</span>
+            <span class="f-price">25,80 грн × 2 = <b>51,60 грн</b></span>
+          </span>
+        </li>
+      </ul>
+      <div class="total">
+        <div class="total-line"><span>Разом за кріплення MAK</span><strong>≈ 2 509 грн</strong></div>
+        <p class="note">Це без запасу. Із запасом 25 % вийде близько <b>3 100 грн</b>. Ціни взято з mak.parts 8 листопада 2026 року, за одиницю товару. Гумові шайби та болти M6 і M8 сюди не входять: у MAK їх немає, купуються окремо.</p>
+      </div>
+      <p class="note">Ще на спойлерах №12 і №13 є по 2 болти (2 Нм) і по 1 пістону, номерів у посібнику немає. На mak.parts для C7 у розділі «Захист днища» є також <b>11716, 16170, 16219, 20531</b>. Відповідника в цьому переліку для них немає, можливо, вони для версії Allroad. Якщо знайдете кріплення, якого тут немає, порівняйте з ними.</p>
+
+      <h3 class="buy-sub">Підкрилки №14–17, якщо знімаєте або міняєте</h3>
+      <ul class="rows">
+        <li class="frow">
+          <span class="qty">22</span>
+          <span class="f-text">
+            <span class="f-name"><svg class="ico t-clip" aria-hidden="true"><use href="#i-clip"/></svg>Кліпса з фіксатором</span>
+            <span class="codes"><button class="codebtn" type="button" data-code="4F0825429A">4F0 825 429 A</button><button class="codebtn mak" type="button" data-code="12265">12265</button></span>
+            <span class="f-desc">№14 — 2 · №15 — 2 · №16 — 9 · №17 — 9. Ще по 1 на щитках №19 і №20, якщо вони є.</span>
+            <span class="f-price">20,60 грн × 22 = <b>453,20 грн</b></span>
+          </span>
+        </li>
+        <li class="frow">
+          <span class="qty">16</span>
+          <span class="f-text">
+            <span class="f-name"><svg class="ico t-bolt" aria-hidden="true"><use href="#i-bolt"/></svg>Болт-саморіз Torx</span>
+            <span class="codes"><button class="codebtn" type="button" data-code="N91057001">N 910 570 01</button><button class="codebtn mak" type="button" data-code="18641">18641</button></span>
+            <span class="f-desc">№14 — 5 · №15 — 5 · №16 — 3 · №17 — 3</span>
+            <span class="f-price">20,20 грн × 16 = <b>323,20 грн</b></span>
+          </span>
+        </li>
+        <li class="frow">
+          <span class="qty">4</span>
+          <span class="f-text">
+            <span class="f-name"><svg class="ico t-nut" aria-hidden="true"><use href="#i-nut"/></svg>Гайка підкрилка</span>
+            <span class="codes"><button class="codebtn" type="button" data-code="WHT003207">WHT 003 207</button><button class="codebtn mak" type="button" data-code="20035">20035</button></span>
+            <span class="f-desc">№14 — 2 · №15 — 2</span>
+            <span class="f-price">67,60 грн × 4 = <b>270,40 грн</b></span>
+          </span>
+        </li>
+        <li class="frow">
+          <span class="qty">4</span>
+          <span class="f-text">
+            <span class="f-name"><svg class="ico t-rivet" aria-hidden="true"><use href="#i-rivet"/></svg>Пістон розпірний, Ø6</span>
+            <span class="codes"><button class="codebtn" type="button" data-code="4B0863907A01C">4B0 863 907 A 01C</button><button class="codebtn mak" type="button" data-code="11660">11660</button></span>
+            <span class="f-desc">№14 — 2 · №15 — 2</span>
+            <span class="f-price">32,60 грн × 4 = <b>130,40 грн</b></span>
+          </span>
+        </li>
+      </ul>
+      <div class="total">
+        <div class="total-line"><span>Разом за кріплення підкрилків</span><strong>≈ 1 177 грн</strong></div>
+        <p class="note">Без запасу. Для №18–23 кріплення купуйте за зразком: номерів для них немає.</p>
+      </div>
+    </section>
+
+    <!-- ===== 1–3 ===== -->
+    <section class="group" aria-labelledby="g-engine">
+      <div class="group-head">
+        <span class="eyebrow">Сегменти 1–3 · ETKA група 8 · 807, 863</span>
+        <h2 id="g-engine">Бампер і захист двигуна</h2>
+      </div>
+
+      <article class="part" id="p1" data-zone="1">
+        <div class="part-head">
+          <span class="callout">1</span>
+          <div>
+            <h3>Нижня накладка переднього бампера</h3>
+            <p class="where">Вузька пластина під самим бампером, перед захистом двигуна. Першою чіпляє бордюри.</p>
+          </div>
+        </div>
+        <ul class="rows">
+          <li class="prow"><button class="codebtn" type="button" data-code="4G0807611">4G0 807 611</button><span class="chip warn">Перевірити за VIN</span></li>
+        </ul>
+        <p class="note">Оригінал продають як деталь для A6 C7 2012–2017. Бампер S line може мати інший номер, а рестайлінг 2016+ має інші версії (<b>611 E</b>, <b>611 F</b>), тож цю позицію обов'язково звірте за VIN.</p>
+        <div class="pfig" data-fig="p1"></div>
+        <div class="fix">
+          <h4>Кріплення на №1</h4>
+          <ul class="rows">
+            <li class="frow">
+              <span class="qty">5</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-bolt" aria-hidden="true"><use href="#i-bolt"/></svg>Гвинт, 1,5 Нм · передній край</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="N90974701">N 909 747 01</button><span class="chip warn">Підібрано за типом</span><button class="codebtn mak" type="button" data-code="18639">18639</button></span>
+                <span class="f-desc">По дузі переднього краю, у бампер: посередині, по одному з кожного боку від середини й по одному біля країв.</span>
+              </span>
+            </li>
+            <li class="frow">
+              <span class="qty">4</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-bolt" aria-hidden="true"><use href="#i-bolt"/></svg>Гвинт, 5 Нм · задній край</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="N90974701">N 909 747 01</button><span class="chip warn">Підібрано за типом</span><button class="codebtn mak" type="button" data-code="18639">18639</button></span>
+                <span class="f-desc">По задньому краю: 2 з лівого боку, 2 з правого. Момент інший, ніж спереду, тож гвинти тут можуть бути іншими. Порівняйте їх між собою, коли знімете.</span>
+              </span>
+            </li>
+          </ul>
+          <p class="note">Знімається назад. Перед цим від пластини треба відчепити джгут проводів і трубку омивача фар.</p>
+        </div>
+      </article>
+
+      <article class="part" id="p2" data-zone="2">
+        <div class="part-head">
+          <span class="callout">2</span>
+          <div>
+            <h3>Передній захист двигуна («пильник»)</h3>
+            <p class="where">Довгий поперек авто щит під радіатором. По краях має посилені «вуха», якими кріпиться до підрамника біля коліс. Знімається назад.</p>
+          </div>
+        </div>
+        <ul class="rows">
+          <li class="prow"><button class="codebtn" type="button" data-code="4G0863821F">4G0 863 821 F</button><span class="chip ok">Каталог США</span></li>
+        </ul>
+        <p class="note">Якщо на авто стоїть посилений захист (пакет для поганих доріг), номер інший: <b>4G0 863 821 P</b>. На американських авто це рідкість.</p>
+        <div class="pfig" data-fig="p2"></div>
+        <div class="fix">
+          <h4>Кріплення на №2</h4>
+          <ul class="rows">
+            <li class="frow">
+              <span class="qty">3</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-qr" aria-hidden="true"><use href="#i-qr"/></svg>Поворотний фіксатор</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="8W0805121">8W0 805 121</button><button class="codebtn mak" type="button" data-code="19982">19982</button></span>
+                <span class="f-desc">По передньому краю: посередині й ближче до кожного боку.</span>
+              </span>
+            </li>
+            <li class="frow">
+              <span class="qty">4</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-bolt" aria-hidden="true"><use href="#i-bolt"/></svg>Болт M8, 20 Нм</span>
+                <span class="codes"><span class="chip none">Номер не знайдено</span></span>
+                <span class="f-desc">По 2 на кожному вусі, до підрамника. Підійде звичайний M8 із фланцем, довжину візьміть зі старого.</span>
+              </span>
+            </li>
+            <li class="frow">
+              <span class="qty">3</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-bolt" aria-hidden="true"><use href="#i-bolt"/></svg>Болт M6×18, 3,5 Нм · стик з №3</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="N91140701">N 911 407 01</button></span>
+                <span class="f-desc">По задньому краю, де на щит заходить №3. Ті самі 3 болти, що й у картці №3, рахуйте їх один раз.</span>
+              </span>
+            </li>
+          </ul>
+          <p class="note">Біля кожного вуха стоять ще по 2 фіксатори колісного спойлера (на схемі бліді). Їх відкривають і при знятті щита №2, а враховані вони в №12 і №13.</p>
+        </div>
+      </article>
+
+      <article class="part" id="p3" data-zone="3">
+        <div class="part-head">
+          <span class="callout">3</span>
+          <div>
+            <h3>Задній захист двигуна</h3>
+            <p class="where">Найбільший щит, між передніми колесами. Закриває низ двигуна й коробку передач до початку тунелю, ззаду на ньому повітряна напрямна.</p>
+          </div>
+        </div>
+        <ul class="rows">
+          <li class="prow"><button class="codebtn" type="button" data-code="4G0863822J">4G0 863 822 J</button><span class="chip ok">Каталог США</span></li>
+        </ul>
+        <p class="note">У європейському каталозі для 2015 року стоїть <b>4G0 863 822 C</b>. Для вашого авто орієнтуйтесь на 822 J.</p>
+        <div class="pfig" data-fig="p3"></div>
+        <div class="fix">
+          <h4>Кріплення на №3</h4>
+          <ul class="rows">
+            <li class="frow">
+              <span class="qty">7</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-qr" aria-hidden="true"><use href="#i-qr"/></svg>Поворотний фіксатор + гумова шайба</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="8W0805121">8W0 805 121</button><button class="codebtn mak" type="button" data-code="19982">19982</button><button class="codebtn" type="button" data-code="WHT002227">WHT 002 227</button></span>
+                <span class="f-desc">1 посередині, по 2 на кожному боці, 2 на задньому краї. Під кожен — гумова шайба Ø25 мм (7 шт., у MAK немає).</span>
+              </span>
+            </li>
+            <li class="frow">
+              <span class="qty">3</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-bolt" aria-hidden="true"><use href="#i-bolt"/></svg>Болт M6×18, 3,5 Нм · стик з №2</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="N91140701">N 911 407 01</button></span>
+                <span class="f-desc">По передньому краю, ті самі, що в картці №2.</span>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </article>
+    </section>
+
+    <!-- ===== 4–9 ===== -->
+    <section class="group" aria-labelledby="g-under">
+      <div class="group-head">
+        <span class="eyebrow">Сегменти 4–9 · ETKA група 8 · 825</span>
+        <h2 id="g-under">Накладки днища</h2>
+      </div>
+      <p class="lead">Схеми — вид знизу, перед ліворуч, як на загальній схемі. Порядок зняття: передня (4 або 5) вперед, потім центральна (6 або 7) теж вперед. Задні (8, 9) знімаються назад.</p>
+
+      <article class="part" id="p4" data-zone="4">
+        <div class="part-head">
+          <span class="callout">4</span>
+          <div>
+            <h3>Передня накладка днища <span class="side-tag">ліва</span></h3>
+            <p class="where">Коротка панель одразу за лівим переднім колесом. Передній край іде по дузі колісної арки.</p>
+          </div>
+        </div>
+        <ul class="rows">
+          <li class="prow"><button class="codebtn" type="button" data-code="4G0825201A">4G0 825 201 A</button><span class="chip ok">Каталог США</span></li>
+          <li class="prow"><button class="codebtn" type="button" data-code="4G0825201B">4G0 825 201 B</button><span class="chip warn">Перевірити за VIN</span></li>
+        </ul>
+        <p class="note">У продажу частіше трапляється новіша версія <b>201 B</b>. Попросіть продавця підтвердити, що вона йде на ваш VIN.</p>
+        <div class="pfig" data-fig="p4"></div>
+        <div class="fix">
+          <h4>Кріплення на №4</h4>
+          <ul class="rows">
+            <li class="frow">
+              <span class="qty">1</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-nut" aria-hidden="true"><use href="#i-nut"/></svg>Пластикова гайка з буртом, 2,1 Нм</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="8E0825265C">8E0 825 265 C</button><button class="codebtn mak" type="button" data-code="20030">20030</button></span>
+                <span class="f-desc">Посередині панелі, на виступі.</span>
+              </span>
+            </li>
+            <li class="frow">
+              <span class="qty">1</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-rivet" aria-hidden="true"><use href="#i-rivet"/></svg>Пістон розпірний</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="8E0825267">8E0 825 267</button><button class="codebtn mak" type="button" data-code="11828">11828</button></span>
+                <span class="f-desc">На краю з боку тунелю, ближче до середини.</span>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="part" id="p5" data-zone="5">
+        <div class="part-head">
+          <span class="callout">5</span>
+          <div>
+            <h3>Передня накладка днища <span class="side-tag">права</span></h3>
+            <p class="where">Дзеркальна до №4, одразу за правим переднім колесом.</p>
+          </div>
+        </div>
+        <ul class="rows">
+          <li class="prow"><button class="codebtn" type="button" data-code="4G0825202A">4G0 825 202 A</button><span class="chip ok">Каталог США</span></li>
+        </ul>
+        <div class="pfig" data-fig="p5"></div>
+        <div class="fix">
+          <h4>Кріплення на №5</h4>
+          <ul class="rows">
+            <li class="frow">
+              <span class="qty">1</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-nut" aria-hidden="true"><use href="#i-nut"/></svg>Пластикова гайка з буртом, 2,1 Нм</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="8E0825265C">8E0 825 265 C</button><button class="codebtn mak" type="button" data-code="20030">20030</button></span>
+                <span class="f-desc">Посередині панелі, на виступі.</span>
+              </span>
+            </li>
+            <li class="frow">
+              <span class="qty">1</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-rivet" aria-hidden="true"><use href="#i-rivet"/></svg>Пістон розпірний</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="8E0825267">8E0 825 267</button><button class="codebtn mak" type="button" data-code="11828">11828</button></span>
+                <span class="f-desc">На краю з боку тунелю, ближче до середини.</span>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="part" id="p6" data-zone="6">
+        <div class="part-head">
+          <span class="callout">6</span>
+          <div>
+            <h3>Центральна накладка днища <span class="side-tag">ліва</span></h3>
+            <p class="where">Довга панель уздовж лівого порога під салоном. Спереду з боку тунелю має виріз.</p>
+          </div>
+        </div>
+        <ul class="rows">
+          <li class="prow"><button class="codebtn" type="button" data-code="4G0825207F">4G0 825 207 F</button><span class="chip ok">Каталог США</span></li>
+        </ul>
+        <div class="pfig" data-fig="p6"></div>
+        <div class="fix">
+          <h4>Кріплення на №6</h4>
+          <ul class="rows">
+            <li class="frow">
+              <span class="qty">10</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-nut" aria-hidden="true"><use href="#i-nut"/></svg>Пластикова гайка з буртом, 2,1 Нм</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="8E0825265C">8E0 825 265 C</button><button class="codebtn mak" type="button" data-code="20030">20030</button></span>
+                <span class="f-desc">5 уздовж порога, 4 уздовж тунелю, 1 посередині ближче до порога.</span>
+              </span>
+            </li>
+            <li class="frow">
+              <span class="qty">2</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-rivet" aria-hidden="true"><use href="#i-rivet"/></svg>Пістон розпірний</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="8E0825267">8E0 825 267</button><button class="codebtn mak" type="button" data-code="11828">11828</button></span>
+                <span class="f-desc">1 у передньому куті біля тунелю, 1 ззаду ближче до тунелю.</span>
+              </span>
+            </li>
+          </ul>
+          <p class="note">Якщо зняті гайки не схожі на 20030, порівняйте з <b>N 106 213 01</b> (MAK <b>14332</b>): у заводському каталозі її теж 10 шт.</p>
+        </div>
+      </article>
+
+      <article class="part" id="p7" data-zone="7">
+        <div class="part-head">
+          <span class="callout">7</span>
+          <div>
+            <h3>Центральна накладка днища <span class="side-tag">права</span></h3>
+            <p class="where">Дзеркальна до №6, уздовж правого порога.</p>
+          </div>
+        </div>
+        <ul class="rows">
+          <li class="prow"><button class="codebtn" type="button" data-code="4G0825208E">4G0 825 208 E</button><span class="chip ok">Каталог США</span></li>
+        </ul>
+        <p class="note">Іноді її пропонують під номером <b>4G0 825 208 K</b>, його ставили на частину авто 2013–2015 років. Якщо продавець пропонує саме його, звірте за VIN.</p>
+        <div class="pfig" data-fig="p7"></div>
+        <div class="fix">
+          <h4>Кріплення на №7</h4>
+          <ul class="rows">
+            <li class="frow">
+              <span class="qty">10</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-nut" aria-hidden="true"><use href="#i-nut"/></svg>Пластикова гайка з буртом, 2,1 Нм</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="8E0825265C">8E0 825 265 C</button><button class="codebtn mak" type="button" data-code="20030">20030</button></span>
+                <span class="f-desc">5 уздовж порога, 4 уздовж тунелю, 1 посередині ближче до порога.</span>
+              </span>
+            </li>
+            <li class="frow">
+              <span class="qty">2</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-rivet" aria-hidden="true"><use href="#i-rivet"/></svg>Пістон розпірний</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="8E0825267">8E0 825 267</button><button class="codebtn mak" type="button" data-code="11828">11828</button></span>
+                <span class="f-desc">1 у передньому куті біля тунелю, 1 ззаду ближче до тунелю.</span>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="part" id="p8" data-zone="8">
+        <div class="part-head">
+          <span class="callout">8</span>
+          <div>
+            <h3>Задня накладка днища <span class="side-tag">ліва</span></h3>
+            <p class="where">Перед лівим заднім колесом. Край з боку тунелю вигнутий, задній зовнішній кут скошений.</p>
+          </div>
+        </div>
+        <ul class="rows">
+          <li class="prow"><button class="codebtn" type="button" data-code="4G0825215F">4G0 825 215 F</button><span class="chip ok">Каталог США</span></li>
+        </ul>
+        <div class="pfig" data-fig="p8"></div>
+        <div class="fix">
+          <h4>Кріплення на №8</h4>
+          <ul class="rows">
+            <li class="frow">
+              <span class="qty">5</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-bolt" aria-hidden="true"><use href="#i-bolt"/></svg>Болт-саморіз 4,8×16, Torx</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="N90775001">N 907 750 01</button><button class="codebtn mak" type="button" data-code="18641">18641</button></span>
+                <span class="f-desc">1 на краю біля тунелю, 3 у задньому куті й по задньому краю, 1 біля порога ззаду.</span>
+              </span>
+            </li>
+            <li class="frow">
+              <span class="qty">1</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-nut" aria-hidden="true"><use href="#i-nut"/></svg>Гайка на стику з №6</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="8E0825265C">8E0 825 265 C</button><button class="codebtn mak" type="button" data-code="20030">20030</button></span>
+                <span class="f-desc">Передній кут біля порога. Посібник каже знімати її «з центральної накладки», тож можливо, це та сама гайка, що й остання ззаду на №6.</span>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="part" id="p9" data-zone="9">
+        <div class="part-head">
+          <span class="callout">9</span>
+          <div>
+            <h3>Задня накладка днища <span class="side-tag">права</span></h3>
+            <p class="where">Перед правим заднім колесом. З боку тунелю має великий виріз, тож формою відрізняється від №8.</p>
+          </div>
+        </div>
+        <ul class="rows">
+          <li class="prow"><button class="codebtn" type="button" data-code="4G0825216A">4G0 825 216 A</button><span class="chip ok">Каталог США</span></li>
+        </ul>
+        <div class="pfig" data-fig="p9"></div>
+        <div class="fix">
+          <h4>Кріплення на №9</h4>
+          <ul class="rows">
+            <li class="frow">
+              <span class="qty">3</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-bolt" aria-hidden="true"><use href="#i-bolt"/></svg>Болт-саморіз 4,8×16, Torx</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="N90775001">N 907 750 01</button><button class="codebtn mak" type="button" data-code="18641">18641</button></span>
+                <span class="f-desc">1 біля порога ззаду, 2 по задньому краю.</span>
+              </span>
+            </li>
+            <li class="frow">
+              <span class="qty">2</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-nut" aria-hidden="true"><use href="#i-nut"/></svg>Пластикова гайка з буртом</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="8E0825265C">8E0 825 265 C</button><button class="codebtn mak" type="button" data-code="20030">20030</button></span>
+                <span class="f-desc">1 на стику з №7 у передньому куті біля порога, 1 у задньому куті біля тунелю.</span>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </article>
+    </section>
+
+    <!-- ===== 12–13 ===== -->
+    <section class="group" aria-labelledby="g-spoiler">
+      <div class="group-head">
+        <span class="eyebrow">Сегменти 12–13 · ETKA група 8 · 853</span>
+        <h2 id="g-spoiler">Колісні спойлери</h2>
+      </div>
+      <p class="lead">У каталозі США (розділ «Front fender») для A6 2012–2015 стоять саме 887 C і 888 C. З 2016 року — 887 J і 888 J.</p>
+
+      <article class="part" id="p12" data-zone="12">
+        <div class="part-head">
+          <span class="callout">12</span>
+          <div>
+            <h3>Колісний спойлер <span class="side-tag">лівий</span></h3>
+            <p class="where">Г-подібний щиток перед лівим переднім колесом: пласка частина знизу, вертикальна стінка йде по краю арки.</p>
+          </div>
+        </div>
+        <ul class="rows">
+          <li class="prow"><button class="codebtn" type="button" data-code="4G0853887C">4G0 853 887 C</button><span class="chip ok">Каталог США</span></li>
+        </ul>
+        <div class="pfig" data-fig="p12"></div>
+        <div class="fix">
+          <h4>Кріплення на №12</h4>
+          <ul class="rows">
+            <li class="frow">
+              <span class="qty">2</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-qr" aria-hidden="true"><use href="#i-qr"/></svg>Поворотний фіксатор</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="8W0805121">8W0 805 121</button><button class="codebtn mak" type="button" data-code="19982">19982</button></span>
+                <span class="f-desc">Знизу, на краю біля вуха щита №2.</span>
+              </span>
+            </li>
+            <li class="frow">
+              <span class="qty">2</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-spring" aria-hidden="true"><use href="#i-spring"/></svg>Гайка-скоба 5 мм під фіксатор</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="8K0805922A">8K0 805 922 A</button><button class="codebtn mak" type="button" data-code="16282">16282</button></span>
+                <span class="f-desc">Насаджується на язички спойлера, у неї входить фіксатор.</span>
+              </span>
+            </li>
+            <li class="frow">
+              <span class="qty">2</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-clip" aria-hidden="true"><use href="#i-clip"/></svg>Кліпса</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="8K0821213A">8K0 821 213 A</button><button class="codebtn mak" type="button" data-code="14724">14724</button></span>
+                <span class="f-desc">Угорі вертикальної стінки, до підкрилка.</span>
+              </span>
+            </li>
+            <li class="frow">
+              <span class="qty">1</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-spring" aria-hidden="true"><use href="#i-spring"/></svg>Гайка-скоба 5×16,5 + болт 2 Нм</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="N90959101">N 909 591 01</button><button class="codebtn mak" type="button" data-code="16132">16132</button></span>
+                <span class="f-desc">Знизу на пласкій частині, ближче до заднього краю.</span>
+              </span>
+            </li>
+            <li class="frow">
+              <span class="qty">1</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-bolt" aria-hidden="true"><use href="#i-bolt"/></svg>Болт 2 Нм</span>
+                <span class="codes"><span class="chip none">Номер не вказано</span></span>
+                <span class="f-desc">Збоку, у нижньому кінці вертикальної стінки.</span>
+              </span>
+            </li>
+            <li class="frow">
+              <span class="qty">1</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-rivet" aria-hidden="true"><use href="#i-rivet"/></svg>Пістон розпірний</span>
+                <span class="codes"><span class="chip none">Номер не вказано</span></span>
+                <span class="f-desc">Посередині вертикальної стінки, до підкрилка.</span>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="part" id="p13" data-zone="13">
+        <div class="part-head">
+          <span class="callout">13</span>
+          <div>
+            <h3>Колісний спойлер <span class="side-tag">правий</span></h3>
+            <p class="where">Дзеркальний до №12, перед правим переднім колесом.</p>
+          </div>
+        </div>
+        <ul class="rows">
+          <li class="prow"><button class="codebtn" type="button" data-code="4G0853888C">4G0 853 888 C</button><span class="chip ok">Каталог США</span></li>
+        </ul>
+        <div class="pfig" data-fig="p13"></div>
+        <div class="fix">
+          <h4>Кріплення на №13</h4>
+          <ul class="rows">
+            <li class="frow">
+              <span class="qty">2</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-qr" aria-hidden="true"><use href="#i-qr"/></svg>Поворотний фіксатор</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="8W0805121">8W0 805 121</button><button class="codebtn mak" type="button" data-code="19982">19982</button></span>
+                <span class="f-desc">Знизу, на краю біля вуха щита №2.</span>
+              </span>
+            </li>
+            <li class="frow">
+              <span class="qty">2</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-spring" aria-hidden="true"><use href="#i-spring"/></svg>Гайка-скоба 5 мм під фіксатор</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="8K0805922A">8K0 805 922 A</button><button class="codebtn mak" type="button" data-code="16282">16282</button></span>
+                <span class="f-desc">Насаджується на язички спойлера, у неї входить фіксатор.</span>
+              </span>
+            </li>
+            <li class="frow">
+              <span class="qty">2</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-clip" aria-hidden="true"><use href="#i-clip"/></svg>Кліпса</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="8K0821213A">8K0 821 213 A</button><button class="codebtn mak" type="button" data-code="14724">14724</button></span>
+                <span class="f-desc">Угорі вертикальної стінки, до підкрилка.</span>
+              </span>
+            </li>
+            <li class="frow">
+              <span class="qty">1</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-spring" aria-hidden="true"><use href="#i-spring"/></svg>Гайка-скоба 5×16,5 + болт 2 Нм</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="N90959101">N 909 591 01</button><button class="codebtn mak" type="button" data-code="16132">16132</button></span>
+                <span class="f-desc">Знизу на пласкій частині, ближче до заднього краю.</span>
+              </span>
+            </li>
+            <li class="frow">
+              <span class="qty">1</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-bolt" aria-hidden="true"><use href="#i-bolt"/></svg>Болт 2 Нм</span>
+                <span class="codes"><span class="chip none">Номер не вказано</span></span>
+                <span class="f-desc">Збоку, у нижньому кінці вертикальної стінки.</span>
+              </span>
+            </li>
+            <li class="frow">
+              <span class="qty">1</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-rivet" aria-hidden="true"><use href="#i-rivet"/></svg>Пістон розпірний</span>
+                <span class="codes"><span class="chip none">Номер не вказано</span></span>
+                <span class="f-desc">Посередині вертикальної стінки, до підкрилка.</span>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </article>
+    </section>
+
+    <!-- ===== 14–17 ===== -->
+    <section class="group" aria-labelledby="g-liners">
+      <div class="group-head">
+        <span class="eyebrow">Сегменти 14–17 · ETKA група 8 · 821, 810</span>
+        <h2 id="g-liners">Підкрилки</h2>
+      </div>
+      <p class="lead">Схеми — вид збоку, як ви дивитесь на колесо: на лівому боці перед ліворуч, на правому — праворуч. Номери підкрилків і більшості кріплень узято з каталогу США для A6 quattro 2012–2016. Розташування кріплень на схемах приблизне.</p>
+
+      <article class="part" id="p14" data-zone="14">
+        <div class="part-head">
+          <span class="callout">14</span>
+          <div>
+            <h3>Передній підкрилок <span class="side-tag">лівий</span></h3>
+            <p class="where">Пластикова арка над лівим переднім колесом. Спереду кріпиться до бампера, ззаду знизу — кліпсами, вгорі — кронштейном до крила.</p>
+          </div>
+        </div>
+        <ul class="rows">
+          <li class="prow"><button class="codebtn" type="button" data-code="4G0821133D">4G0 821 133 D</button><span class="chip ok">Каталог США</span></li>
+        </ul>
+        <div class="pfig" data-fig="p14"></div>
+        <div class="fix">
+          <h4>Кріплення на №14</h4>
+          <ul class="rows">
+            <li class="frow">
+              <span class="qty">5</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-bolt" aria-hidden="true"><use href="#i-bolt"/></svg>Болт-саморіз, 2,1 Нм</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="N91057001">N 910 570 01</button><span class="chip warn">Найімовірніше</span><button class="codebtn mak" type="button" data-code="18641">18641</button></span>
+                <span class="f-desc">По передньому краю, до бампера. MAK 18641 — той самий саморіз, що на накладках №8 і №9.</span>
+              </span>
+            </li>
+            <li class="frow">
+              <span class="qty">2</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-rivet" aria-hidden="true"><use href="#i-rivet"/></svg>Пістон розпірний, Ø6</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="4B0863907A01C">4B0 863 907 A 01C</button><span class="chip ok">Каталог США</span><button class="codebtn mak" type="button" data-code="11660">11660</button></span>
+                <span class="f-desc">Спереду внизу. 01C у номері — чорний колір. Сіро-чорний варіант — MAK 11661.</span>
+              </span>
+            </li>
+            <li class="frow">
+              <span class="qty">2</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-nut" aria-hidden="true"><use href="#i-nut"/></svg>Гайка підкрилка, 2 Нм</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="WHT003207">WHT 003 207</button><span class="chip ok">Каталог США</span><button class="codebtn mak" type="button" data-code="20035">20035</button></span>
+                <span class="f-desc">Одна вгорі спереду, одна посередині біля амортизатора. Посібник для авто з 2015 модельного року показує ще одну гайку 2 Нм. Перевірте, чи вона є на вашому.</span>
+              </span>
+            </li>
+            <li class="frow">
+              <span class="qty">2</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-clip" aria-hidden="true"><use href="#i-clip"/></svg>Кліпса з фіксатором</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="4F0825429A">4F0 825 429 A</button><span class="chip ok">Каталог США</span><button class="codebtn mak" type="button" data-code="12265">12265</button></span>
+                <span class="f-desc">Ззаду внизу, на шпильках кузова. Щоб зняти, підчепіть язичок фіксатора тонкогубцями і стягніть кліпсу зі шпильки.</span>
+              </span>
+            </li>
+            <li class="frow">
+              <span class="qty">1</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-bolt" aria-hidden="true"><use href="#i-bolt"/></svg>Болт кронштейна до крила, 2,1 Нм</span>
+                <span class="codes"><span class="chip none">Номер не вказано</span></span>
+                <span class="f-desc">Угорі арки. Сам кронштейн (8E0 821 989 A, MAK 12784) іде в комплекті з новим підкрилком.</span>
+              </span>
+            </li>
+          </ul>
+          <p class="note">Перед зняттям підкрилка зніміть <b>кришку приводного вала</b>. Вона тримається на 2 гайках (2 Нм), до яких дістаєте, повертаючи колесо то вліво, то вправо. На лівому боці від неї ще відчіпляється дріт. У каталозі США поруч із підкрилком є щиток <b>4G0 863 189</b> (лівий) / <b>190</b> (правий). Найімовірніше, це вона, але звірте за VIN.</p>
+          <p class="note">Під підкрилком є ще кожух лонжерона. Він кріпиться заклепками, і для заміни підкрилка його знімати не треба.</p>
+        </div>
+      </article>
+
+      <article class="part" id="p15" data-zone="15">
+        <div class="part-head">
+          <span class="callout">15</span>
+          <div>
+            <h3>Передній підкрилок <span class="side-tag">правий</span></h3>
+            <p class="where">Дзеркальний до №14, над правим переднім колесом.</p>
+          </div>
+        </div>
+        <ul class="rows">
+          <li class="prow"><button class="codebtn" type="button" data-code="4G0821134D">4G0 821 134 D</button><span class="chip ok">Каталог США</span></li>
+        </ul>
+        <div class="pfig" data-fig="p15"></div>
+        <div class="fix">
+          <h4>Кріплення на №15</h4>
+          <p class="note">Ті самі, що на №14: <b>5</b> саморізів (MAK 18641), <b>2</b> пістони (MAK 11660), <b>2</b> гайки (MAK 20035), <b>2</b> кліпси з фіксатором (MAK 12265), <b>1</b> болт кронштейна. Кришка приводного вала тут — <b>4G0 863 190</b>.</p>
+        </div>
+      </article>
+
+      <article class="part" id="p16" data-zone="16">
+        <div class="part-head">
+          <span class="callout">16</span>
+          <div>
+            <h3>Задній підкрилок <span class="side-tag">лівий</span></h3>
+            <p class="where">Арка над лівим заднім колесом. Для зняття колесо краще зняти.</p>
+          </div>
+        </div>
+        <ul class="rows">
+          <li class="prow"><button class="codebtn" type="button" data-code="4G0810171A">4G0 810 171 A</button><span class="chip ok">Каталог США</span></li>
+        </ul>
+        <div class="pfig" data-fig="p16"></div>
+        <div class="fix">
+          <h4>Кріплення на №16</h4>
+          <ul class="rows">
+            <li class="frow">
+              <span class="qty">9</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-clip" aria-hidden="true"><use href="#i-clip"/></svg>Кліпса з фіксатором</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="4F0825429A">4F0 825 429 A</button><span class="chip warn">Найімовірніше</span><button class="codebtn mak" type="button" data-code="12265">12265</button></span>
+                <span class="f-desc">По всьому зовнішньому краю арки. Знімається так само, як на передньому підкрилку. Тип кліпси той самий, але номер для задніх у каталозі США не вказано.</span>
+              </span>
+            </li>
+            <li class="frow">
+              <span class="qty">3</span>
+              <span class="f-text">
+                <span class="f-name"><svg class="ico t-bolt" aria-hidden="true"><use href="#i-bolt"/></svg>Болт-саморіз, 2 Нм</span>
+                <span class="codes"><button class="codebtn" type="button" data-code="N91057001">N 910 570 01</button><span class="chip warn">Найімовірніше</span><button class="codebtn mak" type="button" data-code="18641">18641</button></span>
+                <span class="f-desc">Ззаду внизу, по краю біля бампера.</span>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="part" id="p17" data-zone="17">
+        <div class="part-head">
+          <span class="callout">17</span>
+          <div>
+            <h3>Задній підкрилок <span class="side-tag">правий</span></h3>
+            <p class="where">Дзеркальний до №16.</p>
+          </div>
+        </div>
+        <ul class="rows">
+          <li class="prow"><button class="codebtn" type="button" data-code="4G0810172A">4G0 810 172 A</button><span class="chip ok">Каталог США</span></li>
+        </ul>
+        <div class="pfig" data-fig="p17"></div>
+        <div class="fix">
+          <h4>Кріплення на №17</h4>
+          <p class="note">Ті самі, що на №16: <b>9</b> кліпс із фіксатором (MAK 12265) і <b>3</b> саморізи (MAK 18641).</p>
+        </div>
+      </article>
+    </section>
+
+    <!-- ===== 18–23 ===== -->
+    <section class="group" aria-labelledby="g-other">
+      <div class="group-head">
+        <span class="eyebrow">Сегменти 18–23 · за посібником з ремонту</span>
+        <h2 id="g-other">Інші щитки днища</h2>
+      </div>
+      <p class="lead">Ці щитки є в посібнику для A6 4G, але в каталозі США їх немає. Тож частини з них на вашому авто може не бути. Подивіться, що стоїть, коли машина буде на підйомнику. Номерів для більшості не знайшов, кількість кріплень — з малюнків посібника.</p>
+
+      <article class="part" id="p-other">
+        <div class="fix">
+          <h4>№18 · Задня ліва накладка</h4>
+          <p class="note">За схемою посібника стоїть позаду центральної накладки №6, з лівого боку. Номер: <span class="chip none">не знайдено</span></p>
+          <ul class="rows">
+            <li class="frow"><span class="qty">4</span><span class="f-text"><span class="f-name"><svg class="ico t-nut" aria-hidden="true"><use href="#i-nut"/></svg>Гайка, 2,1 Нм</span><span class="f-desc">2 по краю з боку порога, 2 посередині.</span></span></li>
+            <li class="frow"><span class="qty">2</span><span class="f-text"><span class="f-name"><svg class="ico t-bolt" aria-hidden="true"><use href="#i-bolt"/></svg>Болт</span><span class="f-desc">По зовнішньому краю.</span></span></li>
+          </ul>
+        </div>
+        <div class="fix">
+          <h4>№19 і №20 · Захист від каміння перед задніми колесами (Л і П)</h4>
+          <ul class="rows">
+            <li class="prow"><button class="codebtn" type="button" data-code="4G0825217A">4G0 825 217 A</button><span class="chip warn">Перевірити за VIN</span><span class="f-desc">лівий</span></li>
+            <li class="prow"><button class="codebtn" type="button" data-code="4G0825218A">4G0 825 218 A</button><span class="chip warn">Перевірити за VIN</span><span class="f-desc">правий</span></li>
+          </ul>
+          <p class="note">Правий номер знайшов в оголошенні з оригінальною деталлю. Лівий виведено за правилом Audi: непарний номер — ліва сторона. Обидва звірте за VIN.</p>
+          <ul class="rows">
+            <li class="frow"><span class="qty">2</span><span class="f-text"><span class="f-name"><svg class="ico t-bolt" aria-hidden="true"><use href="#i-bolt"/></svg>Гвинт, 2,1 Нм</span><span class="f-desc">На кожен бік, угорі щитка.</span></span></li>
+            <li class="frow"><span class="qty">1</span><span class="f-text"><span class="f-name"><svg class="ico t-clip" aria-hidden="true"><use href="#i-clip"/></svg>Кліпса з фіксатором</span><span class="codes"><button class="codebtn" type="button" data-code="4F0825429A">4F0 825 429 A</button><span class="chip warn">Найімовірніше</span><button class="codebtn mak" type="button" data-code="12265">12265</button></span><span class="f-desc">На кожен бік, посередині. Такий самий тип, як на підкрилках.</span></span></li>
+          </ul>
+        </div>
+        <div class="fix">
+          <h4>№21 · Задня центральна накладка</h4>
+          <p class="note">Великий щиток за задньою віссю, під багажником. Номер: <span class="chip none">не знайдено</span></p>
+          <ul class="rows">
+            <li class="frow"><span class="qty">3</span><span class="f-text"><span class="f-name"><svg class="ico t-nut" aria-hidden="true"><use href="#i-nut"/></svg>Гайка, 2,1 Нм</span><span class="f-desc">По задньому краю та в задньому правому куті.</span></span></li>
+            <li class="frow"><span class="qty">2</span><span class="f-text"><span class="f-name"><svg class="ico t-bolt" aria-hidden="true"><use href="#i-bolt"/></svg>Болт 15 Нм + шайба</span><span class="f-desc">По передньому краю. Шайби (2 шт.) не загубіть.</span></span></li>
+            <li class="frow"><span class="qty">2</span><span class="f-text"><span class="f-name"><svg class="ico t-bolt" aria-hidden="true"><use href="#i-bolt"/></svg>Гвинт</span><span class="f-desc">У задньому правому куті.</span></span></li>
+            <li class="frow"><span class="qty">1</span><span class="f-text"><span class="f-name"><svg class="ico t-rivet" aria-hidden="true"><use href="#i-rivet"/></svg>Пістон розпірний</span><span class="f-desc">Ззаду посередині.</span></span></li>
+          </ul>
+        </div>
+        <div class="fix">
+          <h4>№22 · Задня права накладка</h4>
+          <p class="note">Праворуч від №21, під заднім бампером. Знімається після того, як злегка відтягнути вниз №21. Позаду правої накладки №9 є ще маленька кришка, окремого опису зняття для неї в посібнику немає. Номер: <span class="chip none">не знайдено</span></p>
+          <ul class="rows">
+            <li class="frow"><span class="qty">3</span><span class="f-text"><span class="f-name"><svg class="ico t-nut" aria-hidden="true"><use href="#i-nut"/></svg>Гайка, 2,1 Нм</span><span class="f-desc">По краях щитка.</span></span></li>
+            <li class="frow"><span class="qty">1</span><span class="f-text"><span class="f-name"><svg class="ico t-rivet" aria-hidden="true"><use href="#i-rivet"/></svg>Пістон розпірний</span><span class="f-desc">У задньому зовнішньому куті.</span></span></li>
+            <li class="frow"><span class="qty">1</span><span class="f-text"><span class="f-name"><svg class="ico t-bolt" aria-hidden="true"><use href="#i-bolt"/></svg>Гвинт на краю №21</span><span class="f-desc">Його викручують і для зняття цього щитка.</span></span></li>
+          </ul>
+        </div>
+        <div class="fix">
+          <h4>№23 · Передня кришка ніші запасного колеса</h4>
+          <p class="note">Невелика кришка знизу, спереду ніші запаски. Номер: <span class="chip none">не знайдено</span></p>
+          <ul class="rows">
+            <li class="frow"><span class="qty">5</span><span class="f-text"><span class="f-name"><svg class="ico t-nut" aria-hidden="true"><use href="#i-nut"/></svg>Гайка, 2,1 Нм</span><span class="f-desc">По периметру кришки.</span></span></li>
+          </ul>
+        </div>
+      </article>
+    </section>
+
+    <section class="tips" aria-labelledby="g-tips">
+      <h2 id="g-tips">Перед замовленням</h2>
+      <ul>
+        <li>Коди MAK — це аналоги від українського виробника кріплень, їх продають на mak.parts і в магазинах автокріплення. Оригінальний номер VAG і код MAK взаємозамінні.</li>
+        <li>Позначка «Найімовірніше» означає, що номер узято з каталогу C7, але не з карти саме вашого авто. Зніміть одну стару деталь і порівняйте з фото в магазині.</li>
+        <li>Літера в кінці оригінального номера — це версія деталі. Якщо продавець пропонує іншу літеру, попросіть перевірити заміну за вашим VIN.</li>
+        <li>Гайки на накладках днища затягуються лише на 2,1 Нм, тобто майже рукою. Інакше пластик тріскає.</li>
+        <li>Ціни MAK на сайті вказані за одиницю товару. При замовленні уточніть, що одиниця — це 1 штука, а не пакування.</li>
+      </ul>
+    </section>
+
+    <section class="sources" aria-labelledby="g-src">
+      <h2 id="g-src">Звідки дані</h2>
+      <ul>
+        <li><a href="https://mak.parts/ru/audi/a6-c7-allroad-11-17/zaschita-dnischa">mak.parts: кліпси Audi A6 C7, захист днища</a></li>
+        <li><a href="https://www.aa6.tochrfr.com/underbody_panels_removing_and_installing-334.html">Посібник з ремонту A6 4G: зняття накладок днища (малюнки №4–9)</a></li>
+        <li><a href="https://www.aa6.tochrfr.com/noise_insulation-332.html">Посібник: захист двигуна (малюнки №2–3)</a></li>
+        <li><a href="https://www.aa6.tochrfr.com/overview_front_wheel_housing_liner-337.html">Посібник: колісні спойлери (№12–13)</a></li>
+        <li><a href="https://www.aa6.tochrfr.com/overview_underbody_panels-333.html">Посібник: огляд накладок днища</a></li>
+        <li><a href="https://oemwolf.com/audi/faw_vw/audi_a6_avant_quattro_d_/2012/body/underbody_trim.html">Заводський каталог C7: кріплення накладок днища</a></li>
+        <li><a href="https://oemwolf.com/oem-parts/4g0853887j.html">4G0 853 887 J: комплект кріплень спойлера (гайки-скоби, кліпси)</a></li>
+        <li><a href="https://www.aa6.tochrfr.com/attachments_removing_and_installing-308.html">Посібник: нижня накладка бампера (№1)</a></li>
+        <li><a href="https://www.autonationparts.com/parts/volkswagen-volkswagen-underbody-splash-shield-trim-torx-screw-m5x16-t25-n-909-747-01-n90974701">N 909 747 01: гвинт Torx M5×16 для накладок днища</a></li>
+        <li><a href="https://oemwolf.com/oem-parts/wht002227.html">WHT 002 227: гумова шайба 3×25×1,5</a></li>
+        <li><a href="https://oemwolf.com/oem-parts/n91140701.html">N 911 407 01: болт M6×18 під шестигранник</a></li>
+        <li><a href="https://static.nhtsa.gov/odi/tsbs/2015/MC-10120924-9999.pdf">Audi of America: сервісна таблиця A6/S6 2015 (мастила, фільтри, об'єми)</a></li>
+        <li><a href="https://www.mann-filter.com/us-en/catalog/search-results/product.html/w719/45_mann-filter.html">MANN W 719/45: застосування для A6 2015 (CAED)</a></li>
+        <li><a href="https://clickableautomotive.com.au/products/air-filter-audi-a6-c7-4g0133843k">4G0 133 843 K = MANN C 15 010</a></li>
+        <li><a href="https://www.5150motorsport.com/MAHLE/67/4G0-133-843K">4G0 133 843 K = Mahle LX 2607/2</a></li>
+        <li><a href="https://www.shopdap.com/cuk-2641-mann.html">MANN CUK 2641 замість 4H0 819 439</a></li>
+        <li><a href="https://www.fcpeuro.com/Audi-parts/A6/Cabin-Air-Filter/">Салонні фільтри для A6: Mahle LAK 667, Hengst E2996LC</a></li>
+        <li><a href="https://www.auto-data.net/en/audi-a6-limousine-4g-c7-2.0-tfsi-220hp-quattro-tiptronic-26827">Auto-data: A6 C7 2.0 TFSI 220 к.с., код CAED</a></li>
+        <li><a href="https://www.aa6.tochrfr.com/front_wheel_housing_liner_removing_and_installing-338.html">Посібник: передній підкрилок і кришка приводного вала (№14–15)</a></li>
+        <li><a href="https://www.aa6.tochrfr.com/rear_wheel_housing_liner_removing_and_installing-339.html">Посібник: задній підкрилок (№16–17)</a></li>
+        <li><a href="https://www.mrallparts.com/ccatalogs/usa_oem/?l=bWFrZV9uYW1lPT1BdWRpfHx5ZWFyPT0yMDE2fHxzdD09NTB8fHN0cz09eyIxMCI6Ik1hbnVmYWN0dXJlciIsIjIwIjoiMjAxNiBBdWRpIiwiMzAiOiJBNiIsIjQwIjoiUHJlbWl1bSBRdWF0dHJvIiwiNTAiOiJGUk9OVCBGRU5ERVIifXx8bWRsX25hbWU9PUE2fHxtb2RpZl9uYW1lPT1QcmVtaXVtIFF1YXR0cm98fHNlcnZpY2VfY29kZT09MTM0N3x8ZGF0YUlkPT00MHx8Z3JvdXBJZD09NzIzOHx8ZnJvbVllYXI9PTIwMTJ8fHRvWWVhcj09MjAxNg%3D%3D&amp;lang=en">Каталог США: передні підкрилки, кріплення, спойлери 2012–2016</a></li>
+        <li><a href="https://www.mrallparts.com/ccatalogs/usa_oem/?l=bWFrZV9uYW1lPT1BdWRpfHx5ZWFyPT0yMDE2fHxzdD09NTB8fHN0cz09eyIxMCI6Ik1hbnVmYWN0dXJlciIsIjIwIjoiMjAxNiBBdWRpIiwiMzAiOiJBNiIsIjQwIjoiUHJlbWl1bSBRdWF0dHJvIiwiNTAiOiJTSURFIEJPRFkifXx8bWRsX25hbWU9PUE2fHxtb2RpZl9uYW1lPT1QcmVtaXVtIFF1YXR0cm98fHNlcnZpY2VfY29kZT09MTM0N3x8ZGF0YUlkPT00MHx8Z3JvdXBJZD09NzI3MHx8ZnJvbVllYXI9PTIwMTJ8fHRvWWVhcj09MjAxNg%3D%3D&amp;lang=en">Каталог США: задні підкрилки</a></li>
+        <li><a href="https://www.ebay.com/itm/333834603377">4G0 825 218 A: захист від каміння, правий (оголошення)</a></li>
+        <li><a href="https://www.mrallparts.com/ccatalogs/usa_oem/?fromchanged=true&amp;l=bWFrZV9uYW1lPT1BdWRpfHx5ZWFyPT0yMDE2fHxzdD09NTB8fHN0cz09eyIxMCI6Ik1hbnVmYWN0dXJlciIsIjIwIjoiMjAxNiBBdWRpIiwiMzAiOiJBNiIsIjQwIjoiUHJlbWl1bSBRdWF0dHJvIiwiNTAiOiJFTkdJTkVcL0JPRFkgVU5ERVIgQ09WRVJTIn18fG1kbF9uYW1lPT1BNnx8bW9kaWZfbmFtZT09UHJlbWl1bSBRdWF0dHJvfHxzZXJ2aWNlX2NvZGU9PTEzNDd8fGRhdGFJZD09NDB8fGdyb3VwSWQ9PTcyNTB8fGZyb21ZZWFyPT0yMDEyfHx0b1llYXI9PTIwMTY%3D&amp;lang=en">Каталог США: накладки днища A6 quattro 2012–2016</a></li>
+        <li><a href="https://www.audiusaparts.com/v-2014-audi-a6-quattro--premium-plus--2-0l-l4-gas/body--splash-shields">Дилер Audi США: захист двигуна, A6 quattro 2.0</a></li>
+        <li><a href="https://audi.7zap.com/en/rdw/audi+a6+s6+avant+quattro/a6q/2015-798/8/863-863025/">ETKA (Європа 2015): варіанти щитів двигуна</a></li>
+        <li><a href="https://www.autonationparts.com/parts/audi-front-shield-pin-8w0805121">8W0 805 121: фіксатор захисту й спойлерів</a></li>
+        <li><a href="https://www.ebay.com/itm/175903002502">Нижня накладка бампера 4G0 807 611</a></li>
+        <li><a href="https://www.ebay.com.au/itm/224218862407">Колісний спойлер 4G0 853 887 C, сумісність з A6 2015</a></li>
+        <li><a href="https://oemwolf.com/oem-parts/4g0825201.html">Заміни для старих номерів накладок (США)</a></li>
+      </ul>
+    </section>
+  </main>
+</div>
+
+</main>
+
+<!-- ===== Вікно «Що купити» ===== -->
+<dialog class="sheet" id="info" aria-labelledby="info-title">
+  <div class="sheet-in">
+    <div class="sheet-head">
+      <div class="sheet-titles">
+        <span class="eyebrow-caps">Що купити</span>
+        <h2 id="info-title">—</h2>
+        <span class="sheet-sub" id="info-sub"></span>
+      </div>
+      <button class="icon-btn" type="button" id="info-close" aria-label="Закрити"><svg aria-hidden="true"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="where-box"><span class="label-s">Де міняти</span><p id="info-where"></p></div>
+    <ul class="plain" id="info-buy"></ul>
+    <div class="facts" id="info-facts"></div>
+    <p class="sheet-note" id="info-note" hidden></p>
+    <div class="sheet-actions">
+      <button class="btn btn-primary" type="button" id="info-log">Записати заміну</button>
+      <a class="btn btn-ghost" id="info-more" href="#catalog" hidden>Докладно в каталозі</a>
+    </div>
+  </div>
+</dialog>
+</body>
+</html>

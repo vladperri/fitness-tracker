@@ -1,0 +1,16 @@
+{
+  "name": "Моя Audi A6 C7",
+  "short_name": "Audi A6",
+  "description": "Журнал обслуговування, нагадування й каталог запчастин для Audi A6 C7.",
+  "lang": "uk",
+  "start_url": "./#home",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#140708",
+  "theme_color": "#140708",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
