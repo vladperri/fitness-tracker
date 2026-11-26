@@ -267,7 +267,7 @@
       var list = remSorted();
       box.innerHTML = list.length ? list.map(function (r) {
         return '<div class="rem' + (r.done ? ' done' : '') + '"><div class="rt"><b>' + esc(r.title) + stateTag(r) + '</b><span>' + esc(remWhen(r)) + (r.note ? ' · ' + esc(r.note) : '') + '</span></div>' +
-          '<div class="rem-actions"><button class="btn btn-ghost" type="button" data-done="' + esc(r.id) + '" aria-pressed="' + (r.done ? 'true' : 'false') + '">' + (r.done ? 'Повернути' : 'Виконано') + '</button>' +
+          '<div class="rem-actions"><button class="btn btn-ghost" type="button" data-rem-edit="' + esc(r.id) + '">Редагувати</button><button class="btn btn-ghost" type="button" data-done="' + esc(r.id) + '" aria-pressed="' + (r.done ? 'true' : 'false') + '">' + (r.done ? 'Повернути' : 'Виконано') + '</button>' +
           '<button class="btn btn-ghost btn-danger" type="button" data-del="reminders/' + esc(r.id) + '">Видалити</button></div></div>';
       }).join('') : '<p class="sub">Поки порожньо. Додайте, наприклад, запис на СТО.</p>';
     }
@@ -417,6 +417,21 @@
     f.querySelectorAll('input[name="svc"]').forEach(function (c) { c.checked = sv.indexOf(c.value) >= 0; });
   }
   function recById(id) { return (S.records || []).filter(function (r) { return r.id === id; })[0] || null; }
+  function remById(id) { return (S.reminders || []).filter(function (r) { return r.id === id; })[0] || null; }
+  var REM_EDIT = null;
+  function setRemMode(rem) {
+    var f = $('rem-form');
+    f.reset();
+    REM_EDIT = rem ? rem.id : null;
+    setText('rem-form-title', rem ? 'Редагувати нагадування' : 'Нове нагадування');
+    setText('rem-submit', rem ? 'Зберегти зміни' : 'Зберегти');
+    var st = $('rem-status'); st.textContent = ''; st.className = 'status';
+    if (!rem) return;
+    field(f, 'title').value = rem.title || '';
+    field(f, 'date').value = rem.date || '';
+    field(f, 'km').value = isNum(rem.km) ? rem.km : '';
+    field(f, 'note').value = rem.note || '';
+  }
   function openNewRecord(preset) {
     if (S.mode === 'out') { signIn(); return; }
     go('#records', function () {
@@ -497,6 +512,8 @@
   });
   $('rem-add-toggle').addEventListener('click', function () {
     if (S.mode === 'out') { signIn(); return; }
+    if (REM_EDIT) { setRemMode(null); toggleForm('rem-add-toggle', 'rem-form', true); field($('rem-form'), 'title').focus(); return; }
+    if ($('rem-form').hidden) setRemMode(null);
     toggleForm('rem-add-toggle', 'rem-form');
     if (!$('rem-form').hidden) field($('rem-form'), 'title').focus();
   });
@@ -504,7 +521,7 @@
     b.addEventListener('click', function () {
       var id = b.getAttribute('data-close');
       toggleForm(id === 'rec-form' ? 'rec-add-toggle' : 'rem-add-toggle', id, false);
-      if (id === 'rec-form') setRecMode(null);
+      if (id === 'rec-form') setRecMode(null); else setRemMode(null);
     });
   });
   document.querySelectorAll('[data-filter]').forEach(function (b) {
@@ -547,11 +564,22 @@
     ev.preventDefault();
     var f = ev.target, st = $('rem-status');
     if (!S.db) { st.textContent = 'Увійдіть, щоб зберігати нагадування.'; st.className = 'status err'; return; }
-    var data = { title: field(f, 'title').value.trim(), date: field(f, 'date').value || null, km: numOrNull(field(f, 'km').value), note: field(f, 'note').value.trim(), done: false, createdAt: new Date().toISOString() };
+    var data = { title: field(f, 'title').value.trim(), date: field(f, 'date').value || null, km: numOrNull(field(f, 'km').value), note: field(f, 'note').value.trim() };
     if (!data.title) { st.textContent = 'Вкажіть, що зробити.'; st.className = 'status err'; return; }
+    var id, body;
+    if (REM_EDIT) {
+      var orig = remById(REM_EDIT);
+      if (!orig) { st.textContent = 'Це нагадування вже видалено.'; st.className = 'status err'; return; }
+      id = REM_EDIT;
+      body = Object.assign({}, orig, data, { updatedAt: new Date().toISOString() });
+      delete body.id;
+    } else {
+      id = newId('m');
+      body = Object.assign({}, data, { done: false, createdAt: new Date().toISOString() });
+    }
     var btn = f.querySelector('button[type="submit"]'); btn.disabled = true; st.className = 'status'; st.textContent = 'Зберігаємо…';
-    S.db.collection('reminders').doc(newId('m')).set(data).then(function () {
-      f.reset(); st.textContent = 'Збережено.'; btn.disabled = false; toggleForm('rem-add-toggle', 'rem-form', false);
+    S.db.collection('reminders').doc(id).set(body).then(function () {
+      setRemMode(null); btn.disabled = false; toggleForm('rem-add-toggle', 'rem-form', false);
     }, function (e) { st.textContent = failMsg(e); st.className = 'status err'; btn.disabled = false; });
   });
 
@@ -621,6 +649,16 @@
       toggleForm('rec-add-toggle', 'rec-form', true);
       var fm = $('rec-form');
       requestAnimationFrame(function () { fm.scrollIntoView({ block: 'start' }); field(fm, 'title').focus({ preventScroll: true }); });
+      return;
+    }
+    var re = t.closest('[data-rem-edit]');
+    if (re) {
+      var rem = remById(re.getAttribute('data-rem-edit'));
+      if (!rem) return;
+      setRemMode(rem);
+      toggleForm('rem-add-toggle', 'rem-form', true);
+      var rf = $('rem-form');
+      requestAnimationFrame(function () { rf.scrollIntoView({ block: 'start' }); field(rf, 'title').focus({ preventScroll: true }); });
       return;
     }
     var del = t.closest('[data-del]');

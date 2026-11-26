@@ -172,7 +172,7 @@
     </div>
 
     <form class="form" id="rem-form" hidden novalidate>
-      <h3>Нове нагадування</h3>
+      <h3 id="rem-form-title">Нове нагадування</h3>
       <label class="field">Що зробити<input type="text" name="title" required maxlength="160" placeholder="Запис на СТО: задні амортизатори"></label>
       <div class="fields">
         <label class="field">Дата<input type="date" name="date"></label>
@@ -180,7 +180,7 @@
       </div>
       <label class="field">Примітка<input type="text" name="note" maxlength="300" placeholder="Адреса, телефон, що взяти з собою"></label>
       <div class="form-actions">
-        <button class="btn btn-primary" type="submit">Зберегти</button>
+        <button class="btn btn-primary" type="submit" id="rem-submit">Зберегти</button>
         <button class="btn btn-ghost" type="button" data-close="rem-form">Скасувати</button>
         <span class="status" id="rem-status" role="status"></span>
       </div>
