@@ -64,6 +64,6 @@ cd audi/public && python3 -m http.server 8080    # http://localhost:8080
 ```
 cd audi
 pip install playwright && python -m playwright install chromium
-python tests/run.py     # 137 перевірок: функції, вікно «Що купити», вхід/вихід, імпорт/експорт,
+python tests/run.py     # 140 перевірок: функції, вікно «Що купити», вхід/вихід, імпорт/експорт,
                         # переповнення 320–1440 px, тач-цілі ≥ 44 px, вертикальний ритм 4 px
 ```

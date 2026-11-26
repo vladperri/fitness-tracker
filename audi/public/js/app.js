@@ -358,6 +358,8 @@
     var f = $(formId), b = $(btnId);
     var show = open === undefined ? f.hidden : open;
     f.hidden = !show; b.setAttribute('aria-expanded', show ? 'true' : 'false');
+    // Поки форма відкрита, кнопка «Додати» в шапці зайва: ховаємо її, не зсуваючи шапку.
+    b.classList.toggle('is-hidden', show);
     if (show) { var st = f.querySelector('.status'); if (st) { st.textContent = ''; st.className = 'status'; } }
   }
   var EDIT = null;
