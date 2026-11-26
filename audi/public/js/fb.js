@@ -82,5 +82,5 @@ window.AudiAuth = {
 };
 
 onAuthStateChanged(auth, (u) => {
-  emit(u ? { user: { email: u.email, name: u.displayName }, db: adapter(u.uid) } : { user: null, db: null });
+  emit(u ? { user: { email: u.email, name: u.displayName, photo: u.photoURL }, db: adapter(u.uid) } : { user: null, db: null });
 });

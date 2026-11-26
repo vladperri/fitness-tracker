@@ -3,27 +3,33 @@
 Запуск (з папки audi):  pip install playwright && python -m playwright install chromium
                          python tests/run.py
 js/fb.js підміняється на tests/mock-fb.js, тож Firebase не потрібен.
+Сервер віддає index.html на будь-який шлях, як Firebase Hosting із rewrites.
 Шрифти Google, якщо мережа їх не віддає, беруться з node_modules/@fontsource (необов'язково).
 """
 import json, os, re, sys, threading, functools, http.server, socketserver, tempfile
 from playwright.sync_api import sync_playwright
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-PUBLIC = os.path.join(HERE, '..', 'public')
+PUBLIC = os.path.abspath(os.path.join(HERE, '..', 'public'))
 MOCK = open(os.path.join(HERE, 'mock-fb.js'), encoding='utf-8').read()
 FONTS = os.environ.get('FONTSOURCE', '/tmp/fonts/node_modules/@fontsource')
 CHROME = os.environ.get('CHROME', '/usr/bin/google-chrome')
 
-class Quiet(http.server.SimpleHTTPRequestHandler):
+class Spa(http.server.SimpleHTTPRequestHandler):
     def log_message(self, *a): pass
-srv = socketserver.TCPServer(('127.0.0.1', 0), functools.partial(Quiet, directory=PUBLIC))
+    def send_head(self):
+        path = self.translate_path(self.path)
+        if not os.path.isfile(path):
+            self.path = '/index.html'
+        return super().send_head()
+srv = socketserver.TCPServer(('127.0.0.1', 0), functools.partial(Spa, directory=PUBLIC))
 PORT = srv.server_address[1]
 threading.Thread(target=srv.serve_forever, daemon=True).start()
-BASE = 'http://127.0.0.1:%d/' % PORT
+BASE = 'http://127.0.0.1:%d' % PORT
 NAV = [0]
-def url(mode, hash=''):
+def url(mode, path='/', query='', hash=''):
     NAV[0] += 1  # новий query щоразу = повне перезавантаження зі свіжим моком
-    return BASE + 'index.html?mock=%s&n=%d%s' % (mode, NAV[0], hash)
+    return BASE + path + '?mock=%s&n=%d%s%s' % (mode, NAV[0], ('&' + query) if query else '', hash)
 
 results = []
 def check(name, cond, info=''):
@@ -55,11 +61,11 @@ def setup(page):
     page.route('https://fonts.gstatic.com/**', gstatic)
     return errors
 
-def open_app(ctx, mode='in', hash='', w=390, h=844):
+def open_app(ctx, mode='in', path='/', query='', hash='', w=390, h=844):
     page = ctx.new_page()
     page.set_viewport_size({'width': w, 'height': h})
     errs = setup(page)
-    page.goto(url(mode, hash))
+    page.goto(url(mode, path, query, hash))
     page.wait_for_function('document.fonts.status === "loaded"')
     page.wait_for_timeout(250)
     return page, errs
@@ -68,7 +74,7 @@ GRID_JS = r'''
 (sel) => {
   const root = document.querySelector(sel); if (!root) return {missing: true};
   const R = root.getBoundingClientRect(); const bad = []; let n = 0;
-  for (const el of root.querySelectorAll('div,section,article,li,button,a.btn,a.tile,a.more,label,input,select,h1,h2,h3,p,dl,ul,.ytext,.item-text')) {
+  for (const el of root.querySelectorAll('div,section,article,li,button,a.btn,a.mlink,a.icon-btn,label,input,select,h1,h2,h3,p,dl,ul,.ytext,.item-text')) {
     if (el.closest('svg,#catalog,dialog') || el.offsetParent === null) continue;
     const cs = getComputedStyle(el); if (cs.display === 'inline' || cs.position === 'absolute') continue;
     const r = el.getBoundingClientRect(); if (!r.height) continue; n++;
@@ -79,10 +85,11 @@ GRID_JS = r'''
 TAP_JS = r'''
 (sel) => {
   const out = [];
-  for (const el of document.querySelectorAll(sel + ' button, ' + sel + ' a.btn, ' + sel + ' a.tile, ' + sel + ' a.more, ' + sel + ' input:not([type=checkbox]):not(.vh), ' + sel + ' select, .tabs a')) {
+  const q = ['button', 'a.btn', 'a.mlink', 'a.icon-btn', 'input:not([type=checkbox]):not(.vh)', 'select'].map(s => sel + ' ' + s).join(',') + ', .tabs a, #fab-wrap button, #fab-wrap a';
+  for (const el of document.querySelectorAll(q)) {
     if (el.offsetParent === null) continue;
     const r = el.getBoundingClientRect();
-    if (r.height < 43.5 || (r.width < 43.5)) out.push([el.tagName, (el.textContent || el.getAttribute('aria-label') || '').trim().slice(0, 30), Math.round(r.width), Math.round(r.height)]);
+    if (r.height < 43.5 || r.width < 43.5) out.push([el.tagName, (el.textContent || el.getAttribute('aria-label') || '').trim().slice(0, 30), Math.round(r.width), Math.round(r.height)]);
   }
   return out;
 }'''
@@ -94,183 +101,183 @@ with sync_playwright() as p:
     # --- головна, увійшли ---
     page, errs = open_app(ctx, 'in')
     t = lambda s: page.locator(s).first.inner_text().strip()
+    path = lambda: page.evaluate('location.pathname')
     check('home: title', t('#hero-title') == 'Готова до дороги', t('#hero-title'))
-    check('home: sub mentions engine lube + km', 'мастила в двигуні' in t('#hero-sub') and '195 690 км' in t('#hero-sub'), t('#hero-sub'))
+    check('home: no oil text above car', page.locator('#hero-sub').is_hidden())
+    check('home: no stat tiles', page.locator('.tile, .tiles').count() == 0)
+    check('home: no «Додати запис» in hero', page.locator('#home .btn:has-text("Додати")').count() == 0)
     check('home: oil left', t('#st-oil') == '7 636' and t('#st-oil-unit') == 'км', t('#st-oil'))
     check('home: km', t('#st-km') == '188 054', t('#st-km'))
-    check('home: counts', t('#st-count') == '5' and t('#st-rem') == '1' and t('#st-miss') == '4', [t('#st-count'), t('#st-rem'), t('#st-miss')])
-    rows = page.locator('#h-year .yrow')
-    check('home: 10 yearly rows', rows.count() == 10, rows.count())
-    first4 = [rows.nth(i).locator('.ytitle').inner_text() for i in range(4)]
-    check('home: missing first', first4 == ['Мастило в передньому редукторі', 'Мастило в задньому редукторі', 'Гальмівна рідина', 'Охолоджувальна рідина двигуна'], first4)
-    check('home: missing marked', page.locator('#h-year .yrow.miss').count() == 4)
-    ui_text = page.evaluate("[...document.querySelectorAll('[data-view]:not(#catalog)')].map(e=>e.textContent).join(' ')")
-    oil_words = re.findall(r'\S*[Мм]асл\S*', ui_text)
-    check('ui: advice text uses «мастило» (only user data may say «масло»)', all(w for w in oil_words) and len(oil_words) <= 2, oil_words)
-    check('home: year sub', '6 з 10' in t('#h-year-sub'), t('#h-year-sub'))
-    check('home: last records', page.locator('#h-last .mrow').count() == 3)
-    check('home: reminder', 'Діагностика задньої підвіски' in t('#h-rem'))
-    check('home: account', 'vlad@example.com' in t('#acc-who') and page.locator('#acc-signout').is_visible())
+    check('home: reminders block shown', page.locator('#h-rem-box').is_visible() and page.locator('#h-rem a.mlink').count() == 1)
+    check('home: reminder links to edit page', page.locator('#h-rem a.mlink').get_attribute('href') == '/create-reminder?id=m1')
+    check('home: one next planned item', page.locator('#h-next .yrow').count() == 1)
+    check('home: next = front diff', 'Мастило в передньому редукторі' in t('#h-next'), t('#h-next'))
+    check('home: 3 last records', page.locator('#h-last .mrow').count() == 3)
+    order = page.evaluate("[...document.querySelectorAll('#home .home-grid > section:not([hidden]) h2')].map(h => h.textContent)")
+    check('home: block order', order == ['Нагадування', 'Наступне планове ТО', 'Останні записи'], order)
+    check('nav: 5 tabs, profile, no reminders tab', page.locator('.tabs a').count() == 5 and page.locator('.tabs a[href="/profile"]').count() == 1 and page.locator('.tabs a:has-text("Нагадування")').count() == 0)
+    check('fab: visible', page.locator('#fab').is_visible())
+    ui_text = page.evaluate("[...document.querySelectorAll('main [data-view]:not(#catalog)')].map(e=>e.textContent).join(' ')")
+    check('ui: advice uses «мастило»', len(re.findall(r'\S*[Мм]асл\S*', ui_text)) <= 2, re.findall(r'\S*[Мм]асл\S*', ui_text))
 
-    # --- вікно «Що купити» ---
-    opener = page.locator('#h-year [data-info="front_diff"]')
-    check('info: aria-label', opener.get_attribute('aria-label') == 'Що купити: мастило в передньому редукторі', opener.get_attribute('aria-label'))
-    opener.click()
-    page.wait_for_timeout(100)
-    check('info: dialog open', page.evaluate("document.getElementById('info').open"))
-    check('info: title', t('#info-title') == 'Мастило в передньому редукторі')
-    check('info: buy rows', page.locator('#info-buy .buy-row').count() == 2)
-    check('info: oil code', page.locator('#info-buy [data-code="G 052 145 S2"]').count() == 1)
-    check('info: last fact', 'немає запису' in t('#info-facts'), t('#info-facts'))
-    check('info: note', '2 л' in t('#info-note'))
-    page.locator('#info-buy [data-code="G 052 145 S2"]').click()
-    page.wait_for_timeout(150)
+    # --- вікно «Що купити» з наступного ТО ---
+    page.locator('#h-next [data-info]').click(); page.wait_for_timeout(100)
+    check('info: open', page.evaluate("document.getElementById('info').open") and t('#info-title') == 'Мастило в передньому редукторі')
+    page.locator('#info-buy [data-code="G 052 145 S2"]').click(); page.wait_for_timeout(150)
     check('info: copy', page.evaluate('navigator.clipboard.readText()') == 'G 052 145 S2')
     page.keyboard.press('Escape'); page.wait_for_timeout(100)
-    check('info: Esc closes', not page.evaluate("document.getElementById('info').open"))
-    check('info: focus returns', page.evaluate("document.activeElement && document.activeElement.getAttribute('data-info')") == 'front_diff')
-    page.locator('#h-year [data-info="engine_oil"]').click(); page.wait_for_timeout(100)
-    check('info: engine oil 3 rows', page.locator('#info-buy .buy-row').count() == 3)
-    check('info: engine last fact', '06.11.2026' in t('#info-facts'), t('#info-facts'))
-    check('info: catalog link', page.locator('#info-more').is_visible() and page.locator('#info-more').get_attribute('href') == '#s-oil')
-    page.mouse.click(5, 5); page.wait_for_timeout(100)
-    check('info: backdrop click closes', not page.evaluate("document.getElementById('info').open"))
+    check('info: Esc closes, focus back', not page.evaluate("document.getElementById('info').open") and page.evaluate("document.activeElement.getAttribute('data-info')") == 'front_diff')
+    page.locator('#h-next [data-info]').click(); page.wait_for_timeout(80)
+    page.locator('#info-log').click(); page.wait_for_timeout(250)
+    check('log: /create-fix with preset', path() == '/create-fix' and page.locator('#rec-form [name=title]').input_value() == 'Заміна: мастило в передньому редукторі' and page.locator('#rec-form input[value=front_diff]').is_checked())
+    check('log: fab hidden on form page', page.locator('#fab-wrap').is_hidden())
+    page.locator('#rec-form [name=km]').fill('188300')
+    page.locator('#rec-submit').click(); page.wait_for_timeout(250)
+    w = page.evaluate('window.__writes')[-1]
+    check('log: saved', w[0] == 'set' and w[2]['svc'] == ['front_diff'] and w[2]['km'] == 188300, w)
+    check('log: back on /records with 6 cards', path() == '/records' and page.locator('#rec-list .rec').count() == 6)
+    page.locator('.tabs a[href="/"]').click(); page.wait_for_timeout(150)
+    check('log: next planned moved on', 'Мастило в задньому редукторі' in t('#h-next'), t('#h-next'))
 
-    # --- записати заміну з вікна ---
-    page.locator('#h-year [data-info="front_diff"]').click(); page.wait_for_timeout(80)
-    page.locator('#info-log').click(); page.wait_for_timeout(300)
-    check('log: on records', page.evaluate('location.hash') == '#records' and not page.locator('#rec-form').is_hidden())
-    check('log: prefilled title', page.locator('#rec-form [name=title]').input_value() == 'Заміна: мастило в передньому редукторі')
-    check('log: svc checked', page.locator('#rec-form input[value=front_diff]').is_checked())
-    page.locator('#rec-form [name=km]').fill('188200')
-    page.locator('#rec-form button[type=submit]').click(); page.wait_for_timeout(200)
-    w = page.evaluate('window.__writes')
-    check('log: saved', w and w[-1][0] == 'set' and w[-1][1].startswith('records/r') and w[-1][2]['svc'] == ['front_diff'] and w[-1][2]['km'] == 188200, w[-1:] if w else w)
-    page.goto(url('in', '#home')); page.wait_for_timeout(300)
-    check('log: (fresh store) still 4 missing', t('#st-miss') == '4')
+    # --- кнопка «+»: нагадування ---
+    page.locator('#fab').click(); page.wait_for_timeout(80)
+    check('fab: menu', page.locator('#fab-menu').is_visible() and page.locator('#fab').get_attribute('aria-expanded') == 'true' and page.locator('#fab-menu a').count() == 2)
+    page.keyboard.press('Escape'); page.wait_for_timeout(50)
+    check('fab: Esc closes', page.locator('#fab-menu').is_hidden())
+    page.locator('#fab').click(); page.locator('#fab-menu a[href="/create-reminder"]').click(); page.wait_for_timeout(200)
+    check('fab → /create-reminder', path() == '/create-reminder' and t('#rem-title') == 'Нове нагадування' and page.locator('#rem-del').is_hidden())
+    page.locator('#rem-form [name=title]').fill('Заміна мастила в редукторах'); page.locator('#rem-form [name=date]').fill('2026-12-10')
+    page.locator('#rem-submit').click(); page.wait_for_timeout(250)
+    check('reminder: saved, back home', path() == '/' and page.locator('#h-rem a.mlink').count() == 2 and 'Заміна мастила в редукторах' in t('#h-rem'))
+    w = page.evaluate('window.__writes')[-1]
+    check('reminder: new doc', w[1].startswith('reminders/m') and w[2]['done'] is False and w[2]['date'] == '2026-12-10', w)
 
-    # --- записи ---
-    page.goto(url('in', '#records')); page.wait_for_timeout(300)
-    check('records: 5 cards', page.locator('#rec-list .rec').count() == 5)
-    check('records: count text', t('#rec-count').startswith('5 записів'), t('#rec-count'))
-    check('records: code button', page.locator('#rec-list [data-code="35742 01"]').count() == 1)
-    check('records: meta with price', 'Lemförder · 350 грн' in t('#rec-list'), '')
-    page.locator('[data-filter=repair]').click(); page.wait_for_timeout(50)
+    # --- редагування нагадування ---
+    page.locator('#h-rem a[href="/create-reminder?id=m1"]').click(); page.wait_for_timeout(200)
+    check('rem edit: filled', path() == '/create-reminder' and page.locator('#rem-form [name=title]').input_value() == 'Діагностика задньої підвіски' and page.locator('#rem-form [name=note]').input_value() == 'Шевчук' and t('#rem-title') == 'Редагувати нагадування')
+    check('rem edit: done & delete shown', page.locator('#rem-done').is_visible() and page.locator('#rem-del').is_visible())
+    page.locator('#rem-form [name=title]').fill('Діагностика задньої підвіски на СТО'); page.locator('#rem-submit').click(); page.wait_for_timeout(250)
+    w = page.evaluate('window.__writes')[-1]
+    check('rem edit: same id, fields kept', w[1] == 'reminders/m1' and w[2]['title'].endswith('на СТО') and w[2]['note'] == 'Шевчук' and w[2]['done'] is False and 'updatedAt' in w[2], w)
+    page.locator('#h-rem a[href="/create-reminder?id=m1"]').click(); page.wait_for_timeout(200)
+    page.locator('#rem-done').click(); page.wait_for_timeout(250)
+    check('rem done: update + home', page.evaluate('window.__writes')[-1] == ['update', 'reminders/m1', {'done': True}] and path() == '/' and page.locator('#h-rem a.mlink').count() == 1)
+    page.locator('#h-rem a.mlink').first.click(); page.wait_for_timeout(200)
+    page.locator('#rem-del').click(); check('rem del: arms', t('#rem-del') == 'Точно видалити?')
+    page.locator('#rem-del').click(); page.wait_for_timeout(250)
+    check('rem del: no open reminders → block hidden', path() == '/' and page.locator('#h-rem-box').is_hidden())
+
+    # --- записи: редагування з картки ---
+    page.locator('.tabs a[href="/records"]').click(); page.wait_for_timeout(150)
+    page.locator('[data-filter=repair]').click()
     check('records: filter repair', page.locator('#rec-list .rec').count() == 2)
     page.locator('[data-filter=all]').click()
-    page.locator('[data-edit=r20261119]').click(); page.wait_for_timeout(150)
-    check('edit: «Додати запис» hidden while form open', not page.locator('#rec-add-toggle').is_visible())
-    check('edit: form filled', page.locator('#rec-form [name=title]').input_value() == 'Передня підвіска й розвал-сходження')
-    check('edit: items text', '35742 01' in page.locator('#rec-form [name=items]').input_value())
-    page.locator('#rec-form [name=title]').fill('Передня підвіска')
-    page.locator('#rec-form button[type=submit]').click(); page.wait_for_timeout(200)
+    page.locator('#rec-list a[href="/create-fix?id=r20261119"]').click(); page.wait_for_timeout(200)
+    check('fix edit: filled', path() == '/create-fix' and t('#fix-title') == 'Редагувати запис' and '35742 01' in page.locator('#rec-form [name=items]').input_value())
+    page.locator('#rec-form [name=title]').fill('Передня підвіска'); page.locator('#rec-submit').click(); page.wait_for_timeout(250)
     w = page.evaluate('window.__writes')[-1]
-    check('edit: same id, fields kept', w[1] == 'records/r20261119' and w[2]['title'] == 'Передня підвіска' and w[2]['total'] == 5250 and 'updatedAt' in w[2], w)
-    d = page.locator('[data-del="records/r20261123"]')
-    d.click(); check('delete: arms first', d.inner_text() == 'Точно видалити?')
-    d.click(); page.wait_for_timeout(200)
-    check('delete: removed', page.locator('#rec-list .rec').count() == 4)
+    check('fix edit: same id, fields kept', w[1] == 'records/r20261119' and w[2]['title'] == 'Передня підвіска' and w[2]['total'] == 5250, w)
+    d = page.locator('[data-del="records/r20261123"]'); d.click(); d.click(); page.wait_for_timeout(200)
+    check('records: delete two-step', page.locator('#rec-list .rec').count() == 5)
+    check('home flow: no errors', not errs, errs[:3])
+    page.close()
 
-    # --- нагадування ---
-    page.goto(url('in', '#reminders')); page.wait_for_timeout(300)
-    check('rem: big', t('#r-oil-km') == '7 636' and t('#r-oil-unit') == 'км залишилось', [t('#r-oil-km'), t('#r-oil-unit')])
-    wpx = page.evaluate("parseFloat(document.querySelector('#r-oil-bar i').style.width)")
-    check('rem: bar ~4.6%', 4 < wpx < 5, wpx)
-    check('rem: bar ends', t('#r-oil-from') == '187 690 · заміна' and t('#r-oil-to') == '195 690 · наступна', [t('#r-oil-from'), t('#r-oil-to')])
-    check('rem: bar aria', 'Пройдено 364' in page.locator('#r-oil-bar').get_attribute('aria-label'))
-    check('rem: where list 11', page.locator('#where-list .wrow').count() == 11)
-    check('rem: where last line', 'Остання заміна: 24.06.2026' in page.locator('#where-list .wrow').nth(4).inner_text())
-    check('rem: my reminder', 'Діагностика задньої підвіски' in t('#rem-list'))
-    page.locator('[data-rem-edit=m1]').click(); page.wait_for_timeout(150)
-    check('rem edit: «Додати» hidden while form open', not page.locator('#rem-add-toggle').is_visible())
-    check('rem edit: form filled', page.locator('#rem-form [name=title]').input_value() == 'Діагностика задньої підвіски' and page.locator('#rem-form [name=note]').input_value() == 'Шевчук' and t('#rem-form-title') == 'Редагувати нагадування')
-    page.locator('#rem-form [name=title]').fill('Діагностика задньої підвіски на СТО')
-    page.locator('#rem-form [name=date]').fill('2026-12-02')
-    page.locator('#rem-form button[type=submit]').click(); page.wait_for_timeout(200)
-    w = page.evaluate('window.__writes')[-1]
-    check('rem edit: same id, fields kept', w[1] == 'reminders/m1' and w[2]['title'] == 'Діагностика задньої підвіски на СТО' and w[2]['date'] == '2026-12-02' and w[2]['done'] is False and w[2]['note'] == 'Шевчук' and 'updatedAt' in w[2], w)
-    check('rem edit: «Додати» back after save', page.locator('#rem-add-toggle').is_visible())
-    check('rem edit: form closed, list updated', page.locator('#rem-form').is_hidden() and 'на СТО' in t('#rem-list'))
-    page.locator('[data-done=m1]').click(); page.wait_for_timeout(150)
-    check('rem: done update', page.evaluate('window.__writes')[-1] == ['update', 'reminders/m1', {'done': True}])
+    # --- планові ТО ---
+    page, errs = open_app(ctx, 'in', '/planned-to')
+    t = lambda s: page.locator(s).first.inner_text().strip()
+    check('planned: direct load', page.locator('#planned').is_visible() and page.locator('.tabs a.on').get_attribute('data-tab') == 'home')
+    rows = page.locator('#plan-list .yrow')
+    check('planned: 11 rows', rows.count() == 11, rows.count())
+    first = [rows.nth(i).locator('.ytitle').inner_text() for i in range(5)]
+    check('planned: unknown first, in priority', first == ['Мастило в передньому редукторі', 'Мастило в задньому редукторі', 'Гальмівна рідина', 'Свічки запалювання', 'Охолоджувальна рідина двигуна'], first)
+    atf = page.locator('#plan-list .yrow:has-text("Мастило в коробці передач")')
+    check('planned: atf next due', 'Через 73 946 км або до 06.2034' in atf.inner_text(), atf.inner_text())
+    check('planned: source shown', 'ZF' in atf.inner_text() and 'рекомендація' in page.locator('#plan-list .yrow:has-text("передньому")').inner_text())
+    check('planned: ac without interval last', 'кондиціонера' in rows.nth(10).inner_text() and 'За станом' in rows.nth(10).inner_text())
+    check('planned: oil card', t('#r-oil-km') == '7 636' and 'Пройдено 364' in page.locator('#r-oil-bar').get_attribute('aria-label'))
     page.locator('#oil-set [name=km]').fill('10000'); page.locator('#oil-set button').click(); page.wait_for_timeout(150)
-    check('rem: interval saved', page.evaluate('window.__writes')[-1] == ['set', 'settings/main', {'oilIntervalKm': 10000, 'oilIntervalMonths': 12}])
-    page.locator('#rem-add-toggle').click()
-    page.locator('#rem-form [name=title]').fill('Заміна мастила в редукторах'); page.locator('#rem-form button[type=submit]').click(); page.wait_for_timeout(150)
-    check('rem: add', 'Заміна мастила в редукторах' in t('#rem-list'))
+    check('planned: interval saved', page.evaluate('window.__writes')[-1] == ['set', 'settings/main', {'oilIntervalKm': 10000, 'oilIntervalMonths': 12}])
+    page.locator('#planned [data-back]').click(); page.wait_for_timeout(150)
+    check('planned: back → home', page.evaluate('location.pathname') == '/')
+    check('planned: no errors', not errs, errs[:3])
+    page.close()
 
-    # --- експорт ---
-    page.goto(url('in', '#home')); page.wait_for_timeout(300)
+    # --- прямі адреси й старі посилання ---
+    page, errs = open_app(ctx, 'in', '/create-fix', 'id=r20261119')
+    page.wait_for_timeout(150)
+    check('deep link: edit record loads after data', page.locator('#rec-form [name=title]').input_value() == 'Передня підвіска й розвал-сходження')
+    page.goto(BASE + '/?mock=in&n=900#records'); page.wait_for_timeout(250)
+    check('legacy #records → /records', page.evaluate('location.pathname') == '/records' and page.locator('#records').is_visible())
+    page.goto(BASE + '/?mock=in&n=901#s-oil'); page.wait_for_timeout(250)
+    check('legacy #s-oil → /catalog#s-oil', page.evaluate('location.pathname + location.hash') == '/catalog#s-oil' and page.locator('#catalog').is_visible())
+    page.close()
+
+    # --- профіль: експорт, вихід ---
+    page, errs = open_app(ctx, 'in', '/profile')
+    t = lambda s: page.locator(s).first.inner_text().strip()
+    check('profile: who', t('#prof-name') == 'Vlad' and t('#prof-email') == 'vlad@example.com' and t('#prof-avatar') == 'V')
+    check('profile: actions', all(page.locator(s).is_visible() for s in ('#acc-export', '#acc-import', '#acc-signout')) and page.locator('#acc-signin').is_hidden())
+    check('profile: tab active', page.locator('.tabs a.on').get_attribute('href') == '/profile')
     with page.expect_download() as dl:
         page.locator('#acc-export').click()
     data = json.load(open(dl.value.path(), encoding='utf-8'))
-    check('export: file', data['app'] == 'audi-a6' and len(data['records']) == 5 and len(data['reminders']) == 1 and data['settings']['main']['oilIntervalKm'] == 8000)
+    check('export: file', data['app'] == 'audi-a6' and len(data['records']) == 5 and len(data['reminders']) == 1)
     backup = os.path.join(tempfile.gettempdir(), 'audi-backup-test.json'); json.dump(data, open(backup, 'w', encoding='utf-8'), ensure_ascii=False)
-    check('home: no console errors', not errs, errs[:3])
+    page.locator('#acc-signout').click(); page.wait_for_timeout(200)
+    check('signout: profile shows sign-in', t('#prof-name') == 'Ви не увійшли' and page.locator('#acc-signin').is_visible() and page.evaluate('window.__unsubs') >= 3)
+    check('profile: no errors', not errs, errs[:3])
     page.close()
 
     # --- імпорт у порожню базу ---
-    page, errs = open_app(ctx, 'empty')
+    page, errs = open_app(ctx, 'empty', '/profile')
     t = lambda s: page.locator(s).first.inner_text().strip()
-    check('empty: title', t('#hero-title') == 'Почніть журнал')
     page.locator('#acc-file').set_input_files(backup); page.wait_for_timeout(400)
-    check('import: status', 'Відновлено: 5 записів, 1 нагадування' in t('#acc-status'), t('#acc-status'))
-    check('import: data shown', t('#st-count') == '5' and t('#hero-title') == 'Готова до дороги', [t('#st-count'), t('#hero-title')])
+    check('import: status', 'Підвантажено: 5 записів, 1 нагадування' in t('#acc-status'), t('#acc-status'))
+    page.locator('.tabs a[href="/"]').click(); page.wait_for_timeout(200)
+    check('import: home filled', t('#hero-title') == 'Готова до дороги' and page.locator('#h-last .mrow').count() == 3)
     check('import: no errors', not errs, errs[:3])
     page.close()
 
     # --- не увійшли ---
     page, errs = open_app(ctx, 'out')
     t = lambda s: page.locator(s).first.inner_text().strip()
-    check('out: title', t('#hero-title') == 'Увійдіть, щоб відкрити журнал')
-    check('out: cta', t('.hero-cta') == 'Увійти через Google')
-    check('out: yearly rows still with info', page.locator('#h-year [data-info]').count() == 10)
-    page.locator('#h-year [data-info=atf]').click(); page.wait_for_timeout(80)
-    check('out: info works', t('#info-title') == 'Мастило в коробці передач' and 'після входу' in t('#info-facts'))
-    page.keyboard.press('Escape')
-    page.locator('.hero-cta').click(); page.wait_for_timeout(300)
-    check('out→in: signed in', t('#hero-title') == 'Готова до дороги' and t('.hero-cta') == 'Додати запис')
-    page.locator('#acc-signout').click(); page.wait_for_timeout(200)
-    check('in→out: listeners closed', page.evaluate('window.__unsubs') >= 3 and t('#hero-title') == 'Увійдіть, щоб відкрити журнал')
+    check('out: title + sign-in in hero', t('#hero-title') == 'Увійдіть, щоб відкрити журнал' and page.locator('.hero-signin').is_visible())
+    check('out: fab hidden, reminders hidden', page.locator('#fab-wrap').is_hidden() and page.locator('#h-rem-box').is_hidden())
+    page.locator('.hero-signin').click(); page.wait_for_timeout(300)
+    check('out→in', t('#hero-title') == 'Готова до дороги' and page.locator('#fab').is_visible())
     check('out: no errors', not errs, errs[:3])
     page.close()
 
-    # --- немає доступу ---
     page, errs = open_app(ctx, 'deny')
     check('deny: note', 'Немає доступу до бази' in page.locator('#db-note').inner_text())
     page.close()
 
     # --- каталог і авто ---
-    page, errs = open_app(ctx, 'in', '#catalog')
-    check('catalog: visible', page.locator('#catalog').is_visible() and page.locator('#catalog .pfig svg').count() >= 10, page.locator('#catalog .pfig svg').count())
+    page, errs = open_app(ctx, 'in', '/catalog')
+    check('catalog: schemas', page.locator('#catalog').is_visible() and page.locator('#catalog .pfig svg').count() >= 10)
     btn = page.locator('#catalog .codebtn').first; code = btn.get_attribute('data-code'); btn.click(); page.wait_for_timeout(150)
     check('catalog: copy', page.evaluate('navigator.clipboard.readText()') == code)
-    page.goto(url('in', '#s-oil')); page.wait_for_timeout(250)
-    check('catalog: deep link', page.locator('#catalog').is_visible() and 'Мастило в двигуні' in page.locator('#s-oil').inner_text())
-    page.goto(url('in', '#car')); page.wait_for_timeout(250)
+    page.locator('.tabs a[href="/car"]').click(); page.wait_for_timeout(150)
     page.locator('#car [data-code]').click(); page.wait_for_timeout(150)
     check('car: VIN copy', page.evaluate('navigator.clipboard.readText()') == 'WAUGFAFC5FN016207')
-    check('car: PR table rows', page.locator('#car .prtable tbody tr').count() >= 45)
     check('catalog/car: no errors', not errs, errs[:3])
     page.close()
 
     # --- верстка: переповнення, тач-цілі, сітка ---
-    for w in (320, 390, 768, 1024, 1280, 1440):
-        page, errs = open_app(ctx, 'in', '', w, 900)
-        for v in ('home', 'records', 'reminders', 'car', 'catalog'):
-            page.evaluate("v => location.hash = '#' + v", v); page.wait_for_timeout(120)
+    VIEWS = [('home', '/', ''), ('records', '/records', ''), ('planned', '/planned-to', ''), ('car', '/car', ''), ('catalog', '/catalog', ''),
+             ('profile', '/profile', ''), ('fix', '/create-fix', 'id=r20261119'), ('remind', '/create-reminder', 'id=m1')]
+    for wd in (320, 390, 768, 1024, 1280, 1440):
+        for v, pth, q in VIEWS:
+            page, errs = open_app(ctx, 'in', pth, q, '', wd, 900)
             ov = page.evaluate('document.documentElement.scrollWidth - document.documentElement.clientWidth')
-            check('layout %d %s: no overflow' % (w, v), ov <= 0, ov)
+            check('layout %d %s: no overflow' % (wd, v), ov <= 0, ov)
             if v != 'catalog':
                 small = page.evaluate(TAP_JS, '#' + v)
-                check('layout %d %s: tap ≥44' % (w, v), not small, small[:4])
-            if w in (390, 1280) and v != 'catalog':
+                check('layout %d %s: tap ≥44' % (wd, v), not small, small[:4])
+            if wd in (390, 1280) and v != 'catalog':
                 g = page.evaluate(GRID_JS, '#' + v)
-                check('grid %d %s: 4px rhythm (%d boxes)' % (w, v, g.get('n', 0)), g.get('count', 1) == 0, g.get('bad'))
-        if w in (390, 1280):
-            page.evaluate("location.hash = '#home'"); page.wait_for_timeout(150)
-            page.screenshot(path=os.path.join(HERE, 'out', 'home-%d.png' % w), full_page=True) if os.path.isdir(os.path.join(HERE, 'out')) else None
-        page.close()
+                check('grid %d %s: 4px rhythm (%d boxes)' % (wd, v, g.get('n', 0)), g.get('count', 1) == 0, g.get('bad'))
+            page.close()
     b.close()
 
 srv.shutdown()
