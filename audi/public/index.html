@@ -36,6 +36,7 @@
     <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
     <symbol id="i-bell" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21h4"/></g></symbol>
     <symbol id="i-doc" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></g></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/><path d="M10 11v6M14 11v6"/></g></symbol>
     <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
   </defs>
 </svg>
@@ -159,7 +160,11 @@
         <label class="field">Сума, грн<input type="number" name="total" inputmode="decimal" min="0" step="any"></label>
       </div>
       <label class="field">Що зробили<input type="text" name="title" required maxlength="160" placeholder="Заміна гальмівних колодок"></label>
-      <label class="field">Деталі й роботи: кожна з нового рядка, у форматі «назва | код | ціна»<textarea name="items" maxlength="2000" placeholder="Колодки передні TRW | GDB1955 | 1800"></textarea></label>
+      <fieldset class="items-ed">
+        <legend>Деталі й роботи</legend>
+        <div class="items-rows" id="items-rows"></div>
+        <button class="btn btn-ghost" type="button" id="item-add"><svg aria-hidden="true"><use href="#i-plus"/></svg>Додати деталь чи роботу</button>
+      </fieldset>
       <fieldset class="checks" id="svc-checks">
         <legend>Що міняли (для планових ТО)</legend>
       </fieldset>

@@ -403,25 +403,73 @@
       fs.appendChild(l);
     });
   }
-  function itemsToText(items) {
-    return (Array.isArray(items) ? items : []).map(function (it) {
-      if (typeof it === 'string') return it;
-      var parts = [it.n || '', it.c || '', isNum(it.p) ? String(it.p) : (it.pt || ''), it.s || ''];
-      while (parts.length > 1 && !parts[parts.length - 1]) parts.pop();
-      return parts.join(' | ');
-    }).join('\n');
+  /* рядки «Деталі й роботи»: назва, код, ціна, примітка — окремими полями */
+  var rowsBox = $('items-rows');
+  function priceText(it) { return isNum(it.p) ? String(it.p).replace('.', ',') : (it.pt || ''); }
+  function addRow(it, focus) {
+    it = typeof it === 'string' ? { n: it } : (it || {});
+    var row = document.createElement('div');
+    row.className = 'item-ed'; row.setAttribute('data-row', '');
+    row.innerHTML =
+      '<div class="item-ed-head"><span data-row-label></span><button class="icon-btn" type="button" data-row-del><svg aria-hidden="true"><use href="#i-trash"/></svg></button></div>' +
+      '<label class="field">Назва<input type="text" data-k="n" maxlength="160"></label>' +
+      '<div class="fields2"><label class="field">Код деталі<input type="text" data-k="c" maxlength="40" autocapitalize="characters" autocomplete="off" spellcheck="false"></label>' +
+      '<label class="field">Ціна, грн<input type="text" data-k="p" inputmode="decimal" maxlength="40"></label></div>' +
+      '<label class="field">Примітка<input type="text" data-k="s" maxlength="160" placeholder="Бренд, кількість, робота чи деталь"></label>';
+    row.querySelector('[data-k="n"]').value = it.n || '';
+    row.querySelector('[data-k="c"]').value = it.c || '';
+    row.querySelector('[data-k="p"]').value = priceText(it);
+    row.querySelector('[data-k="s"]').value = it.s || '';
+    rowsBox.appendChild(row);
+    renumberRows();
+    if (focus) row.querySelector('[data-k="n"]').focus();
   }
-  function parseItems(text) {
-    return String(text || '').split('\n').map(function (l) { return l.trim(); }).filter(Boolean).map(function (l) {
-      if (l.indexOf('|') < 0) return l;
-      var p = l.split('|').map(function (x) { return x.trim(); });
-      var o = { n: p[0] || '' };
-      if (p[1]) o.c = p[1];
-      if (p[2]) { var n = numOrNull(p[2].replace(/\s/g, '').replace(/(грн|₴)\.?$/i, '')); if (n !== null) o.p = n; else o.pt = p[2]; }
-      if (p[3]) o.s = p.slice(3).join(' | ');
-      return o;
+  function renumberRows() {
+    var rows = rowsBox.querySelectorAll('[data-row]');
+    rows.forEach(function (r, i) {
+      r.querySelector('[data-row-label]').textContent = 'Рядок ' + (i + 1);
+      r.querySelector('[data-row-del]').setAttribute('aria-label', 'Видалити рядок ' + (i + 1));
     });
+    updateSumHint();
   }
+  function setRows(items) {
+    rowsBox.innerHTML = '';
+    var list = Array.isArray(items) ? items : [];
+    if (!list.length) addRow(null); else list.forEach(function (it) { addRow(it); });
+  }
+  function parsePrice(v) { return numOrNull(String(v || '').replace(/\s/g, '').replace(/(грн|₴)\.?$/i, '')); }
+  // Збирає рядки у формат запису; повертає { items } або { error }.
+  function collectRows() {
+    var items = [], error = '';
+    rowsBox.querySelectorAll('[data-row]').forEach(function (r, i) {
+      var v = {}; ['n', 'c', 'p', 's'].forEach(function (k) { v[k] = r.querySelector('[data-k="' + k + '"]').value.trim(); });
+      if (!v.n && !v.c && !v.p && !v.s) return;
+      if (!v.n && !error) error = 'Вкажіть назву в рядку ' + (i + 1) + '.';
+      var o = { n: v.n };
+      if (v.c) o.c = v.c;
+      if (v.p) { var n = parsePrice(v.p); if (n !== null) o.p = n; else o.pt = v.p; }
+      if (v.s) o.s = v.s;
+      items.push(o);
+    });
+    return error ? { error: error } : { items: items };
+  }
+  function updateSumHint() {
+    var sum = 0, any = false;
+    rowsBox.querySelectorAll('[data-k="p"]').forEach(function (inp) { var n = parsePrice(inp.value); if (n !== null) { sum += n; any = true; } });
+    field($('rec-form'), 'total').placeholder = any ? 'Сума рядків: ' + money(sum) : '';
+  }
+  $('item-add').addEventListener('click', function () { addRow(null, true); });
+  rowsBox.addEventListener('input', function (e) { if (e.target.getAttribute('data-k') === 'p') updateSumHint(); });
+  rowsBox.addEventListener('click', function (e) {
+    var del = e.target.closest('[data-row-del]');
+    if (!del) return;
+    var row = del.closest('[data-row]'), next = row.nextElementSibling || row.previousElementSibling;
+    row.remove();
+    if (!rowsBox.children.length) addRow(null);
+    renumberRows();
+    var target = next && next.isConnected ? next.querySelector('[data-k="n"]') : $('item-add');
+    if (target) target.focus();
+  });
   // Заповнює форму запису за адресою: /create-fix — новий, /create-fix?id=… — редагування.
   // refresh = true: дані щойно приїхали з бази; форму, яку вже почали заповнювати, не чіпаємо.
   var fixFilledFor = null;
@@ -433,6 +481,7 @@
     if (refresh && id && !rec) return;
     f.reset();
     var tmp = f.querySelector('option[data-tmp]'); if (tmp) tmp.remove();
+    setRows(rec ? rec.items : null);
     EDIT = rec ? rec.id : null;
     fixFilledFor = id ? (rec ? key : null) : key;
     setText('fix-title', id ? 'Редагувати запис' : 'Новий запис');
@@ -461,7 +510,6 @@
     } else sel.value = ts[0] || 'other';
     field(f, 'total').value = isNum(rec.total) ? rec.total : '';
     field(f, 'title').value = rec.title || '';
-    field(f, 'items').value = itemsToText(rec.items);
     field(f, 'note').value = rec.note || '';
     var sv = svc(rec);
     f.querySelectorAll('input[name="svc"]').forEach(function (c) { c.checked = sv.indexOf(c.value) >= 0; });
@@ -472,11 +520,14 @@
     if (!S.db) { status('rec-status', 'Увійдіть, щоб зберігати записи.', true); return; }
     var data = {
       date: field(f, 'date').value, km: numOrNull(field(f, 'km').value), types: String(field(f, 'type').value).split(','),
-      title: field(f, 'title').value.trim(), items: parseItems(field(f, 'items').value),
+      title: field(f, 'title').value.trim(), items: [],
       total: numOrNull(field(f, 'total').value), note: field(f, 'note').value.trim(),
       svc: Array.prototype.slice.call(f.querySelectorAll('input[name="svc"]:checked')).map(function (c) { return c.value; })
     };
     if (!data.title || !data.date) { status('rec-status', 'Вкажіть дату й що зробили.', true); return; }
+    var rows = collectRows();
+    if (rows.error) { status('rec-status', rows.error, true); return; }
+    data.items = rows.items;
     var id, body;
     if (EDIT) {
       var orig = recById(EDIT);
