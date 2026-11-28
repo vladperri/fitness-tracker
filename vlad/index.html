@@ -67,7 +67,7 @@
     max-width:480px;margin:0 auto;
     /* Низ очищено під плаваючу кнопку AI — інакше вона накриває
        останні кнопки меню й галочку прийому їжі. */
-    padding:0 var(--pad) calc(96px + env(safe-area-inset-bottom));
+    padding:0 var(--pad) calc(112px + env(safe-area-inset-bottom));
     min-height:100dvh;
   }
 
@@ -229,6 +229,93 @@
   .rot-full{display:none;padding:2px 12px 12px;border-top:1px solid var(--line);margin:0 4px}
   .rot.open .rot-full{display:block}
   .rot-full .wk:first-child{margin-top:10px}
+
+
+  /* ── нижнє меню: пігулка з чотирьох кружечків ──────────────────
+     Найхарактерніша форма референсу. Не смуга на всю ширину, а
+     пігулка, що плаває над вмістом. Підписів немає — тільки іконки,
+     тож aria-label обовʼязковий на кожній кнопці. */
+  .nav{position:fixed;z-index:340;left:50%;transform:translateX(-50%);
+    bottom:calc(14px + env(safe-area-inset-bottom));
+    display:flex;gap:10px;padding:9px;border-radius:999px;
+    background:rgba(24,24,24,.82);
+    -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
+  .nav-b{width:50px;height:50px;border-radius:999px;border:0;flex:none;cursor:pointer;
+    display:grid;place-items:center;background:var(--raised);color:var(--ink);
+    padding:0;font-family:inherit;transition:background .18s,color .18s}
+  .nav-b svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2;
+    stroke-linecap:round;stroke-linejoin:round}
+  .nav-b.on{background:var(--accent);color:#000}
+  .nav-b:active{filter:brightness(1.3)}
+
+  /* ── повноекранний розділ: той самий каркас, що в холодильника ── */
+  /* Те саме світіння, що на головній — у референсі воно на кожному
+     екрані, а не лише на першому. */
+  .pg{position:fixed;inset:0;z-index:320;display:none;flex-direction:column;
+    background:
+      radial-gradient(132% 62vh at 72% 0%,
+        rgba(250,250,94,.29) 0%, rgba(250,250,94,.085) 38%, rgba(250,250,94,0) 72%) no-repeat,
+      var(--bg)}
+  .pg.open{display:flex}
+  .pg-hd{flex:none;display:flex;align-items:center;gap:11px;
+    padding:calc(12px + env(safe-area-inset-top)) var(--pad) 12px}
+  .pg-hd-t{flex:1;min-width:0}
+  .pg-hd-t b{display:block;font-size:22px;font-weight:800;letter-spacing:-.02em}
+  .pg-hd-t span{display:block;font-size:12px;color:var(--muted);font-weight:600;margin-top:2px}
+  .pg-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    padding:4px var(--pad) calc(104px + env(safe-area-inset-bottom));
+    max-width:480px;margin:0 auto;width:100%}
+  .pg-empty{font-size:13.5px;color:var(--muted);font-weight:600;line-height:1.5;
+    padding:22px 2px;text-align:center}
+
+  /* ── статистика ── */
+  .st-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:var(--gap)}
+  .st-tile{background:var(--card);border-radius:16px;padding:14px}
+  .st-tile b{display:block;font-size:24px;font-weight:800;letter-spacing:-.025em;line-height:1.1;
+    font-variant-numeric:tabular-nums}
+  .st-tile b small{font-size:13px;font-weight:700;color:var(--muted);margin-left:3px}
+  .st-tile b.txt{font-size:17px;letter-spacing:-.01em}
+  .st-tile span{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-top:4px}
+  .st-card{background:var(--card);border-radius:20px;padding:16px;margin-bottom:var(--gap)}
+  .st-card h3{font-size:15px;font-weight:800;letter-spacing:-.01em;margin-bottom:3px}
+  .st-card .sub{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:14px;
+    font-variant-numeric:tabular-nums}
+  .st-bars{display:flex;align-items:flex-end;gap:4px;height:96px}
+  .st-bar{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+  .st-bar i{display:block;width:100%;border-radius:4px 4px 2px 2px;background:var(--raised);
+    min-height:3px}
+  .st-bar.hi i{background:var(--accent)}
+  .st-bar u{display:block;font-size:9px;font-weight:700;color:var(--muted);text-align:center;
+    margin-top:6px;text-decoration:none;font-variant-numeric:tabular-nums}
+  .st-split{display:flex;gap:8px;margin-top:4px}
+  .st-split div{flex:1;background:var(--card2);border-radius:14px;padding:11px 12px}
+  .st-split b{display:block;font-size:18px;font-weight:800;font-variant-numeric:tabular-nums}
+  .st-split span{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-top:2px}
+
+  /* ── профіль: рядки налаштувань із круглою іконкою й шевроном ── */
+  .pr-card{background:var(--card);border-radius:20px;padding:6px 14px;margin-bottom:var(--gap)}
+  .pr-row{display:flex;align-items:center;gap:13px;width:100%;padding:14px 0;background:none;
+    border:0;font-family:inherit;text-align:left;cursor:pointer}
+  .pr-row + .pr-row{border-top:1px solid rgba(255,255,255,.06)}
+  .pr-row .ic{width:40px;height:40px;border-radius:999px;background:var(--raised);color:var(--ink2);
+    flex:none;display:grid;place-items:center}
+  .pr-row .ic svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.9;
+    stroke-linecap:round;stroke-linejoin:round}
+  .pr-row .tx{flex:1;min-width:0}
+  .pr-row .tx b{display:block;font-size:14.5px;font-weight:700}
+  .pr-row .tx span{display:block;font-size:12px;color:var(--muted);font-weight:600;margin-top:2px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pr-row .ch{flex:none;color:var(--muted);font-size:17px;line-height:1}
+  .pr-row.danger .tx b{color:var(--warn)}
+  .pr-row.danger .ic{color:var(--warn)}
+  .pr-me{display:flex;align-items:center;gap:14px;background:var(--card);border-radius:20px;
+    padding:16px;margin-bottom:var(--gap)}
+  .pr-av{width:56px;height:56px;border-radius:999px;background:var(--accent);color:#000;flex:none;
+    display:grid;place-items:center;font-size:21px;font-weight:800}
+  .pr-me-t{flex:1;min-width:0}
+  .pr-me-t b{display:block;font-size:17px;font-weight:800;letter-spacing:-.01em}
+  .pr-me-t span{display:block;font-size:12.5px;color:var(--muted);font-weight:600;margin-top:3px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
   /* ── секція-картка ── */
   section{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px 16px;margin-bottom:var(--gap)}
@@ -485,7 +572,7 @@
 
   /* ══ ШІ-тренер ══════════════════════════════════════════════ */
   .ai-fab{position:fixed;z-index:90;right:max(16px,calc(50vw - 240px + 16px));
-    bottom:calc(20px + env(safe-area-inset-bottom));width:56px;height:56px;border-radius:50%;
+    bottom:calc(96px + env(safe-area-inset-bottom));width:56px;height:56px;border-radius:50%;
     border:0;cursor:pointer;display:grid;place-items:center;background:var(--accent);
     color:var(--ai-on);box-shadow:0 6px 22px rgba(250,226,8,.32);transition:transform .18s}
   .ai-fab:active{transform:scale(.92)}
@@ -637,7 +724,7 @@
 
   /* щоб міні-бар не накривав підвал і кнопку чату */
   body.minibar{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
-  body.minibar .ai-fab{bottom:calc(84px + env(safe-area-inset-bottom))}
+  body.minibar .ai-fab{bottom:calc(152px + env(safe-area-inset-bottom))}
 
   /* ── їжа: кільце калорій замість плоскої смужки ───────────────
      Кільце — той самий мотив, що в таймері вправи, і воно дає блоку
@@ -732,7 +819,7 @@
     color:var(--ink2);font-size:15px;cursor:pointer;flex:none;line-height:1;font-family:inherit;padding:0}
   .fr-body{flex:1;overflow-y:auto;padding:14px 16px calc(14px + env(safe-area-inset-bottom));
     max-width:480px;margin:0 auto;width:100%}
-  .fr-foot{flex:none;padding:10px 16px calc(14px + env(safe-area-inset-bottom));
+  .fr-foot{flex:none;padding:10px 16px calc(84px + env(safe-area-inset-bottom));
     border-top:1px solid var(--line);max-width:480px;margin:0 auto;width:100%}
 
   .fr-item{display:flex;align-items:center;gap:11px;padding:12px 14px;background:var(--card);
@@ -938,10 +1025,30 @@
   <div class="hw-note">Дані пише шорткат Health Sync. Якщо щойно тренувався — запусти його й натисни ↻ Оновити.</div>
 </section>
 
+
+<nav class="nav" id="navBar" aria-label="Головне меню">
+  <button class="nav-b on" type="button" data-go="home" aria-label="Сьогодні" aria-current="page">
+    <svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></button>
+  <button class="nav-b" type="button" data-go="fridge" aria-label="Холодильник">
+    <svg viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="2.5"/><path d="M6 10h12M9.4 6.2v1.8M9.4 13v2.2"/></svg></button>
+  <button class="nav-b" type="button" data-go="stats" aria-label="Статистика">
+    <svg viewBox="0 0 24 24"><path d="M5 20v-7M12 20V5M19 20v-4"/></svg></button>
+  <button class="nav-b" type="button" data-go="profile" aria-label="Профіль">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.4-3.6 4-5.2 7-5.2s5.6 1.6 7 5.2"/></svg></button>
+</nav>
+
+<div class="pg" id="pgStats" aria-hidden="true">
+  <div class="pg-hd"><div class="pg-hd-t"><b>Статистика</b><span id="stSub">за 30 днів</span></div></div>
+  <div class="pg-body" id="stBody"></div>
+</div>
+
+<div class="pg" id="pgProfile" aria-hidden="true">
+  <div class="pg-hd"><div class="pg-hd-t"><b>Профіль</b><span>налаштування трекера</span></div></div>
+  <div class="pg-body" id="prBody"></div>
+</div>
+
 <footer>
-  <div id="authBar" class="auth-bar"></div>
   <div class="note">Зберігається на пристрої · синхронізується з хмарою після входу.<br>Додай на головний екран для швидкого доступу.</div>
-  <button class="reset" id="resetBtn">Скинути цей день</button>
 </footer>
 
 <div class="modal" id="modal" aria-hidden="true">
@@ -1219,7 +1326,7 @@
       document.getElementById("signInBtn").onclick=function(){ fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); };
     }
   }
-  if(fbAuth) fbAuth.onAuthStateChanged(function(u){ fbUser=u; updateAuthUI(); if(u){ syncFromCloud(); ovPull(); chatPull(); frPull(); mnPull(); hwRefresh(); } else { renderWatch(); } });
+  if(fbAuth) fbAuth.onAuthStateChanged(function(u){ fbUser=u; updateAuthUI(); stCache=null; if(curView==="profile") renderProfile(); if(u){ syncFromCloud(); ovPull(); chatPull(); frPull(); mnPull(); hwRefresh(); } else { renderWatch(); } });
 
   function pad(n){ return n<10?"0"+n:""+n; }
   function fmt(d){ return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
@@ -1431,13 +1538,12 @@
 
   document.getElementById("prevWk").addEventListener("click",function(){ weekStart=addDays(weekStart,-7); renderCalendar(); });
   document.getElementById("nextWk").addEventListener("click",function(){ weekStart=addDays(weekStart,7); renderCalendar(); });
-  document.getElementById("resetBtn").addEventListener("click",function(){
-    if(confirm("Скинути всі відмітки за "+state.selectedDate+"?")){
-      var prev=state.entries[state.selectedDate];
-      if(prev && prev.wIdx!=null) state.cycle=prev.wIdx;
-      state.entries[state.selectedDate]={activity:{},meals:{},water:0}; save(); renderAll();
-    }
-  });
+  function resetDay(){
+    if(!confirm("Скинути всі відмітки за "+state.selectedDate+"?")) return;
+    var prev=state.entries[state.selectedDate];
+    if(prev && prev.wIdx!=null) state.cycle=prev.wIdx;
+    state.entries[state.selectedDate]={activity:{},meals:{},water:0}; save(); renderAll();
+  }
 
   var modal=document.getElementById("modal");
   var PLAY='<svg viewBox="0 0 14 14"><polygon points="2,1 12,7 2,13"/></svg>';
@@ -2518,9 +2624,237 @@
   });
 
   document.getElementById("frX").addEventListener("click", function(){
+    if(typeof setNav === "function") setNav("home");
     frEl.classList.remove("open"); frEl.setAttribute("aria-hidden","true");
     document.body.classList.remove("noscroll");
   });
+  // ── нижнє меню й розділи ──────────────────────────────────────
+  // Холодильник уже був повноекранним оверлеєм, тож статистика й
+  // профіль зроблені тим самим каркасом, а не окремими файлами:
+  // інакше довелося б дублювати ініціалізацію Firebase і авторизацію.
+  var navEl = document.getElementById("navBar");
+  var pgStats = document.getElementById("pgStats");
+  var pgProfile = document.getElementById("pgProfile");
+  var curView = "home";
+
+  function setNav(v){
+    curView = v;
+    navEl.querySelectorAll(".nav-b").forEach(function(b){
+      var on = b.getAttribute("data-go") === v;
+      b.classList.toggle("on", on);
+      if(on) b.setAttribute("aria-current", "page");
+      else b.removeAttribute("aria-current");
+    });
+  }
+
+  function closePages(){
+    [pgStats, pgProfile].forEach(function(el){
+      el.classList.remove("open"); el.setAttribute("aria-hidden", "true");
+    });
+  }
+
+  function go(v){
+    if(v === curView && v !== "home") return;
+    closePages();
+    if(v === "fridge"){ setNav("fridge"); frOpen(); return; }
+    if(v === "stats"){
+      pgStats.classList.add("open"); pgStats.setAttribute("aria-hidden", "false");
+      renderStats();
+    } else if(v === "profile"){
+      pgProfile.classList.add("open"); pgProfile.setAttribute("aria-hidden", "false");
+      renderProfile();
+    }
+    document.body.classList.toggle("noscroll", v === "stats" || v === "profile");
+    setNav(v);
+  }
+
+  navEl.addEventListener("click", function(e){
+    var b = e.target.closest(".nav-b"); if(!b) return;
+    go(b.getAttribute("data-go"));
+  });
+
+  // ── статистика ────────────────────────────────────────────────
+  var ST_DAYS = 30, stCache = null;
+
+  function lastDays(n){
+    var out = [], base = new Date();
+    for(var i = n - 1; i >= 0; i--) out.push(fmt(addDays(base, -i)));
+    return out;
+  }
+
+  // 30 окремих читань, а не запит по колекції: доступ до одного
+  // документа вже дозволений правилами, і міняти їх не доводиться.
+  function loadStats(){
+    if(!fbDb || !fbUser) return Promise.resolve(null);
+    if(stCache) return Promise.resolve(stCache);
+    var days = lastDays(ST_DAYS);
+    return Promise.all(days.map(function(d){
+      return fbDb.collection("health").doc(d).get()
+        .then(function(snap){ return { d: d, v: snap.exists ? snap.data() : null }; })
+        .catch(function(){ return { d: d, v: null }; });
+    })).then(function(rows){ stCache = rows; return rows; });
+  }
+
+  function bars(rows, key, unit, scale){
+    var slice = rows.slice(-14);
+    var vals = slice.map(function(r){ return r.v ? (hwVal(r.v, key) || 0) : 0; });
+    var max = Math.max.apply(null, vals.concat([1]));
+    var withData = vals.filter(function(v){ return v > 0; });
+    var avg = withData.length
+      ? Math.round(withData.reduce(function(a, b){ return a + b; }, 0) / withData.length) : 0;
+    var h = '<div class="st-bars">';
+    slice.forEach(function(r, i){
+      var v = vals[i], pct = Math.round(v / max * 100);
+      var lbl = r.d.slice(8);
+      h += '<div class="st-bar' + (v >= max && v > 0 ? ' hi' : '') + '">'
+         + '<i style="height:' + (v ? Math.max(3, pct) : 3) + '%"></i>'
+         + '<u>' + lbl + '</u></div>';
+    });
+    h += '</div>';
+    return { html: h, avg: avg, days: withData.length, unit: unit, scale: scale || 1 };
+  }
+
+  function renderStats(){
+    var box = document.getElementById("stBody");
+    var sub = document.getElementById("stSub");
+    sub.textContent = "за " + ST_DAYS + " днів";
+
+    // Тренування живуть локально, а не в Firestore — їх можна
+    // порахувати одразу, не чекаючи мережі.
+    var days = lastDays(ST_DAYS), byType = [0, 0, 0], total = 0, lastAgo = null;
+    days.forEach(function(d, i){
+      var e = state.entries[d];
+      if(e && e.wIdx != null && ROTATION[e.wIdx]){
+        byType[e.wIdx]++; total++; lastAgo = days.length - 1 - i;
+      }
+    });
+
+    var h = '<div class="st-grid">'
+      + '<div class="st-tile"><b>' + total + '</b><span>Тренувань за ' + ST_DAYS + ' днів</span></div>'
+      + '<div class="st-tile">'
+      + (lastAgo === null ? '<b class="txt">ще немає</b>'
+         : lastAgo === 0 ? '<b class="txt">сьогодні</b>'
+         : lastAgo === 1 ? '<b class="txt">вчора</b>'
+         : '<b>' + lastAgo + '<small>дн тому</small></b>')
+      + '<span>Останнє тренування</span></div>'
+      + '</div>';
+
+    h += '<div class="st-card"><h3>Ротація</h3>'
+       + '<div class="sub">Скільки разів кожне за ' + ST_DAYS + ' днів</div><div class="st-split">';
+    ROTATION.forEach(function(w, i){
+      h += '<div><b>' + byType[i] + '</b><span>' + esc(w.title) + '</span></div>';
+    });
+    h += '</div></div>';
+
+    box.innerHTML = h + '<div class="pg-empty">Завантажую дані з годинника…</div>';
+
+    loadStats().then(function(rows){
+      if(curView !== "stats") return;
+      if(!rows){
+        box.innerHTML = h + '<div class="pg-empty">Увійди в профілі, щоб побачити дані з годинника.</div>';
+        return;
+      }
+      var steps = bars(rows, "steps", "", 1);
+      var kcal  = bars(rows, "activeKcal", "ккал", 1);
+      var dist  = rows.filter(function(r){ return r.v && hwVal(r.v, "distanceKm"); });
+      var distAvg = dist.length
+        ? (dist.reduce(function(a, r){ return a + hwVal(r.v, "distanceKm"); }, 0) / dist.length) : 0;
+
+      var g = h;
+      g += '<div class="st-grid">'
+        + '<div class="st-tile"><b>' + (steps.avg || "—") + '</b><span>Кроків на день, сер.</span></div>'
+        + '<div class="st-tile"><b>' + (distAvg ? distAvg.toFixed(1) : "—")
+        + '<small>км</small></b><span>Дистанція на день</span></div>'
+        + '</div>';
+
+      if(steps.days){
+        g += '<div class="st-card"><h3>Кроки</h3><div class="sub">останні 14 днів · сер. '
+           + steps.avg + '</div>' + steps.html + '</div>';
+      }
+      if(kcal.days){
+        g += '<div class="st-card"><h3>Активні калорії</h3><div class="sub">останні 14 днів · сер. '
+           + kcal.avg + ' ккал</div>' + kcal.html + '</div>';
+      }
+      if(!steps.days && !kcal.days){
+        g += '<div class="pg-empty">За останні ' + ST_DAYS
+           + ' днів годинник не записав жодного дня. Запусти шорткат Health Sync.</div>';
+      }
+      box.innerHTML = g;
+    });
+  }
+
+  // ── профіль ───────────────────────────────────────────────────
+  var PR_IC = {
+    goal:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.5"/></svg>',
+    prot:'<svg viewBox="0 0 24 24"><path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/></svg>',
+    out: '<svg viewBox="0 0 24 24"><path d="M15 4h3a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-3M10 8l-4 4 4 4M6 12h10"/></svg>',
+    reset:'<svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v4h4"/></svg>'
+  };
+
+  function renderProfile(){
+    var box = document.getElementById("prBody");
+    var g = goal(), mail = fbUser ? (fbUser.email || "") : "";
+    var h = '';
+
+    if(fbUser){
+      h += '<div class="pr-me"><div class="pr-av">'
+         + esc((mail[0] || "В").toUpperCase()) + '</div>'
+         + '<div class="pr-me-t"><b>Синхронізовано</b><span>' + esc(mail) + '</span></div></div>';
+    } else {
+      h += '<div class="pr-me"><div class="pr-av">В</div>'
+         + '<div class="pr-me-t"><b>Без синхронізації</b>'
+         + '<span>дані лише на цьому пристрої</span></div></div>'
+         + '<div class="pr-card"><button class="pr-row" id="prIn" type="button">'
+         + '<div class="ic">' + PR_IC.out + '</div>'
+         + '<div class="tx"><b>Увійти через Google</b><span>щоб дані жили в хмарі</span></div>'
+         + '<div class="ch">›</div></button></div>';
+    }
+
+    h += '<div class="pr-card">'
+      + '<button class="pr-row" id="prGoal" type="button"><div class="ic">' + PR_IC.goal + '</div>'
+      + '<div class="tx"><b>Норма калорій</b><span>' + g.base + ' ккал · ±' + GOAL_SWING
+      + ' залежно від дня</span></div><div class="ch">›</div></button>'
+      + '<button class="pr-row" id="prProt" type="button"><div class="ic">' + PR_IC.prot + '</div>'
+      + '<div class="tx"><b>Норма білка</b><span>' + g.p + ' г на день</span></div>'
+      + '<div class="ch">›</div></button>'
+      + '</div>';
+
+    h += '<div class="pr-card">'
+      + '<button class="pr-row danger" id="prReset" type="button"><div class="ic">' + PR_IC.reset + '</div>'
+      + '<div class="tx"><b>Скинути цей день</b><span>' + state.selectedDate + '</span></div>'
+      + '<div class="ch">›</div></button>';
+    if(fbUser){
+      h += '<button class="pr-row" id="prOut" type="button"><div class="ic">' + PR_IC.out + '</div>'
+        + '<div class="tx"><b>Вийти</b><span>дані лишаться на пристрої</span></div>'
+        + '<div class="ch">›</div></button>';
+    }
+    h += '</div>';
+
+    h += '<div class="pg-empty">Зберігається на пристрої · синхронізується з хмарою після входу.</div>';
+    box.innerHTML = h;
+
+    var bind = function(id, fn){ var el = document.getElementById(id); if(el) el.onclick = fn; };
+    bind("prIn", function(){
+      if(fbAuth) fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+    });
+    bind("prOut", function(){ if(fbAuth) fbAuth.signOut(); });
+    bind("prReset", function(){ resetDay(); renderProfile(); });
+    bind("prGoal", function(){
+      var v = prompt("Базова норма калорій на день", String(goal().base));
+      if(v == null) return;
+      var n = parseInt(v, 10);
+      if(!(n >= 1200 && n <= 5000)){ alert("Введи число від 1200 до 5000."); return; }
+      state.goal = state.goal || {}; state.goal.kcal = n; save(); renderMenu(); renderProfile();
+    });
+    bind("prProt", function(){
+      var v = prompt("Норма білка, г на день", String(goal().p));
+      if(v == null) return;
+      var n = parseInt(v, 10);
+      if(!(n >= 60 && n <= 400)){ alert("Введи число від 60 до 400."); return; }
+      state.goal = state.goal || {}; state.goal.p = n; save(); renderMenu(); renderProfile();
+    });
+  }
+
   function frOpen(){
     frEl.classList.add("open"); frEl.setAttribute("aria-hidden","false");
     document.body.classList.add("noscroll");
