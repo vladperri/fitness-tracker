@@ -169,9 +169,14 @@
   .hero.done .hero-tick svg{stroke:#000}
 
   .hero-name{display:flex;align-items:center;gap:13px;margin-top:12px}
-  .hero-ico{width:52px;height:52px;border-radius:999px;background:var(--accent-dim);color:var(--accent);
-    flex:none;display:grid;place-items:center}
-  .hero-ico svg{width:26px;height:26px}
+  .hero-ico{width:72px;height:72px;border-radius:18px;background:var(--raised);color:var(--accent);
+    flex:none;display:grid;place-items:center;overflow:hidden;position:relative}
+  .hero-ico svg{width:30px;height:30px}
+  .hero-ico .thumb{position:absolute;inset:0;background-repeat:no-repeat;
+    background-size:864px 72px;background-position:0 0;background-color:#fff;
+    filter:invert(1) grayscale(1) sepia(.6) saturate(1.5) hue-rotate(8deg) brightness(.96) contrast(1.05);
+    animation:exrun72 1.4s steps(12) infinite}
+  @keyframes exrun72{from{background-position:0 0}to{background-position:-864px 0}}
   .hero.done .hero-ico{background:var(--card2);color:var(--muted)}
   .hero.idle .hero-ico{background:var(--card2);color:var(--muted)}
   .hero-t{min-width:0}
@@ -246,8 +251,13 @@
   /* Виконане зелене всюди однаково — і в hero, і в рядку ротації. */
   .wk.done .wk-check{background:var(--ok)}
   .wk.done .wk-check svg{stroke:#000}
-  .wk-ico{width:40px;height:40px;border-radius:999px;background:var(--raised);flex:none;
-    display:grid;place-items:center;color:var(--accent)}
+  /* У референсі кожен рядок списку має мініатюру — текстових
+     рядків без зображення там немає взагалі. */
+  .wk-ico{width:54px;height:54px;border-radius:14px;background:var(--raised);flex:none;
+    display:grid;place-items:center;color:var(--accent);overflow:hidden;position:relative}
+  .wk-ico .thumb{position:absolute;inset:0;background-repeat:no-repeat;
+    background-size:648px 54px;background-position:0 0;background-color:#fff;
+    filter:invert(1) grayscale(1) sepia(.6) saturate(1.5) hue-rotate(8deg) brightness(.96) contrast(1.05)}
   .wk-ico svg{width:21px;height:21px}
   .wk.next .wk-ico{background:rgba(250,226,8,.16)}
   .wk.done .wk-ico{color:var(--muted)}
@@ -300,11 +310,15 @@
 
   .ex-card{display:flex;gap:13px;padding:13px;background:var(--card);border:1px solid var(--line);
     border-radius:18px;margin-bottom:9px}
-  .ex-img{width:88px;height:88px;border-radius:14px;background:#fff;flex:none;display:grid;place-items:center;
-    color:var(--accent-deep);padding:6px;overflow:hidden;position:relative}
+  /* Білої плашки в референсі немає ніде: ілюстрація вправи лежить
+     на темній плитці. Спрайти намальовані темним по білому, тож
+     invert перевертає їх, а sepia+hue дають теплий тон referencу. */
+  .ex-img{width:88px;height:88px;border-radius:14px;background:var(--raised);flex:none;
+    display:grid;place-items:center;color:var(--accent);padding:6px;overflow:hidden;position:relative}
   .ex-img svg{width:100%;height:100%}
   .ex-img .ex-sprite{position:absolute;inset:0;border-radius:14px;background-repeat:no-repeat;
     background-size:1056px 88px;background-position:0 0;background-color:#fff;
+    filter:invert(1) grayscale(1) sepia(.6) saturate(1.5) hue-rotate(8deg) brightness(.96) contrast(1.05);
     animation:exrun 1.3s steps(12) infinite}
   @keyframes exrun{from{background-position:0 0}to{background-position:-1056px 0}}
   .ex-img .ex-pic{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#fff;
@@ -1254,6 +1268,19 @@
     pull:'<svg '+SV+'><path d="M4 5h16M9 5v5M15 5v5M12 10v9M12 19l-3.2-3.2M12 19l3.2-3.2"/></svg>',
     legs:'<svg '+SV+'><path d="M13.5 3v5.6l-4 4.4 4 4.4V20M5.5 20h13"/></svg>'
   };
+  // Перша вправа тренування, у якої є спрайт — вона й стає обличчям
+  // картки. Якщо спрайта немає, лишається гліф як раніше.
+  function firstSprite(ex){
+    for (var g = 0; g < ex.length; g++){
+      var items = ex[g].items || [];
+      for (var k = 0; k < items.length; k++){
+        var e = items[k];
+        if (!e.off && e.img && e.img.sprite) return e.img.sprite;
+      }
+    }
+    return null;
+  }
+
   function exCount(ex){ var n=0; ex.forEach(function(g){ n += g.items.filter(function(e){return !e.off;}).length; }); return n; }
   var TICK = '<svg viewBox="0 0 18 18"><polyline points="3,9.5 7.5,14 15,4.5"/></svg>';
 
@@ -1267,7 +1294,10 @@
       var isDone = (i === doneIdx), isNext = (i === nextIdx);
       html += '<div class="wk'+(isDone?' done':'')+(isNext?' next':'')+'" data-i="'+i+'">';
       html +=   '<button class="wk-check" type="button" aria-label="Відмітити виконаним">'+TICK+'</button>';
-      html +=   '<div class="wk-ico">'+(ICONS[w.icon]||'')+'</div>';
+      var sp = firstSprite(w.ex);
+      html +=   '<div class="wk-ico">' + (sp
+                  ? '<div class="thumb" style="background-image:url(\''+sp+'\')"></div>'
+                  : (ICONS[w.icon]||'')) + '</div>';
       html +=   '<div class="wk-meta">';
       html +=     '<div class="wk-name">'+w.title+(isNext?'<span class="wk-badge">наступне</span>':'')+'</div>';
       html +=     '<div class="wk-sub">'+w.groups+'</div>';
@@ -1318,6 +1348,7 @@
     var eye = p.done ? (isToday ? "Виконано сьогодні" : "Виконано")
                      : (past ? "Не відмічено" : "Наступне");
     var mins = Math.round(totalSec(w.ex) / 60);
+    var heroSprite = firstSprite(w.ex);
 
     var h = '<div class="hero'+cls+'">'
       + '<div class="hero-top">'
@@ -1326,7 +1357,9 @@
       +     '" aria-label="'+(p.done?"Зняти відмітку":"Відмітити виконаним")+'">'+TICK+'</button>'
       + '</div>'
       + '<div class="hero-name">'
-      +   '<div class="hero-ico">'+(ICONS[w.icon]||"")+'</div>'
+      +   '<div class="hero-ico">' + (heroSprite
+            ? '<div class="thumb" style="background-image:url(\''+heroSprite+'\')"></div>'
+            : (ICONS[w.icon]||"")) + '</div>'
       +   '<div class="hero-t"><b>'+esc(w.title)+'</b><span>'+esc(w.groups)+'</span></div>'
       + '</div>'
       + '<div class="hero-tiles">'
