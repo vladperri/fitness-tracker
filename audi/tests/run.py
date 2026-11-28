@@ -295,6 +295,20 @@ with sync_playwright() as p:
     check('version: stale highlights button', 'btn-primary' in page.locator('#app-refresh').get_attribute('class'))
     page.close(); vctx.close()
 
+    # --- iPhone: відступ під статус-бар, навіть коли iOS віддає env(safe-area-inset-top)=0 ---
+    IOS = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148'
+    pad = lambda pg, sel: pg.evaluate("s => parseFloat(getComputedStyle(document.querySelector(s)).paddingTop)", sel)
+    for name, vh, want in (('home screen app, full screen', 852, 24 + 59), ('Safari with toolbars', 759, 24)):
+        ictx = b.new_context(user_agent=IOS, viewport={'width': 393, 'height': vh}, screen={'width': 393, 'height': 852})
+        page = ictx.new_page(); errs = setup(page)
+        page.goto(url('in', '/')); page.wait_for_timeout(300)
+        hero, eyebrow = pad(page, '.hero-grid'), page.locator('.hero-head .eyebrow-s').bounding_box()
+        page.goto(url('in', '/records')); page.wait_for_timeout(300)
+        rec = pad(page, '[data-view="records"] .view-in')
+        check('iphone top inset: ' + name, hero == want and rec == want and (vh != 852 or eyebrow['y'] >= 59), (hero, rec, eyebrow))
+        check('iphone top inset: no errors (' + name + ')', not errs, errs[:3])
+        ictx.close()
+
     # --- імпорт у порожню базу ---
     page, errs = open_app(ctx, 'empty', '/profile')
     t = lambda s: page.locator(s).first.inner_text().strip()

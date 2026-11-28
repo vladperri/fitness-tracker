@@ -3,6 +3,9 @@
    Усі вертикальні відступи й висоти рядків кратні 4 px. Мінімальна висота всього, на що натискають, — 44 px. */
 
 :root {
+  /* верхня безпечна зона: env() або мінімум із index.html, якщо iOS віддає 0 */
+  --sat-min: 0px;
+  --sat: max(env(safe-area-inset-top, 0px), var(--sat-min));
   --night: #140708;
   --burgundy: #3a0d12;
   --glow: #4c1117;
@@ -421,7 +424,7 @@ body.has-fab main { padding-bottom: 80px; }
   padding: 14px 14px 12px;
   display: grid;
   gap: 10px;
-  scroll-margin-top: calc(16px + env(safe-area-inset-top, 0px));
+  scroll-margin-top: calc(16px + var(--sat));
   transition: border-color .15s;
   min-width: 0;
 }
@@ -524,14 +527,14 @@ body.has-fab main { padding-bottom: 80px; }
 #catalog .codebtn { min-height: 36px; }
 @media (pointer: coarse) { #catalog .codebtn { min-height: 44px; } }
 #catalog [id] { scroll-margin-top: 80px; }
-@media (max-width: 767px) { #catalog [id] { scroll-margin-top: 16px; } }
+@media (max-width: 767px) { #catalog [id] { scroll-margin-top: calc(16px + var(--sat)); } }
 
 
 
 /* ---------- безпечна зона зверху (iPhone на весь екран, вбудовані браузери) ---------- */
 @media (max-width: 767px) {
-  .hero-grid, .view-in, #catalog.wrap { padding-top: calc(var(--s5) + env(safe-area-inset-top, 0px)); }
+  .hero-grid, .view-in, #catalog.wrap { padding-top: calc(var(--s5) + var(--sat)); }
 }
 @media (min-width: 768px) {
-  .tabs { padding-top: env(safe-area-inset-top, 0px); }
+  .tabs { padding-top: var(--sat); }
 }

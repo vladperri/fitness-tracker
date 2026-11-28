@@ -17,6 +17,25 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@200;300;500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
 <link rel="stylesheet" href="/css/app.css">
+<script>
+/* Відступ під статус-бар. На деяких версіях iOS сторінка з домашнього екрана малюється під статус-баром,
+   а env(safe-area-inset-top) віддає 0 — заголовок ховається під годинником і Dynamic Island.
+   Якщо iPhone у портреті й сторінка займає весь екран, ставимо мінімальний відступ сами;
+   CSS бере більше з двох: env() або цей. */
+(function () {
+  var d = document.documentElement;
+  function fit() {
+    var phone = /iPhone|iPod/.test(navigator.userAgent) && screen.width < 500;
+    var portrait = innerHeight > innerWidth;
+    var full = Math.abs(screen.height - innerHeight) <= 2;
+    var min = phone && portrait && full ? (screen.height >= 852 ? 59 : screen.height >= 812 ? 47 : 20) : 0;
+    d.style.setProperty('--sat-min', min + 'px');
+  }
+  fit();
+  addEventListener('resize', fit);
+  addEventListener('orientationchange', fit);
+})();
+</script>
 <script defer src="/js/info.js"></script>
 <script defer src="/js/app.js"></script>
 <script defer src="/js/catalog.js"></script>
