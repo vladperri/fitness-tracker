@@ -4,7 +4,8 @@
                          python tests/run.py
 js/fb.js підміняється на tests/mock-fb.js, тож Firebase не потрібен.
 Сервер віддає index.html на будь-який шлях, як Firebase Hosting із rewrites.
-Шрифти Google, якщо мережа їх не віддає, беруться з node_modules/@fontsource (необов'язково).
+Шрифти (Inter, Inter Tight, IBM Plex Mono) беруться з @fontsource, шлях — змінна FONTSOURCE,
+щоб метрики тексту були однакові на будь-якій машині й у GitHub Actions.
 """
 import json, os, re, sys, threading, functools, http.server, socketserver, tempfile
 from playwright.sync_api import sync_playwright
@@ -14,6 +15,8 @@ PUBLIC = os.path.abspath(os.path.join(HERE, '..', 'public'))
 MOCK = open(os.path.join(HERE, 'mock-fb.js'), encoding='utf-8').read()
 FONTS = os.environ.get('FONTSOURCE', '/tmp/fonts/node_modules/@fontsource')
 CHROME = os.environ.get('CHROME', '/usr/bin/google-chrome')
+# Дати в тестах відносні до «сьогодні» (нагадування «скоро», прострочення), тож годинник браузера фіксуємо.
+TODAY = '2026-11-26T12:00:00'
 
 class Spa(http.server.SimpleHTTPRequestHandler):
     def log_message(self, *a): pass
@@ -38,7 +41,7 @@ def check(name, cond, info=''):
 
 def font_css():
     faces = []
-    for fam, pkg, ws in [('Inter Tight', 'inter-tight', (200, 300, 500, 700)), ('IBM Plex Mono', 'ibm-plex-mono', (400, 600))]:
+    for fam, pkg, ws in [('Inter', 'inter', (400, 500, 600, 700)), ('Inter Tight', 'inter-tight', (200, 300, 500, 700)), ('IBM Plex Mono', 'ibm-plex-mono', (400, 600))]:
         for w in ws:
             for sub in ('latin', 'cyrillic'):
                 f = '%s/%s/files/%s-%s-%d-normal.woff2' % (FONTS, pkg, pkg, sub, w)
@@ -65,6 +68,7 @@ def open_app(ctx, mode='in', path='/', query='', hash='', w=390, h=844):
     page = ctx.new_page()
     page.set_viewport_size({'width': w, 'height': h})
     errs = setup(page)
+    page.clock.set_fixed_time(TODAY)
     page.goto(url(mode, path, query, hash))
     page.wait_for_function('document.fonts.status === "loaded"')
     page.wait_for_timeout(250)

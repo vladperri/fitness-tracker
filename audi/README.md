@@ -56,7 +56,7 @@ audi/{uid}/settings/main    інтервал заміни мастила в дв
 3. **Правила Firestore.** Firestore Database → Rules → вставте блок із `firestore.rules.audi`
    **всередину** наявного `match /databases/{database}/documents { … }` і натисніть *Publish*.
    Наявні правила трекерів і медкартки не видаляйте.
-4. **Деплой** (на Mac, з цієї папки):
+4. **Деплой** вручну (на Mac, з цієї папки) — або автоматично, див. нижче:
    ```
    cd audi
    npx firebase-tools login
@@ -66,6 +66,28 @@ audi/{uid}/settings/main    інтервал заміни мастила в дв
    і виберіть `audi-a6-backup-….json`, щоб перенести записи зі старої версії.
 
 Далі після змін достатньо кроку 4. `firebase.json` деплоїть лише хостинг: правила Firestore звідси не перезаписуються.
+
+## Автодеплой через GitHub Actions
+
+`.github/workflows/audi-deploy.yml` у корені репозиторію: після кожного пушу в гілку `audi-a6`, що зачіпає `audi/`,
+GitHub проганяє `tests/run.py`, і якщо все зелене — деплоїть хостинг на https://vlad-audi-a6.web.app.
+Запустити вручну: GitHub → Actions → «audi — тести й деплой» → *Run workflow*.
+
+Потрібен секрет `FIREBASE_SERVICE_ACCOUNT_FITNESS_TRACKER_7EF81` (один раз). Без нього тести йдуть, а деплой пропускається.
+
+**Варіант А — з Mac (сервісний акаунт лише з правами на хостинг):**
+```
+cd ~/fitness-tracker/audi && git pull
+npx firebase-tools init hosting:github
+```
+Репозиторій — `vladperri/fitness-tracker`. На питання про build-скрипт і про деплой після злиття PR відповідайте **No**:
+робочий процес уже є. Команда сама створить сервісний акаунт і додасть секрет у GitHub.
+Файли, які вона запише в `audi/.github/`, не потрібні (вони в `.gitignore`).
+
+**Варіант Б — через браузер:** Firebase Console → ⚙ Project settings → Service accounts → *Generate new private key*.
+GitHub → репозиторій → Settings → Secrets and variables → Actions → *New repository secret*:
+ім'я `FIREBASE_SERVICE_ACCOUNT_FITNESS_TRACKER_7EF81`, значення — увесь вміст завантаженого JSON. Сам файл потім видаліть.
+Цей ключ має ширші права (Admin SDK), тож варіант А безпечніший.
 
 ## Локально
 

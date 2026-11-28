@@ -1,0 +1,71 @@
+# «Моя Audi A6 C7»: тести й деплой на Firebase Hosting (сайт vlad-audi-a6) після кожного пушу в гілку audi-a6.
+# Зачіпає лише папку audi/ — трекери й медкартка в цьому репозиторії не змінюються.
+# Потрібен секрет FIREBASE_SERVICE_ACCOUNT_FITNESS_TRACKER_7EF81 (створює `npx firebase-tools init hosting:github`).
+# Поки секрету немає, тести проходять, а деплой пропускається з попередженням.
+name: audi — тести й деплой
+
+on:
+  push:
+    branches: [audi-a6]
+    paths:
+      - 'audi/**'
+      - '.github/workflows/audi-deploy.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: audi-deploy
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: audi
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Playwright і Chromium
+        run: |
+          pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Шрифти для однакових метрик
+        run: npm install --no-save --prefix "$RUNNER_TEMP/fonts" @fontsource/inter @fontsource/inter-tight @fontsource/ibm-plex-mono
+      - name: Тести
+        env:
+          FONTSOURCE: ${{ runner.temp }}/fonts/node_modules/@fontsource
+        run: python tests/run.py
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Чи є доступ до Firebase
+        id: sa
+        env:
+          SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FITNESS_TRACKER_7EF81 }}
+        run: |
+          if [ -z "$SA" ]; then
+            echo "ok=no" >> "$GITHUB_OUTPUT"
+            echo "::warning::Немає секрету FIREBASE_SERVICE_ACCOUNT_FITNESS_TRACKER_7EF81 — деплой пропущено. Див. audi/README.md."
+          else
+            echo "ok=yes" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.sa.outputs.ok == 'yes'
+      - name: Деплой на vlad-audi-a6.web.app
+        if: steps.sa.outputs.ok == 'yes'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FITNESS_TRACKER_7EF81 }}
+          projectId: fitness-tracker-7ef81
+          channelId: live
+          entryPoint: ./audi
