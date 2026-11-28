@@ -15,6 +15,8 @@
   function $(id) { return document.getElementById(id); }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function num(n) { return Math.round(Number(n)).toLocaleString('uk-UA'); }
+  // гроші: копійки показуємо, лише коли вони є (2 122,50 грн, але 3 000 грн)
+  function money(n) { var v = Number(n); return v.toLocaleString('uk-UA', { minimumFractionDigits: v % 1 ? 2 : 0, maximumFractionDigits: 2 }) + ' грн'; }
   function isNum(n) { return typeof n === 'number' && isFinite(n); }
   function fd(iso) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ''); return m ? m[3] + '.' + m[2] + '.' + m[1] : ''; }
   function parseD(iso) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ''); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null; }
@@ -241,7 +243,7 @@
     if (typeof it === 'string') return '<li class="item"><span class="item-text"><span class="item-name">' + esc(it) + '</span></span></li>';
     var meta = [];
     if (it.s) meta.push(it.s);
-    var price = isNum(it.p) ? num(it.p) + ' грн' : (it.pt || '');
+    var price = isNum(it.p) ? money(it.p) : (it.pt || '');
     if (price) meta.push(price);
     var code = it.c ? '<button class="code" type="button" data-code="' + esc(it.c) + '" aria-label="Скопіювати номер ' + esc(it.c) + '">' + esc(it.c) + ICON_COPY + '</button>' : '';
     return '<li class="item"><span class="item-text"><span class="item-name">' + esc(it.n) + '</span>' + (meta.length ? '<span class="item-meta">' + esc(meta.join(' · ')) + '</span>' : '') + '</span>' + code + '</li>';
@@ -257,7 +259,7 @@
     box.innerHTML = list.map(function (r) {
       var tags = types(r).map(function (t) { return '<span class="tag ' + esc(t) + '">' + esc(TYPE[t] || t) + '</span>'; }).join('');
       var rows = (Array.isArray(r.items) ? r.items : []).map(itemRow).join('');
-      if (isNum(r.total)) rows += '<li class="item-total"><span>Разом</span><span>' + esc(num(r.total)) + ' грн</span></li>';
+      if (isNum(r.total)) rows += '<li class="item-total"><span>Разом</span><span>' + esc(money(r.total)) + '</span></li>';
       return '<article class="rec">' +
         '<div class="rec-headline"><div class="rec-meta"><span class="rec-date">' + esc(fd(r.date)) + '</span><span class="rec-km">' + (isNum(r.km) ? esc(km(r.km)) : 'пробіг не записано') + '</span><span class="tags">' + tags + '</span></div>' +
         '<h3 class="rec-title">' + esc(r.title) + '</h3></div>' +
