@@ -21,14 +21,19 @@
     /* Фон, картки й сірі — з RevoFit: справжній чорний дає межу,
        якої не буває в майже-чорному. Акцент лишається свій, ціановий. */
     --bg:#000000;
-    --card:#1C1C1E;
-    --card2:#2C2C2E;
-    --raised:#3B3B3B;
-    --line:rgba(255,255,255,.07);
+    /* Сірі зняті піксель-у-піксель з екранів референсу. Вони
+       НЕЙТРАЛЬНІ (R=G=B) — системні сірі Apple з синім підтоном
+       поруч із жовтим акцентом віддають холодом. */
+    --card:#181818;      /* секція, hero, плитка показників */
+    --card2:#212121;     /* картка в картці: прийом їжі, плитка */
+    --raised:#323232;    /* чипи, кружечки іконок, треки */
+    /* Обведень у референсі немає ніде: поверхні розділяє заливка,
+       а не лінія. Токен лишається прозорим, щоб не правити 24 місця. */
+    --line:rgba(255,255,255,0);
     --line2:rgba(255,255,255,.12);
     --ink:#FFFFFF;
-    --ink2:#C7C7CE;
-    --muted:#9A9AA0;
+    --ink2:#C8C8C8;      /* виміряно: цифри днів, вторинний текст */
+    --muted:#969696;     /* виміряно: підписи під заголовками */
     /* Палітра референсу: жовтий — усе активне й натискне,
        зелений — усе завершене й відновлення. Третього немає. */
     --accent:#FAE208;
@@ -47,7 +52,8 @@
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   html{-webkit-text-size-adjust:100%}
-  html,body{background:var(--bg);color:var(--ink)}
+  /* Фон тільки на html: суцільний фон на body накривав би світіння. */
+  html,body{color:var(--ink)}
   body{
     font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
     -webkit-font-smoothing:antialiased;
@@ -56,6 +62,24 @@
        останні кнопки меню й галочку прийому їжі. */
     padding:0 var(--pad) calc(96px + env(safe-area-inset-bottom));
     min-height:100dvh;
+  }
+
+  /* Верхнє світіння. Знято з екранів референсу: пік #44441A біля
+     верхнього краю, центр приблизно на 72% ширини, гасне в чорний
+     десь на 40% висоти — у перерахунку на оверлей по чорному це
+     жовто-зелений rgba(250,250,94) приблизно на 26%.
+     Живе на канві (html), а не псевдоелементі: так його нічим
+     не перекриє і не треба гратися з шарами.
+     clip, не hidden: hidden зробив би body скрол-контейнером
+     і зламав sticky-шапку. Потрібен через винос шапки за поля. */
+  html{
+    background:
+      radial-gradient(132% 62vh at 72% 0%,
+        rgba(250,250,94,.29) 0%,
+        rgba(250,250,94,.085) 38%,
+        rgba(250,250,94,0) 72%) no-repeat,
+      var(--bg);
+    overflow-x:clip;
   }
   body.noscroll{overflow:hidden}
   h1,h2,h3,h4{font-weight:800;letter-spacing:-.01em}
@@ -69,8 +93,23 @@
   @media (hover:hover){.tn-link:hover,.tn-btn:hover{color:var(--accent);border-color:var(--line2)}}
 
   /* ── шапка ── */
-  header{padding:20px 0 18px;position:sticky;top:0;z-index:20;
-    background:linear-gradient(180deg,var(--bg) 86%,rgba(0,0,0,0))}
+  /* Шапка не може бути чорним градієнтом — він убиває світіння саме
+     там, де воно найсильніше. Розмиття пропускає його крізь себе,
+     а прокручений вміст ховає. Маска гасить край, щоб не було лінії. */
+  /* Відʼємні поля виносять шапку на всю ширину, не виходячи за неї:
+     вони повертають її рівно до border-box body, тож переповнення
+     немає ні в портреті, ні в ландскейпі. */
+  header{padding:20px var(--pad) 18px;margin:0 calc(var(--pad) * -1);
+    position:sticky;top:0;z-index:20;background:none}
+  header::before{content:"";position:absolute;z-index:-1;
+    top:-40px;bottom:0;left:0;right:0;
+    background:rgba(0,0,0,0);transition:background .2s;
+    -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+    -webkit-mask-image:linear-gradient(180deg,#000 76%,rgba(0,0,0,0));
+    mask-image:linear-gradient(180deg,#000 76%,rgba(0,0,0,0))}
+  /* Угорі сторінки за шапкою нема чого ховати — тільки світіння,
+     і затемнювати його там нічим. Щільність зʼявляється з прокруткою. */
+  header.stuck::before{background:rgba(0,0,0,.5)}
   .hd-row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
     color:var(--muted);margin-top:6px}
@@ -108,14 +147,16 @@
     letter-spacing:.13em;text-transform:uppercase;color:var(--accent);line-height:1.2;padding-top:7px}
   .hero.done .hero-eye{color:var(--ok)}
   .hero.idle .hero-eye{color:var(--muted)}
-  .hero-tick{width:44px;height:44px;border-radius:999px;border:1.5px solid var(--line2);flex:none;
-    display:grid;place-items:center;background:transparent;cursor:pointer;padding:0;transition:.2s}
-  .hero-tick:active{background:var(--card2)}
+  /* Без обведення: у референсі все — заливка. Невідмічений стан —
+     піднятий сірий чип із приглушеною галочкою всередині. */
+  .hero-tick{width:44px;height:44px;border-radius:999px;border:0;flex:none;
+    display:grid;place-items:center;background:var(--raised);cursor:pointer;padding:0;transition:.2s}
+  .hero-tick:active{filter:brightness(1.25)}
   /* Галочка видима завжди, інакше кружечок читається як декор,
      а не як «відмітити». Колір і заливка кажуть, у якому вона стані. */
-  .hero-tick svg{width:18px;height:18px;fill:none;stroke:rgba(255,255,255,.32);stroke-width:3;
+  .hero-tick svg{width:18px;height:18px;fill:none;stroke:rgba(255,255,255,.42);stroke-width:3;
     stroke-linecap:round;stroke-linejoin:round;transition:stroke .2s}
-  .hero.done .hero-tick{background:var(--ok);border-color:var(--ok)}
+  .hero.done .hero-tick{background:var(--ok)}
   .hero.done .hero-tick svg{stroke:#000}
 
   .hero-name{display:flex;align-items:center;gap:13px;margin-top:12px}
@@ -142,6 +183,9 @@
     background:var(--accent);color:#000;border:0;border-radius:999px;padding:17px;
     font-family:inherit;font-size:16px;font-weight:800;letter-spacing:-.01em;cursor:pointer;line-height:1}
   .hero-go svg{width:16px;height:16px;flex:none}
+  /* Велика жовта кнопка в референсі світиться: поруч із нею фон
+     піднімається до rgb(26,26,10) і гасне десь за 35px. */
+  .hero-go:not(.quiet){box-shadow:0 0 32px rgba(250,226,8,.20)}
   .hero-go:active{background:var(--accent-deep)}
   .hero-go.quiet{background:var(--card2);color:var(--ink)}
   .hero-go.quiet:active{background:var(--raised)}
@@ -186,13 +230,14 @@
   .wk:active{background:#2A2A30}
   .wk + .wk{margin-top:8px}
   .wk.next{border-color:var(--accent);background:var(--accent-dim)}
-  .wk-check{width:28px;height:28px;border-radius:999px;border:1.5px solid var(--line2);flex:none;
-    display:grid;place-items:center;background:transparent;transition:.2s;padding:0;cursor:pointer}
-  .wk-check svg{width:14px;height:14px;fill:none;stroke:#000;stroke-width:3.2;stroke-linecap:round;
-    stroke-linejoin:round;stroke-dasharray:22;stroke-dashoffset:22;transition:stroke-dashoffset .28s}
-  .wk.done .wk-check{background:var(--accent);border-color:var(--accent)}
-  .wk.done .wk-check svg{stroke-dashoffset:0}
-  .wk-ico{width:40px;height:40px;border-radius:13px;background:rgba(255,255,255,.05);flex:none;
+  .wk-check{width:28px;height:28px;border-radius:999px;border:0;flex:none;
+    display:grid;place-items:center;background:var(--raised);transition:.2s;padding:0;cursor:pointer}
+  .wk-check svg{width:14px;height:14px;fill:none;stroke:rgba(255,255,255,.42);stroke-width:3.2;
+    stroke-linecap:round;stroke-linejoin:round;transition:stroke .2s}
+  /* Виконане зелене всюди однаково — і в hero, і в рядку ротації. */
+  .wk.done .wk-check{background:var(--ok)}
+  .wk.done .wk-check svg{stroke:#000}
+  .wk-ico{width:40px;height:40px;border-radius:999px;background:var(--raised);flex:none;
     display:grid;place-items:center;color:var(--accent)}
   .wk-ico svg{width:21px;height:21px}
   .wk.next .wk-ico{background:rgba(250,226,8,.16)}
@@ -574,7 +619,7 @@
   .fd-ring{width:78px;height:78px;flex:none;position:relative}
   .fd-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
   .fd-ring circle{fill:none;stroke-width:8;stroke-linecap:round}
-  .fd-ring .trk{stroke:var(--card2)}
+  .fd-ring .trk{stroke:var(--raised)}
   .fd-ring .bar{stroke:var(--accent);transition:stroke-dashoffset .4s}
   .fd-ring.over .bar{stroke:var(--warn)}
   .fd-pc{position:absolute;inset:0;display:grid;place-items:center;font-size:17px;font-weight:800;
@@ -616,10 +661,10 @@
   .mn-top-t b{display:block;font-size:16px;font-weight:700;letter-spacing:-.01em;line-height:1.25}
   .mn-kc{font-size:13px;font-weight:800;color:var(--ink2);flex:none;text-align:right;
     font-variant-numeric:tabular-nums;line-height:1.35}
-  .mn-tick{width:32px;height:32px;flex:none;border-radius:999px;border:1.5px solid var(--line2);
-    background:transparent;color:rgba(255,255,255,.32);font-size:15px;cursor:pointer;display:grid;
+  .mn-tick{width:32px;height:32px;flex:none;border-radius:999px;border:0;
+    background:var(--raised);color:rgba(255,255,255,.42);font-size:15px;cursor:pointer;display:grid;
     place-items:center;padding:0;font-family:inherit}
-  .mn-meal.eaten .mn-tick{border-color:var(--ok);color:var(--ok);background:rgba(3,217,100,.12)}
+  .mn-meal.eaten .mn-tick{color:#000;background:var(--ok)}
   .mn-ing{font-size:13px;color:var(--ink2);font-weight:600;line-height:1.5;margin-top:8px}
   .mn-how{font-size:12.5px;color:var(--muted);font-weight:500;line-height:1.45;margin-top:6px}
   /* Нотатка до меню — пояснення, а не попередження: нейтральна. */
@@ -633,7 +678,8 @@
   .mn-btn:active{background:var(--raised)}
   .mn-btn svg{width:16px;height:16px;flex:none}
   .mn-btn.wide{flex-basis:100%}
-  .mn-btn.main{flex-basis:100%;background:var(--accent);color:#000}
+  .mn-btn.main{flex-basis:100%;background:var(--accent);color:#000;
+    box-shadow:0 0 32px rgba(250,226,8,.20)}
   .mn-btn.main:active{background:var(--accent-deep)}
   .mn-empty{font-size:13.5px;color:var(--muted);font-weight:600;line-height:1.5;
     text-align:center;padding:18px 10px 14px}
@@ -744,7 +790,9 @@
   @media (orientation:landscape) and (max-height:540px){
     /* Шапка стискається: у 430 px висоти вона інакше зʼїдає пів екрана,
        а денні пігулки розтягуються на всю ширину й стають гігантськими. */
-    header{padding:10px 0 12px}
+    /* У ландскейпі body — грід, і винос шапки за поля дає зайві
+       пікселі збоку: тут вона лишається в межах колонок. */
+    header{padding:10px 0 12px;margin:0}
     .topnav{padding:8px 0 2px}
     .date .day{font-size:22px}
     .date{margin-top:2px}
@@ -1324,6 +1372,11 @@
   document.getElementById("rotStrip").addEventListener("click", function(){
     rotOpen = !rotOpen; renderRotStrip();
   });
+
+  var hdrEl = document.querySelector("header");
+  function onHdrScroll(){ hdrEl.classList.toggle("stuck", window.scrollY > 4); }
+  window.addEventListener("scroll", onHdrScroll, { passive: true });
+  onHdrScroll();
 
   function renderAll(){ renderHeader(); renderCalendar(); renderHero(); renderRotStrip(); renderActivity(); renderWatch(); updateAuthUI(); renderMenu(); }
 
