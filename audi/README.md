@@ -72,6 +72,7 @@ audi/{uid}/settings/main    інтервал заміни мастила в дв
 `.github/workflows/audi-deploy.yml` у корені репозиторію: після кожного пушу в гілку `audi-a6`, що зачіпає `audi/`,
 GitHub проганяє `tests/run.py`, і якщо все зелене — деплоїть хостинг на https://vlad-audi-a6.web.app.
 Запустити вручну: GitHub → Actions → «audi — тести й деплой» → *Run workflow*.
+Перед деплоєм workflow пише `public/version.json` (коміт і час), тож у Профілі видно «Версія сайту: abc1234 · дата» — так легко перевірити, що на проді саме останній пуш.
 
 Потрібен секрет `FIREBASE_SERVICE_ACCOUNT_FITNESS_TRACKER_7EF81` (один раз). Без нього тести йдуть, а деплой пропускається.
 
@@ -101,6 +102,6 @@ cd audi && npx serve -s public     # -s: будь-яка адреса відда
 ```
 cd audi
 pip install playwright && python -m playwright install chromium
-python tests/run.py     # 174 перевірки: сторінки й маршрути, «+», регламент, вікно «Що купити», вхід/вихід, імпорт/експорт,
+python tests/run.py     # 186 перевірок: сторінки й маршрути, «+», регламент, вікно «Що купити», вхід/вихід, імпорт/експорт,
                         # переповнення 320–1440 px, тач-цілі ≥ 44 px, вертикальний ритм 4 px
 ```

@@ -327,6 +327,22 @@
     $('acc-import').hidden = S.mode !== 'in';
   }
 
+  /* Версію сайту пише GitHub Actions перед деплоєм (audi/public/version.json).
+     Локально і в тестах файлу немає: сервер віддає index.html, рядок лишається схованим. */
+  function loadVersion() {
+    if (!window.fetch) return;
+    fetch('/version.json', { cache: 'no-store' }).then(function (r) {
+      return r.ok && /json/.test(r.headers.get('content-type') || '') ? r.json() : null;
+    }).then(function (v) {
+      if (!v || !v.short) return;
+      var d = new Date(v.time), el = $('prof-ver');
+      var when = isNaN(d) ? '' : ' · ' + d.toLocaleString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+      el.textContent = 'Версія сайту: ' + v.short + when;
+      el.title = v.sha || '';
+      el.hidden = false;
+    }).catch(function () { /* без версії — не страшно */ });
+  }
+
   function renderAll() { renderHero(); renderHome(); renderRecords(); renderPlanned(); renderProfile(); renderFab(); }
 
   /* ---------- дані ---------- */
@@ -756,5 +772,6 @@
   buildChecks();
   route();
   renderAll();
+  loadVersion();
   if (window.__audiAuth) onAuth(window.__audiAuth);
 })();

@@ -240,6 +240,7 @@ with sync_playwright() as p:
     check('profile: who', t('#prof-name') == 'Vlad' and t('#prof-email') == 'vlad@example.com' and t('#prof-avatar') == 'V')
     check('profile: actions', all(page.locator(s).is_visible() for s in ('#acc-export', '#acc-import', '#acc-signout')) and page.locator('#acc-signin').is_hidden())
     check('profile: tab active', page.locator('.tabs a.on').get_attribute('href') == '/profile')
+    check('version: hidden without version.json', page.locator('#prof-ver').is_hidden())
     with page.expect_download() as dl:
         page.locator('#acc-export').click()
     data = json.load(open(dl.value.path(), encoding='utf-8'))
@@ -249,6 +250,17 @@ with sync_playwright() as p:
     check('signout: profile shows sign-in', t('#prof-name') == 'Ви не увійшли' and page.locator('#acc-signin').is_visible() and page.evaluate('window.__unsubs') >= 3)
     check('profile: no errors', not errs, errs[:3])
     page.close()
+
+    # --- версія сайту з version.json ---
+    vctx = b.new_context(timezone_id='Europe/Kyiv')  # час версії показуємо по Києву
+    page = vctx.new_page(); page.set_viewport_size({'width': 390, 'height': 844}); errs = setup(page)
+    page.route('**/version.json', lambda r: r.fulfill(status=200, content_type='application/json',
+        body='{"sha":"0e72acf1234567890","short":"0e72acf","time":"2026-11-28T11:30:00Z","run":3}'))
+    page.goto(url('in', '/profile')); page.wait_for_timeout(400)
+    v = page.locator('#prof-ver')
+    check('version: shown in profile', v.is_visible() and v.inner_text() == 'Версія сайту: 0e72acf · 28.11.2026, 13:30', v.inner_text())
+    check('version: no errors', not errs, errs[:3])
+    page.close(); vctx.close()
 
     # --- імпорт у порожню базу ---
     page, errs = open_app(ctx, 'empty', '/profile')
