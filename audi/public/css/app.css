@@ -512,3 +512,11 @@ body.has-fab main { padding-bottom: 80px; }
 @media (max-width: 767px) { #catalog [id] { scroll-margin-top: 16px; } }
 
 
+
+/* ---------- безпечна зона зверху (iPhone на весь екран, вбудовані браузери) ---------- */
+@media (max-width: 767px) {
+  .hero-grid, .view-in, #catalog.wrap { padding-top: calc(var(--s5) + env(safe-area-inset-top, 0px)); }
+}
+@media (min-width: 768px) {
+  .tabs { padding-top: env(safe-area-inset-top, 0px); }
+}
