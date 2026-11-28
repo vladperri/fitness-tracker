@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0B0B0D">
+<meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
 <title>Fitness Tracker</title>
 <link rel="icon" type="image/svg+xml" href="../favicon.svg">
@@ -18,18 +18,25 @@
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0B0B0D;
-    --card:#17171A;
-    --card2:#212126;
+    /* Фон, картки й сірі — з RevoFit: справжній чорний дає межу,
+       якої не буває в майже-чорному. Акцент лишається свій, ціановий. */
+    --bg:#000000;
+    --card:#1C1C1E;
+    --card2:#2C2C2E;
+    --raised:#3B3B3B;
     --line:rgba(255,255,255,.07);
     --line2:rgba(255,255,255,.12);
     --ink:#FFFFFF;
     --ink2:#C7C7CE;
-    --muted:#86868F;
+    --muted:#8E8E93;
     --accent:#5FD3E6;
     --accent-dim:rgba(95,211,230,.13);
     --accent-deep:#2BB6CC;
     --ok:#4ED6A1;
+    --rest:#FFC861;
+    /* Сітка референсу: бічні поля 20, проміжок 16 */
+    --pad:20px;
+    --gap:16px;
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   html{-webkit-text-size-adjust:100%}
@@ -38,7 +45,9 @@
     font-family:'Hanken Grotesk',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
     -webkit-font-smoothing:antialiased;
     max-width:480px;margin:0 auto;
-    padding:0 18px calc(34px + env(safe-area-inset-bottom));
+    /* Низ очищено під плаваючу кнопку AI — інакше вона накриває
+       останні кнопки меню й галочку прийому їжі. */
+    padding:0 var(--pad) calc(96px + env(safe-area-inset-bottom));
     min-height:100dvh;
   }
   body.noscroll{overflow:hidden}
@@ -47,39 +56,113 @@
   /* ── верхня панель ── */
   .topnav{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 0 4px}
   .tn-link,.tn-btn{display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:13px;font-weight:600;
-    color:var(--ink2);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:9px 15px;
+    color:var(--ink2);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:15px 16px;
     text-decoration:none;cursor:pointer;line-height:1;transition:.16s}
   .tn-link:active,.tn-btn:active{background:var(--card2);color:var(--accent)}
   @media (hover:hover){.tn-link:hover,.tn-btn:hover{color:var(--accent);border-color:var(--line2)}}
 
   /* ── шапка ── */
-  header{padding:18px 0 16px;position:sticky;top:0;z-index:20;
-    background:linear-gradient(180deg,var(--bg) 82%,rgba(11,11,13,0))}
-  .eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
-  .date{display:flex;align-items:baseline;gap:10px;margin-top:4px}
-  .date .day{font-size:30px;font-weight:800;line-height:1;letter-spacing:-.02em}
+  header{padding:20px 0 18px;position:sticky;top:0;z-index:20;
+    background:linear-gradient(180deg,var(--bg) 86%,rgba(0,0,0,0))}
+  .hd-row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted);margin-top:6px}
+  .date{display:flex;align-items:baseline;gap:9px;margin-top:3px}
+  .date .day{font-size:28px;font-weight:800;line-height:1;letter-spacing:-.02em}
   .date .sub{font-size:14px;color:var(--muted);font-weight:600}
 
-  /* ── тиждень ── */
-  .cal{display:flex;align-items:center;gap:2px;margin-top:16px}
-  .cal-nav{width:26px;height:46px;border-radius:9px;border:0;background:transparent;color:var(--muted);
-    font-size:20px;cursor:pointer;line-height:1}
-  .cal-days{flex:1;display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-  .cal-day{position:relative;border-radius:13px;padding:8px 0 9px;display:flex;flex-direction:column;
-    align-items:center;gap:4px;cursor:pointer;background:var(--card);border:1px solid transparent;transition:.16s}
+  /* ── тиждень: вертикальні пігулки, активний день — заливка акценту ── */
+  .cal-nav{width:40px;height:40px;border-radius:999px;border:0;background:var(--card);color:var(--ink2);
+    font-size:17px;cursor:pointer;line-height:1;flex:none;font-family:inherit;padding:0}
+  .cal-nav:active{background:var(--card2);color:var(--accent)}
+  .cal-arrows{display:flex;gap:6px;flex:none}
+  .cal-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:16px}
+  .cal-day{position:relative;border-radius:999px;padding:10px 0 11px;display:flex;flex-direction:column;
+    align-items:center;gap:3px;cursor:pointer;background:var(--card);border:0;transition:.16s;font-family:inherit}
   .cal-day:active{background:var(--card2)}
-  .cal-day .lbl{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-  .cal-day .num{font-size:15px;font-weight:700;color:var(--ink2)}
-  .cal-day.sel{background:var(--accent);border-color:var(--accent)}
-  .cal-day.sel .lbl{color:rgba(11,11,13,.6)}
-  .cal-day.sel .num{color:#0B0B0D}
+  .cal-day .lbl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;line-height:1}
+  .cal-day .num{font-size:14px;font-weight:700;color:var(--ink2);line-height:1;font-variant-numeric:tabular-nums}
+  .cal-day.sel{background:var(--accent)}
+  .cal-day.sel .lbl{color:rgba(0,0,0,.62)}
+  .cal-day.sel .num{color:#000}
   .cal-day .tdot{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);
     width:4px;height:4px;border-radius:50%;background:var(--accent);opacity:0}
   .cal-day.today .tdot{opacity:1}
-  .cal-day.sel.today .tdot{background:#0B0B0D}
+  .cal-day.sel.today .tdot{background:#000}
+
+  /* ── hero: тренування, яке веде екран ──────────────────────────
+     Три стани: наступне (акцент), виконано (ok), не відмічено (тихий).
+     Галочка винесена в правий верхній кут, щоб відмітка не ховалася
+     за відкриттям програми. */
+  .hero{background:var(--card);border:1px solid var(--line);border-radius:24px;
+    padding:18px;margin-bottom:var(--gap)}
+  .hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+  .hero-eye{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;
+    letter-spacing:.13em;text-transform:uppercase;color:var(--accent);line-height:1.2;padding-top:7px}
+  .hero.done .hero-eye{color:var(--ok)}
+  .hero.idle .hero-eye{color:var(--muted)}
+  .hero-tick{width:44px;height:44px;border-radius:999px;border:1.5px solid var(--line2);flex:none;
+    display:grid;place-items:center;background:transparent;cursor:pointer;padding:0;transition:.2s}
+  .hero-tick:active{background:var(--card2)}
+  /* Галочка видима завжди, інакше кружечок читається як декор,
+     а не як «відмітити». Колір і заливка кажуть, у якому вона стані. */
+  .hero-tick svg{width:18px;height:18px;fill:none;stroke:rgba(255,255,255,.32);stroke-width:3;
+    stroke-linecap:round;stroke-linejoin:round;transition:stroke .2s}
+  .hero.done .hero-tick{background:var(--ok);border-color:var(--ok)}
+  .hero.done .hero-tick svg{stroke:#000}
+
+  .hero-name{display:flex;align-items:center;gap:13px;margin-top:12px}
+  .hero-ico{width:52px;height:52px;border-radius:999px;background:var(--accent-dim);color:var(--accent);
+    flex:none;display:grid;place-items:center}
+  .hero-ico svg{width:26px;height:26px}
+  .hero.done .hero-ico{background:var(--card2);color:var(--muted)}
+  .hero.idle .hero-ico{background:var(--card2);color:var(--muted)}
+  .hero-t{min-width:0}
+  .hero-t b{display:block;font-size:30px;font-weight:800;letter-spacing:-.025em;line-height:1}
+  .hero-t span{display:block;font-size:13px;font-weight:500;color:var(--muted);margin-top:5px;line-height:1.3}
+
+  .hero-tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+  .hero-tile{background:var(--card2);border-radius:16px;padding:11px 12px;display:flex;align-items:center;gap:11px}
+  .hero-tile .ti{width:38px;height:38px;border-radius:999px;background:var(--raised);color:var(--ink2);
+    flex:none;display:grid;place-items:center}
+  .hero-tile .ti svg{width:18px;height:18px}
+  .hero-tile .tv{min-width:0}
+  .hero-tile b{display:block;font-size:18px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums;
+    letter-spacing:-.02em}
+  .hero-tile span{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-top:2px}
+
+  .hero-go{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;margin-top:16px;
+    background:var(--accent);color:#000;border:0;border-radius:999px;padding:17px;
+    font-family:inherit;font-size:16px;font-weight:800;letter-spacing:-.01em;cursor:pointer;line-height:1}
+  .hero-go svg{width:16px;height:16px;flex:none}
+  .hero-go:active{background:var(--accent-deep)}
+  .hero-go.quiet{background:var(--card2);color:var(--ink)}
+  .hero-go.quiet:active{background:var(--raised)}
+  .hero-next{font-size:12.5px;font-weight:600;color:var(--muted);text-align:center;margin-top:12px}
+  .hero-next b{color:var(--ink2);font-weight:700}
+
+  /* ── ротація: згорнута смуга з трьома крапками ── */
+  .rot{background:var(--card);border:1px solid var(--line);border-radius:20px;
+    margin-bottom:var(--gap);overflow:hidden}
+  .rot-strip{display:flex;align-items:center;gap:10px;padding:13px 16px;cursor:pointer;width:100%;
+    background:transparent;border:0;font-family:inherit;text-align:left}
+  .rot-strip:active{background:var(--card2)}
+  .rot-dots{flex:1;min-width:0;display:flex;align-items:center;gap:13px;flex-wrap:wrap}
+  .rot-d{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--muted)}
+  .rot-d i{width:9px;height:9px;border-radius:50%;flex:none;border:1.5px solid var(--line2);background:transparent}
+  .rot-d.on{color:var(--accent)}
+  .rot-d.on i{background:var(--accent);border-color:var(--accent)}
+  .rot-d.ok{color:var(--ok)}
+  .rot-d.ok i{background:var(--ok);border-color:var(--ok)}
+  .rot-chev{flex:none;width:28px;height:28px;border-radius:50%;background:var(--card2);color:var(--ink2);
+    display:grid;place-items:center;font-size:15px;line-height:1;transition:transform .22s}
+  .rot.open .rot-chev{transform:rotate(90deg)}
+  .rot-full{display:none;padding:2px 12px 12px;border-top:1px solid var(--line);margin:0 4px}
+  .rot.open .rot-full{display:block}
+  .rot-full .wk:first-child{margin-top:10px}
 
   /* ── секція-картка ── */
-  section{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px 16px;margin-bottom:14px}
+  section{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px 16px;margin-bottom:var(--gap)}
   .sec-head{display:flex;align-items:center;gap:11px;margin-bottom:16px}
   .sec-ico{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;flex:none;
     background:var(--accent-dim);color:var(--accent)}
@@ -94,9 +177,9 @@
   .wk:active{background:#2A2A30}
   .wk + .wk{margin-top:8px}
   .wk.next{border-color:var(--accent);background:var(--accent-dim)}
-  .wk-check{width:26px;height:26px;border-radius:9px;border:1.5px solid var(--line2);flex:none;
+  .wk-check{width:28px;height:28px;border-radius:999px;border:1.5px solid var(--line2);flex:none;
     display:grid;place-items:center;background:transparent;transition:.2s;padding:0;cursor:pointer}
-  .wk-check svg{width:14px;height:14px;fill:none;stroke:#0B0B0D;stroke-width:3.2;stroke-linecap:round;
+  .wk-check svg{width:14px;height:14px;fill:none;stroke:#000;stroke-width:3.2;stroke-linecap:round;
     stroke-linejoin:round;stroke-dasharray:22;stroke-dashoffset:22;transition:stroke-dashoffset .28s}
   .wk.done .wk-check{background:var(--accent);border-color:var(--accent)}
   .wk.done .wk-check svg{stroke-dashoffset:0}
@@ -111,22 +194,24 @@
   .wk.done .wk-name{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(255,255,255,.25)}
   .wk-sub{font-size:12.5px;color:var(--muted);font-weight:500;margin-top:3px;line-height:1.3}
   .wk-badge{font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
-    color:#0B0B0D;background:var(--accent);padding:3px 7px;border-radius:999px;line-height:1}
+    color:#000;background:var(--accent);padding:3px 7px;border-radius:999px;line-height:1}
   .wk-chev{width:30px;height:30px;border-radius:50%;flex:none;display:grid;place-items:center;
     background:rgba(255,255,255,.05);color:var(--ink2);font-size:17px;font-weight:400;line-height:1}
-  .wk.next .wk-chev{background:var(--accent);color:#0B0B0D;font-weight:600}
+  .wk.next .wk-chev{background:var(--accent);color:#000;font-weight:600}
 
   /* ── низ ── */
   footer{text-align:center;padding:4px 0 0}
-  .reset{background:transparent;border:1px solid var(--line);color:var(--muted);font-family:inherit;
-    font-size:13px;font-weight:600;padding:11px 20px;border-radius:999px;cursor:pointer;transition:.16s}
-  .reset:active{background:var(--card);color:var(--ink2)}
-  .auth-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;
+  /* Скидання дня — деструктивна дія, тож тихий текст, а не кнопка. */
+  .reset{background:transparent;border:0;color:#79797F;font-family:inherit;
+    font-size:12.5px;font-weight:600;padding:10px 16px;margin-top:4px;cursor:pointer;
+    text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(255,255,255,.14)}
+  .reset:active{color:var(--ink2)}
+  .auth-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:0;
     padding:12px 14px;background:var(--card);border:1px solid var(--line);border-radius:16px}
   .auth-status{font-size:12.5px;color:var(--muted);font-weight:600;text-align:left;line-height:1.3}
-  .auth-btn{background:var(--accent);color:#0B0B0D;border:0;font-family:inherit;font-size:12.5px;font-weight:700;
+  .auth-btn{background:var(--accent);color:#000;border:0;font-family:inherit;font-size:12.5px;font-weight:700;
     padding:9px 15px;border-radius:999px;cursor:pointer;flex:none}
-  .note{font-size:11.5px;color:#5C5C64;margin-top:14px;line-height:1.5}
+  .note{font-size:11.5px;color:#79797F;margin-top:14px;line-height:1.5}
 
   /* ── модалка ── */
   .modal{position:fixed;inset:0;z-index:100;display:none}
@@ -176,11 +261,11 @@
   .demo-btn{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:12px;font-weight:700;
     color:var(--accent);text-decoration:none;background:var(--accent-dim);padding:7px 12px;border-radius:999px}
   .demo-btn svg{width:13px;height:13px}
-  .sheet-foot{font-size:11.5px;color:#5C5C64;text-align:center;margin-top:18px;line-height:1.5}
+  .sheet-foot{font-size:11.5px;color:#79797F;text-align:center;margin-top:18px;line-height:1.5}
 
   /* ── кнопка старту в аркуші ── */
   .start-btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;
-    background:var(--accent);color:#0B0B0D;border:0;border-radius:16px;padding:16px;
+    background:var(--accent);color:#000;border:0;border-radius:16px;padding:16px;
     font-family:inherit;font-size:16px;font-weight:800;letter-spacing:-.01em;cursor:pointer;
     margin-bottom:20px}
   .start-btn:active{opacity:.85}
@@ -274,7 +359,7 @@
   .tmr-btn{flex:1;background:var(--card);border:1px solid var(--line);color:var(--ink2);
     font-family:inherit;font-size:14px;font-weight:700;padding:15px 8px;border-radius:15px;cursor:pointer}
   .tmr-btn:active{background:var(--card2)}
-  .tmr-btn.main{flex:1.3;background:var(--accent);color:#0B0B0D;border-color:var(--accent)}
+  .tmr-btn.main{flex:1.3;background:var(--accent);color:#000;border-color:var(--accent)}
 
   /* ── 3-2-1 ── */
   .tmr-go{position:absolute;inset:0;background:var(--bg);display:none;flex-direction:column;gap:26px;align-items:center;
@@ -314,8 +399,8 @@
   .hw-wk-row{display:flex;gap:16px;flex-wrap:wrap}
   .hw-wk-row div{font-size:12.5px;color:var(--ink2);font-weight:600}
   .hw-wk-row b{display:block;font-size:17px;font-weight:800;color:var(--ink);margin-top:2px;letter-spacing:-.01em}
-  .hw-note{font-size:11.5px;color:#5C5C64;margin-top:10px;line-height:1.4}
-  :root{--ai-on:#0B0B0D;--ai-soft:var(--accent-dim);--ai-ink2:var(--ink2)}
+  .hw-note{font-size:11.5px;color:#79797F;margin-top:10px;line-height:1.4}
+  :root{--ai-on:#000;--ai-soft:var(--accent-dim);--ai-ink2:var(--ink2)}
 
   /* ══ ШІ-тренер ══════════════════════════════════════════════ */
   .ai-fab{position:fixed;z-index:90;right:max(16px,calc(50vw - 240px + 16px));
@@ -466,45 +551,65 @@
   .tmr-mini-time{font-size:20px;font-weight:800;letter-spacing:-.02em;flex:none;
     font-variant-numeric:tabular-nums}
   .tmr-mini-btn{width:38px;height:38px;border-radius:50%;border:0;background:var(--accent);
-    color:#0B0B0D;flex:none;cursor:pointer;display:grid;place-items:center;padding:0}
+    color:#000;flex:none;cursor:pointer;display:grid;place-items:center;padding:0}
   .tmr-mini-btn svg{width:15px;height:15px}
 
   /* щоб міні-бар не накривав підвал і кнопку чату */
   body.minibar{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
   body.minibar .ai-fab{bottom:calc(84px + env(safe-area-inset-bottom))}
 
-  /* ── меню на сьогодні ── */
-  .mn-goal{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--card);
-    border:1px solid var(--line);border-radius:18px;margin-bottom:10px}
-  .mn-goal-n{flex:1;min-width:0}
-  .mn-goal-n b{display:block;font-size:21px;font-weight:800;letter-spacing:-.02em;
+  /* ── їжа: кільце калорій замість плоскої смужки ───────────────
+     Кільце — той самий мотив, що в таймері вправи, і воно дає блоку
+     візуальний якір, якого в парі чисел зі смужкою не було. */
+  .fd-top{display:flex;align-items:center;gap:15px;margin-bottom:14px}
+  .fd-ring{width:78px;height:78px;flex:none;position:relative}
+  .fd-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+  .fd-ring circle{fill:none;stroke-width:8;stroke-linecap:round}
+  .fd-ring .trk{stroke:var(--card2)}
+  .fd-ring .bar{stroke:var(--accent);transition:stroke-dashoffset .4s}
+  .fd-ring.over .bar{stroke:var(--rest)}
+  .fd-pc{position:absolute;inset:0;display:grid;place-items:center;font-size:17px;font-weight:800;
+    letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .fd-n{flex:1;min-width:0}
+  .fd-n b{display:block;font-size:20px;font-weight:800;letter-spacing:-.02em;line-height:1.1;
     font-variant-numeric:tabular-nums}
-  .mn-goal-n span{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-top:2px}
-  .mn-bar{height:6px;border-radius:3px;background:var(--card2);overflow:hidden;margin-top:9px}
-  .mn-bar i{display:block;height:100%;width:0;border-radius:3px;background:var(--accent);
-    transition:width .35s}
-  .mn-bar i.over{background:#FFC861}
+  .fd-left{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-top:3px;
+    font-variant-numeric:tabular-nums}
+  .fd-left.over{color:var(--rest)}
+  .fd-mac{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}
+  .fd-mac div{font-size:11.5px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+  .fd-mac u{text-decoration:none;color:var(--ink2)}
   .mn-day{font-family:inherit;font-size:12px;font-weight:700;color:var(--accent);
-    background:var(--accent-dim);border:0;border-radius:8px;padding:3px 8px;cursor:pointer;
-    margin-left:2px}
-  .mn-day.rest{color:var(--muted);background:var(--card2)}
-  .mn-mac{display:flex;gap:14px;margin-top:9px}
-  .mn-mac div{font-size:11.5px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
-  .mn-mac u{text-decoration:none;color:var(--ink2)}
+    background:var(--accent-dim);border:0;border-radius:999px;padding:14px 15px;cursor:pointer;
+    margin-top:10px;line-height:1}
+  .mn-day.rest{color:var(--rest);background:rgba(255,200,97,.13)}
+
+  /* ── наступний прийом і згорнута решта ── */
+  .mn-slotlbl{font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:9px}
+  .mn-more{display:flex;align-items:center;gap:10px;width:100%;padding:13px 15px;background:var(--card2);
+    border:0;border-radius:16px;font-family:inherit;cursor:pointer;text-align:left;margin-bottom:10px}
+  .mn-more:active{background:var(--raised)}
+  .mn-more b{flex:1;min-width:0;font-size:13.5px;font-weight:700;color:var(--ink2)}
+  .mn-more span{flex:none;font-size:12.5px;font-weight:700;color:var(--muted);
+    font-variant-numeric:tabular-nums}
+  .mn-more i{flex:none;width:24px;height:24px;border-radius:50%;background:var(--raised);color:var(--ink2);
+    display:grid;place-items:center;font-size:14px;line-height:1;font-style:normal;transition:transform .22s}
+  .mn-more.open i{transform:rotate(90deg)}
 
   .mn-meal{background:var(--card);border:1px solid var(--line);border-radius:18px;
     padding:14px 15px;margin-bottom:9px}
   .mn-meal.eaten{opacity:.5}
-  .mn-top{display:flex;align-items:flex-start;gap:11px}
+  .mn-top{display:flex;align-items:center;gap:11px}
   .mn-slot{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
     color:var(--accent);margin-bottom:3px}
   .mn-top-t{flex:1;min-width:0}
   .mn-top-t b{display:block;font-size:16px;font-weight:700;letter-spacing:-.01em;line-height:1.25}
-  .mn-kc{font-size:13px;font-weight:800;color:var(--ink2);flex:none;
-    font-variant-numeric:tabular-nums;padding-top:12px}
-  .mn-tick{width:28px;height:28px;flex:none;border-radius:50%;border:1.5px solid var(--line2);
-    background:transparent;color:var(--muted);font-size:14px;cursor:pointer;display:grid;
-    place-items:center;padding:0;font-family:inherit;margin-top:8px}
+  .mn-kc{font-size:13px;font-weight:800;color:var(--ink2);flex:none;text-align:right;
+    font-variant-numeric:tabular-nums;line-height:1.35}
+  .mn-tick{width:32px;height:32px;flex:none;border-radius:999px;border:1.5px solid var(--line2);
+    background:transparent;color:rgba(255,255,255,.32);font-size:15px;cursor:pointer;display:grid;
+    place-items:center;padding:0;font-family:inherit}
   .mn-meal.eaten .mn-tick{border-color:var(--ok);color:var(--ok);background:rgba(78,214,161,.12)}
   .mn-ing{font-size:13px;color:var(--ink2);font-weight:600;line-height:1.5;margin-top:8px}
   .mn-how{font-size:12.5px;color:var(--muted);font-weight:500;line-height:1.45;margin-top:6px}
@@ -512,12 +617,14 @@
     padding:11px 13px;background:rgba(255,200,97,.09);border-radius:13px;margin-bottom:9px}
 
   .mn-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
-  .mn-btn{flex:1 1 calc(50% - 4px);min-width:0;background:var(--card);border:1px solid var(--line);color:var(--ink2);
-    font-family:inherit;font-size:13.5px;font-weight:700;padding:13px 8px;border-radius:14px;
+  .mn-btn{flex:1 1 calc(50% - 4px);min-width:0;background:var(--card2);border:0;color:var(--ink2);
+    font-family:inherit;font-size:13.5px;font-weight:700;padding:14px 8px;border-radius:999px;
     cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px}
-  .mn-btn:active{background:var(--card2)}
+  .mn-btn:active{background:var(--raised)}
   .mn-btn svg{width:16px;height:16px;flex:none}
-  .mn-btn.main{flex-basis:100%;background:var(--accent);color:#0B0B0D;border-color:var(--accent)}
+  .mn-btn.wide{flex-basis:100%}
+  .mn-btn.main{flex-basis:100%;background:var(--accent);color:#000}
+  .mn-btn.main:active{background:var(--accent-deep)}
   .mn-empty{font-size:13.5px;color:var(--muted);font-weight:600;line-height:1.5;
     text-align:center;padding:18px 10px 14px}
 
@@ -567,7 +674,7 @@
   .fr-ask-b{display:flex;gap:8px;margin-top:12px}
   .fr-ask-b button{flex:1;font-family:inherit;font-size:13.5px;font-weight:700;padding:11px 8px;
     border-radius:12px;cursor:pointer;border:1px solid var(--line);background:var(--card2);color:var(--ink2)}
-  .fr-ask-b button.ok{background:var(--accent);color:#0B0B0D;border-color:var(--accent)}
+  .fr-ask-b button.ok{background:var(--accent);color:#000;border-color:var(--accent)}
   .fr-busy{font-size:13px;color:var(--muted);font-weight:600;text-align:center;padding:14px}
 
   /* комірка на один продукт: фото необовʼязкове, опису досить */
@@ -588,7 +695,7 @@
   .fr-one-b{display:flex;gap:8px;margin-top:10px}
   .fr-one-b button{flex:1;font-family:inherit;font-size:13.5px;font-weight:700;padding:11px 8px;
     border-radius:12px;cursor:pointer;border:1px solid var(--line);background:var(--card2);color:var(--ink2)}
-  .fr-one-b button.ok{background:var(--accent);color:#0B0B0D;border-color:var(--accent)}
+  .fr-one-b button.ok{background:var(--accent);color:#000;border-color:var(--accent)}
   .fr-one-b button[disabled]{opacity:.5}
   .fr-foot-r{display:flex;gap:8px}
 
@@ -625,6 +732,20 @@
      розтягуємо на всю ширину, картку й список ставимо поруч, а
      всередині картки гіфку виносимо ліворуч від решти. */
   @media (orientation:landscape) and (max-height:540px){
+    /* Шапка стискається: у 430 px висоти вона інакше зʼїдає пів екрана,
+       а денні пігулки розтягуються на всю ширину й стають гігантськими. */
+    header{padding:10px 0 12px}
+    .topnav{padding:8px 0 2px}
+    .date .day{font-size:22px}
+    .date{margin-top:2px}
+    .cal-days{margin-top:10px;max-width:640px;gap:5px}
+    .cal-day{padding:7px 0 8px}
+    .cal-day .num{font-size:13px}
+    .cal-day .lbl{font-size:10px}
+    .hero{padding:16px}
+    .hero-t b{font-size:26px}
+    .hero-go{padding:15px}
+
     .tmr.open:not(.mini){max-width:none;top:calc(env(safe-area-inset-top) + 4px);
       padding-top:8px;
       padding-left:calc(16px + env(safe-area-inset-left));
@@ -673,6 +794,11 @@
       padding-left:calc(16px + env(safe-area-inset-left));
       padding-right:calc(16px + env(safe-area-inset-right))}
     body > header,body > footer{grid-column:1 / -1}
+    /* Без явних колонок висока hero-картка лишає під ротацією
+       порожню дірку на пів екрана — сітка кладе їжу під неї. */
+    #heroBox{grid-column:1}
+    #rotBox,#mnSec{grid-column:2}
+    #hwSec{grid-column:1}
     header{padding-bottom:10px}
     section{margin-bottom:12px}
 
@@ -690,27 +816,30 @@
     <a class="tn-link" href="../">‹ Меню</a>
     <button class="tn-btn" type="button" onclick="var u=location.href.split('?')[0].split('#')[0];location.replace(u+'?v='+Date.now())">↻ Оновити</button>
   </div>
-    <div class="eyebrow" id="eyebrow">Сьогодні</div>
-  <div class="date"><span class="day" id="dayName">—</span><span class="sub" id="dateSub"></span></div>
-  <div class="cal">
-    <button class="cal-nav" id="prevWk">‹</button>
-    <div class="cal-days" id="calDays"></div>
-    <button class="cal-nav" id="nextWk">›</button>
+  <div class="hd-row">
+    <div>
+      <div class="eyebrow" id="eyebrow">Сьогодні</div>
+      <div class="date"><span class="day" id="dayName">—</span><span class="sub" id="dateSub"></span></div>
+    </div>
+    <div class="cal-arrows">
+      <button class="cal-nav" id="prevWk" type="button" aria-label="Попередній тиждень">‹</button>
+      <button class="cal-nav" id="nextWk" type="button" aria-label="Наступний тиждень">›</button>
+    </div>
   </div>
+  <div class="cal-days" id="calDays"></div>
 </header>
 
-<section>
-  <div class="sec-head">
-    <div class="sec-ico" id="moveIco"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/></svg></div>
-    <div class="sec-title">Програма · через день<b id="activityTitle">Push · Pull · Legs</b></div>
-  </div>
-  <div id="activityTasks"></div>
-</section>
+<div id="heroBox"></div>
+
+<div class="rot" id="rotBox">
+  <button class="rot-strip" id="rotStrip" type="button" aria-expanded="false"></button>
+  <div class="rot-full" id="activityTasks"></div>
+</div>
 
 <section id="mnSec">
   <div class="sec-head">
     <div class="sec-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v8a3 3 0 0 0 6 0V3M8 11v10M19 3c-1.7 1.4-2.5 3.4-2.5 6s.8 3.5 2.5 3.5V21"/></svg></div>
-    <div class="sec-title">Меню<b id="mnDayT">на сьогодні</b></div>
+    <div class="sec-title">Їжа<b id="mnDayT">на сьогодні</b></div>
   </div>
   <div id="mnBody"></div>
 </section>
@@ -725,9 +854,9 @@
 </section>
 
 <footer>
-  <button class="reset" id="resetBtn">Скинути цей день</button>
   <div id="authBar" class="auth-bar"></div>
   <div class="note">Зберігається на пристрої · синхронізується з хмарою після входу.<br>Додай на головний екран для швидкого доступу.</div>
+  <button class="reset" id="resetBtn">Скинути цей день</button>
 </footer>
 
 <div class="modal" id="modal" aria-hidden="true">
@@ -1088,17 +1217,105 @@
       var i = parseInt(el.getAttribute("data-i"), 10), w = ROTATION[i];
       el.querySelector(".wk-check").addEventListener("click", function(ev){
         ev.stopPropagation();
-        var n = entry();
-        if(n.wIdx === i){ state.cycle = i; delete n.wIdx; }
-        else { n.wIdx = i; state.cycle = (i+1) % ROTATION.length; }
-        save(); renderActivity(); renderCalendar();
+        toggleDone(i);
       });
       el.addEventListener("click", function(){ openModal(w.exTitle, w.exSub, w.ex, i); });
     });
   }
 
 
-  function renderAll(){ renderHeader(); renderCalendar(); renderActivity(); renderWatch(); updateAuthUI(); renderMenu(); }
+  // ── hero: одне тренування, яке веде екран ─────────────────────
+  // Відмічене сьогодні перебиває «наступне»: якщо зал уже був, екран
+  // має підтверджувати це, а не вмовляти йти ще раз.
+  var TI_DUR = '<svg '+SV+'><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>';
+  var TI_CNT = '<svg '+SV+'><path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/></svg>';
+  var PLAY_S = '<svg viewBox="0 0 14 14" fill="currentColor" stroke="none"><polygon points="2,1 12,7 2,13"/></svg>';
+  var CHEV_S = '<svg '+SV+'><path d="M9 6l6 6-6 6"/></svg>';
+  var rotOpen = false;
+
+  function heroPick(){
+    var en = entry();
+    if(en.wIdx != null && ROTATION[en.wIdx]) return { i:en.wIdx, done:true };
+    return { i:state.cycle, done:false };
+  }
+
+  function renderHero(){
+    var box = document.getElementById("heroBox");
+    var p = heroPick(), w = ROTATION[p.i];
+    if(!box) return;
+    if(!w){ box.innerHTML = ""; return; }
+
+    var today = todayStr(), sel = state.selectedDate;
+    var isToday = sel === today, past = sel < today;
+    var cls = p.done ? " done" : (past ? " idle" : "");
+    var eye = p.done ? (isToday ? "Виконано сьогодні" : "Виконано")
+                     : (past ? "Не відмічено" : "Наступне");
+    var mins = Math.round(totalSec(w.ex) / 60);
+
+    var h = '<div class="hero'+cls+'">'
+      + '<div class="hero-top">'
+      +   '<div class="hero-eye">'+esc(eye)+'</div>'
+      +   '<button class="hero-tick" id="heroTick" type="button" aria-pressed="'+(p.done?"true":"false")
+      +     '" aria-label="'+(p.done?"Зняти відмітку":"Відмітити виконаним")+'">'+TICK+'</button>'
+      + '</div>'
+      + '<div class="hero-name">'
+      +   '<div class="hero-ico">'+(ICONS[w.icon]||"")+'</div>'
+      +   '<div class="hero-t"><b>'+esc(w.title)+'</b><span>'+esc(w.groups)+'</span></div>'
+      + '</div>'
+      + '<div class="hero-tiles">'
+      +   '<div class="hero-tile"><div class="ti">'+TI_DUR+'</div>'
+      +     '<div class="tv"><b>'+mins+' хв</b><span>Тривалість</span></div></div>'
+      +   '<div class="hero-tile"><div class="ti">'+TI_CNT+'</div>'
+      +     '<div class="tv"><b>'+exCount(w.ex)+'</b><span>Вправ</span></div></div>'
+      + '</div>'
+      + '<button class="hero-go'+(p.done || !isToday ? " quiet" : "")+'" id="heroGo" type="button">'
+      +   (p.done || !isToday ? "" : PLAY_S)
+      +   (p.done ? "Відкрити програму" : (isToday ? "Почати тренування" : "Відкрити програму"))
+      + '</button>';
+
+    if(p.done){
+      var nx = ROTATION[state.cycle];
+      if(nx) h += '<div class="hero-next">Далі в ротації — <b>'+esc(nx.title)+'</b></div>';
+    }
+    h += '</div>';
+    box.innerHTML = h;
+
+    document.getElementById("heroGo").addEventListener("click", function(){
+      openModal(w.exTitle, w.exSub, w.ex, p.i);
+    });
+    document.getElementById("heroTick").addEventListener("click", function(){
+      toggleDone(p.i);
+    });
+  }
+
+  // Одна точка правди для відмітки — і hero, і рядки ротації йдуть сюди.
+  function toggleDone(i){
+    var n = entry();
+    if(n.wIdx === i){ state.cycle = i; delete n.wIdx; }
+    else { n.wIdx = i; state.cycle = (i + 1) % ROTATION.length; }
+    save(); renderHero(); renderRotStrip(); renderActivity(); renderCalendar(); renderMenu();
+  }
+
+  function renderRotStrip(){
+    var strip = document.getElementById("rotStrip"), box = document.getElementById("rotBox");
+    if(!strip || !box) return;
+    var en = entry(), doneIdx = (en.wIdx != null) ? en.wIdx : -1;
+    var nextIdx = (doneIdx >= 0) ? -1 : state.cycle;
+    var d = "";
+    ROTATION.forEach(function(w, i){
+      var k = (i === doneIdx) ? " ok" : (i === nextIdx ? " on" : "");
+      d += '<span class="rot-d'+k+'"><i></i>'+esc(w.title)+'</span>';
+    });
+    strip.innerHTML = '<span class="rot-dots">'+d+'</span><span class="rot-chev">'+CHEV_S+'</span>';
+    strip.setAttribute("aria-expanded", rotOpen ? "true" : "false");
+    box.classList.toggle("open", rotOpen);
+  }
+
+  document.getElementById("rotStrip").addEventListener("click", function(){
+    rotOpen = !rotOpen; renderRotStrip();
+  });
+
+  function renderAll(){ renderHeader(); renderCalendar(); renderHero(); renderRotStrip(); renderActivity(); renderWatch(); updateAuthUI(); renderMenu(); }
 
   document.getElementById("prevWk").addEventListener("click",function(){ weekStart=addDays(weekStart,-7); renderCalendar(); });
   document.getElementById("nextWk").addEventListener("click",function(){ weekStart=addDays(weekStart,7); renderCalendar(); });
@@ -2315,37 +2532,84 @@
     return "відпочинок";
   }
 
+  // Екран має відповідати «що їсти далі» без жодного тапа, тому
+  // наступний невідмічений прийом стоїть розгорнутим, а решта дня —
+  // за одним дотиком. Кільце замінило смужку: блоку потрібен якір.
+  var mealsOpen = false;
+  var RING_C = 219.9;  // 2πr при r=35
+
   function renderMenu(){
     var box = document.getElementById("mnBody"), g = goal(), eat = eatenToday();
     var mn = MENU[state.selectedDate], en = entry();
     var pct = Math.min(100, Math.round(eat.kcal / g.kcal * 100));
     var over = eat.kcal > g.kcal;
+    var left = g.kcal - eat.kcal;
+    var off = RING_C * (1 - Math.min(1, Math.max(0, eat.kcal / g.kcal)));
 
-    var h = '<div class="mn-goal"><div class="mn-goal-n">'
-          +   '<b>' + eat.kcal + ' / ' + g.kcal + ' ккал</b>'
-          +   '<span>Білок ' + eat.p + ' / ' + g.p + ' г · <button class="mn-day'
-          +     (isTrain() ? "" : " rest") + '" id="mnDay">' + esc(dayType()) + '</button></span>'
-          +   '<div class="mn-bar"><i class="' + (over ? "over" : "") + '" style="width:' + pct + '%"></i></div>'
-          +   '<div class="mn-mac"><div>Ж <u>' + eat.f + ' г</u></div><div>В <u>' + eat.c + ' г</u></div></div>'
-          + '</div></div>';
+    var h = '<div class="fd-top">'
+          +   '<div class="fd-ring' + (over ? " over" : "") + '" role="img" aria-label="'
+          +     eat.kcal + ' з ' + g.kcal + ' ккал">'
+          +     '<svg viewBox="0 0 78 78" aria-hidden="true">'
+          +       '<circle class="trk" cx="39" cy="39" r="35"></circle>'
+          +       '<circle class="bar" cx="39" cy="39" r="35" stroke-dasharray="' + RING_C
+          +         '" stroke-dashoffset="' + off.toFixed(1) + '"></circle>'
+          +     '</svg><div class="fd-pc">' + pct + '%</div>'
+          +   '</div>'
+          +   '<div class="fd-n">'
+          +     '<b>' + eat.kcal + ' / ' + g.kcal + ' ккал</b>'
+          +     '<span class="fd-left' + (over ? " over" : "") + '">'
+          +       (over ? "перебір на " + (-left) + " ккал" : "лишилось " + left + " ккал") + '</span>'
+          +     '<div class="fd-mac"><div>Б <u>' + eat.p + '/' + g.p + ' г</u></div>'
+          +       '<div>Ж <u>' + eat.f + ' г</u></div><div>В <u>' + eat.c + ' г</u></div></div>'
+          +     '<button class="mn-day' + (isTrain() ? "" : " rest") + '" id="mnDay" type="button">'
+          +       (isTrain() ? "День тренування" : "День відпочинку")
+          +       ' · ' + (isTrain() ? "+" : "−") + GOAL_SWING + '</button>'
+          +   '</div></div>';
 
     if(mn && mn.note) h += '<div class="mn-note">' + esc(mn.note) + '</div>';
 
-    if(mn && mn.meals && mn.meals.length){
-      mn.meals.forEach(function(m){
-        var tt = sumItems(m.items), done = !!(en.meals && en.meals[m.slot]);
-        h += '<div class="mn-meal' + (done ? " eaten" : "") + '">'
-           +   '<div class="mn-top">'
-           +     '<div class="mn-top-t"><div class="mn-slot">' + (SLOT_UK[m.slot] || m.slot) + '</div>'
-           +       '<b>' + esc(m.title) + '</b></div>'
-           +     '<div class="mn-kc">' + tt.kcal + ' ккал<br>Б' + tt.p + '</div>'
-           +     '<button class="mn-tick" data-eat="' + m.slot + '" aria-label="Зʼїв">✓</button>'
-           +   '</div>'
-           +   '<div class="mn-ing">' + m.items.map(function(x){
-                 return esc(x.n) + " — " + x.g + " г"; }).join(" · ") + '</div>'
-           +   (m.how ? '<div class="mn-how">' + esc(m.how) + '</div>' : "")
-           + '</div>';
-      });
+    var meals = (mn && mn.meals) ? mn.meals : [];
+    var eaten = en.meals || {};
+
+    function mealCard(m, lead){
+      var tt = sumItems(m.items), done = !!eaten[m.slot];
+      var slot = esc(SLOT_UK[m.slot] || m.slot);
+      return (lead ? '<div class="mn-slotlbl">Далі · ' + slot + '</div>' : '')
+        + '<div class="mn-meal' + (done ? " eaten" : "") + '">'
+        +   '<div class="mn-top">'
+        +     '<div class="mn-top-t">' + (lead ? "" : '<div class="mn-slot">' + slot + '</div>')
+        +       '<b>' + esc(m.title) + '</b></div>'
+        +     '<div class="mn-kc">' + tt.kcal + ' ккал<br>Б' + tt.p + '</div>'
+        +     '<button class="mn-tick" data-eat="' + m.slot + '" aria-label="Зʼїв">✓</button>'
+        +   '</div>'
+        +   '<div class="mn-ing">' + m.items.map(function(x){
+              return esc(x.n) + " — " + x.g + " г"; }).join(" · ") + '</div>'
+        +   (m.how ? '<div class="mn-how">' + esc(m.how) + '</div>' : "")
+        + '</div>';
+    }
+
+    function moreBtn(label, list){
+      var kc = list.reduce(function(a, m){ return a + sumItems(m.items).kcal; }, 0);
+      return '<button class="mn-more' + (mealsOpen ? " open" : "") + '" id="mnMore" type="button"'
+        + ' aria-expanded="' + (mealsOpen ? "true" : "false") + '">'
+        + '<b>' + label + '</b><span>' + list.length + ' · ' + kc + ' ккал</span>'
+        + '<i>' + CHEV_S + '</i></button>'
+        + (mealsOpen ? list.map(function(m){ return mealCard(m, false); }).join("") : "");
+    }
+
+    if(meals.length){
+      var nextI = -1;
+      for(var i = 0; i < meals.length; i++){ if(!eaten[meals[i].slot]){ nextI = i; break; } }
+
+      if(nextI >= 0){
+        h += mealCard(meals[nextI], true);
+        var rest = meals.filter(function(_, i2){ return i2 !== nextI; });
+        if(rest.length) h += moreBtn("Решта дня", rest);
+      } else {
+        h += '<div class="mn-empty">Усі прийоми відмічені. '
+           + (over ? "Є перебір — зважай на перекуси." : "Норма закрита.") + '</div>';
+        h += moreBtn("Меню дня", meals);
+      }
     } else {
       h += '<div class="mn-empty">' + (FR.length
             ? "Меню ще не складено на цей день."
@@ -2362,7 +2626,8 @@
     h += '<div class="mn-acts">'
        +   '<button class="mn-btn" id="mnFridge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M6 10h12M9.5 6v2M9.5 13.5v2.5"/></svg>Холодильник</button>'
        +   '<button class="mn-btn" id="mnSnack">+ Перекус</button>'
-       +   '<button class="mn-btn main" id="mnGen">' + (mnBusy ? "Складаю…" : (mn ? "Інше меню" : "Скласти меню")) + '</button>'
+       +   '<button class="mn-btn ' + (mn ? "wide" : "main") + '" id="mnGen">'
+       +     (mnBusy ? "Складаю…" : (mn ? "Інше меню" : "Скласти меню")) + '</button>'
        + '</div>';
 
     box.innerHTML = h;
@@ -2376,6 +2641,7 @@
     if(b.id === "mnDay"){
       var en0 = entry(); en0.train = !isTrain(); save(); renderMenu(); return;
     }
+    if(b.id === "mnMore"){ mealsOpen = !mealsOpen; renderMenu(); return; }
     if(b.id === "mnFridge"){ frOpen(); return; }
     if(b.id === "mnGen"){ mnGenerate(); return; }
     if(b.id === "mnSnack"){ mnAddSnack(); return; }
@@ -2396,7 +2662,7 @@
   // Норму правимо тапом по рядку з калоріями — але не по кнопці в ньому.
   document.getElementById("mnBody").addEventListener("click", function(e){
     if(e.target.closest("button")) return;
-    if(!e.target.closest(".mn-goal")) return;
+    if(!e.target.closest(".fd-top")) return;
     var g = goal();
     var k = prompt("Базова норма калорій (±" + GOAL_SWING + " за типом дня):", g.base);
     if(k === null) return;
