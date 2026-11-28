@@ -300,7 +300,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .mlink .d { color: var(--muted); }
 
 /* ---------- кнопка «+» ---------- */
-body.has-fab main { padding-bottom: 80px; }
+/* Місце під «+», щоб у кінці сторінки він не закривав останню кнопку: 56 (кнопка) + 16 (від меню) + 16 (зазор).
+   Власний нижній відступ розділу тут зайвий — раніше вони складалися (24 + 80). */
+body.has-fab main { padding-bottom: 88px; }
+body.has-fab .home-grid, body.has-fab .view-in { padding-bottom: 0; }
 .fab-wrap { position: fixed; z-index: 40; right: max(16px, env(safe-area-inset-right, 0px)); bottom: 24px; display: flex; flex-direction: column; align-items: flex-end; gap: var(--s3); }
 .fab { width: 56px; height: 56px; border: 0; border-radius: 28px; background: var(--coral); color: var(--night); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 8px 24px rgba(0, 0, 0, .45); transition: transform .15s; }
 .fab svg { width: 24px; height: 24px; transition: transform .15s; }
@@ -326,6 +329,7 @@ body.has-fab main { padding-bottom: 80px; }
 
 /* ---------- комп'ютер ---------- */
 @media (min-width: 768px) {
+  body.has-fab main { padding-bottom: 96px; } /* «+» за 24 від низу: 24 + 56 + 16 */
   .car-photo { height: 320px; }
   .hero-grid { padding-top: var(--s6); padding-bottom: var(--s6); column-gap: var(--s5); row-gap: var(--s5); }
   .home-grid { padding-top: var(--s5); }

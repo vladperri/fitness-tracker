@@ -295,6 +295,16 @@ with sync_playwright() as p:
     check('version: stale highlights button', 'btn-primary' in page.locator('#app-refresh').get_attribute('class'))
     page.close(); vctx.close()
 
+    # --- місце під «+» унизу: рівно стільки, щоб «+» не закривав останню кнопку ---
+    for path in ('/', '/records', '/planned-to'):
+        page, errs = open_app(ctx, 'in', path)
+        page.evaluate('window.scrollTo(0, document.body.scrollHeight)'); page.wait_for_timeout(200)
+        g = page.evaluate("""() => { const tabs = document.querySelector('.tabs').getBoundingClientRect(), fab = document.querySelector('#fab').getBoundingClientRect();
+            const v = document.querySelector('main [data-view]:not([hidden])'); const kids = [...v.querySelectorAll('.panel, .card, .rec, .yrow, .btn')].filter(e => e.offsetParent);
+            const end = Math.max(...kids.map(e => e.getBoundingClientRect().bottom)); return { gap: Math.round(tabs.top - end), fabTop: Math.round(fab.top), end: Math.round(end) }; }""")
+        check('fab space %s: 88 above tabs, «+» clear of content' % path, g['gap'] == 88 and g['end'] <= g['fabTop'] - 16, g)
+        page.close()
+
     # --- iPhone: відступ під статус-бар, навіть коли iOS віддає env(safe-area-inset-top)=0 ---
     IOS = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148'
     pad = lambda pg, sel: pg.evaluate("s => parseFloat(getComputedStyle(document.querySelector(s)).paddingTop)", sel)
