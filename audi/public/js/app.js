@@ -181,6 +181,7 @@
     closeFab();
     if (v === 'fix') enterFix();
     if (v === 'remind') enterRemind();
+    if (v === 'profile') loadVersion();
     renderFab();
     var hash = location.hash.slice(1), target = hash ? document.getElementById(hash) : null;
     requestAnimationFrame(function () {
@@ -327,20 +328,63 @@
     $('acc-import').hidden = S.mode !== 'in';
   }
 
-  /* Версію сайту пише GitHub Actions перед деплоєм (audi/public/version.json).
-     Локально і в тестах файлу немає: сервер віддає index.html, рядок лишається схованим. */
+  /* Версії. GitHub Actions перед деплоєм пише /version.json (остання версія на сервері)
+     і ставить той самий коміт у <meta name="app-version"> (версія, що зараз працює).
+     Локально й у тестах version.json немає (сервер віддає index.html), а meta = dev. */
+  var RUNNING = (document.querySelector('meta[name="app-version"]') || {}).content || 'dev';
   function loadVersion() {
     if (!window.fetch) return;
     fetch('/version.json', { cache: 'no-store' }).then(function (r) {
       return r.ok && /json/.test(r.headers.get('content-type') || '') ? r.json() : null;
     }).then(function (v) {
       if (!v || !v.short) return;
-      var d = new Date(v.time), el = $('prof-ver');
+      var d = new Date(v.time), el = $('prof-ver'), btn = $('app-refresh');
       var when = isNaN(d) ? '' : ' · ' + d.toLocaleString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-      el.textContent = 'Версія сайту: ' + v.short + when;
+      var stale = RUNNING !== 'dev' && RUNNING !== v.short;
+      el.textContent = stale ? 'Відкрита версія ' + RUNNING + '. Вийшла нова: ' + v.short + when : 'Версія сайту: ' + v.short + when;
       el.title = v.sha || '';
+      el.classList.toggle('is-new', stale);
+      btn.classList.toggle('btn-primary', stale);
+      btn.classList.toggle('btn-ghost', !stale);
       el.hidden = false;
     }).catch(function () { /* без версії — не страшно */ });
+  }
+
+  /* «Оновити застосунок»: тягнемо свіжі копії всіх файлів сайту в обхід кешу
+     (fetch з cache: 'reload' ще й перезаписує кеш браузера), чистимо Cache Storage
+     і service worker-и, якщо колись з'являться, і перезавантажуємо сторінку.
+     Дані Firestore не чіпаємо: там можуть бути ще не відправлені зміни. */
+  var REFRESH_KEY = 'audi-refreshed';
+  function refreshApp() {
+    var btn = $('app-refresh');
+    if (navigator.onLine === false) { setText('app-status', 'Немає з’єднання з інтернетом. Оновіть, коли воно з’явиться.'); return; }
+    btn.disabled = true;
+    setText('app-status', 'Оновлюю…');
+    var seen = {}, urls = [];
+    function add(u) { if (u && !seen[u] && !/version\.json/.test(u)) { seen[u] = 1; urls.push(u); } }
+    add(location.origin + location.pathname);
+    // основні файли — явно (config.js підвантажує fb.js як модуль, у список ресурсів він може не потрапити)
+    ['/', '/index.html', '/css/app.css', '/js/app.js', '/js/info.js', '/js/catalog.js', '/js/fb.js', '/js/config.js', '/manifest.webmanifest']
+      .forEach(function (p) { add(location.origin + p); });
+    try {
+      performance.getEntriesByType('resource').forEach(function (e) {
+        if (e.name.indexOf(location.origin + '/') === 0) add(e.name.split('#')[0]);
+      });
+    } catch (e) { /* без списку ресурсів оновимо хоча б сторінку */ }
+    var jobs = urls.map(function (u) { return fetch(u, { cache: 'reload', credentials: 'same-origin' }); });
+    if (window.caches && caches.keys) jobs.push(caches.keys().then(function (ks) { return Promise.all(ks.map(function (k) { return caches.delete(k); })); }));
+    if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) jobs.push(navigator.serviceWorker.getRegistrations().then(function (rs) { return Promise.all(rs.map(function (r) { return r.unregister(); })); }));
+    var all = Promise.all(jobs.map(function (p) { return p.catch(function () {}); }));
+    var limit = new Promise(function (res) { setTimeout(res, 8000); });
+    Promise.race([all, limit]).then(function () {
+      try { sessionStorage.setItem(REFRESH_KEY, '1'); } catch (e) { /* приватний режим */ }
+      location.reload();
+    });
+  }
+  function afterRefresh() {
+    var done = false;
+    try { done = sessionStorage.getItem(REFRESH_KEY) === '1'; sessionStorage.removeItem(REFRESH_KEY); } catch (e) { /* приватний режим */ }
+    if (done) setText('app-status', 'Застосунок оновлено.');
   }
 
   function renderAll() { renderHero(); renderHome(); renderRecords(); renderPlanned(); renderProfile(); renderFab(); }
@@ -677,6 +721,7 @@
 
   /* ---------- профіль: вхід, вихід, резервна копія ---------- */
   $('acc-signin').addEventListener('click', signIn);
+  $('app-refresh').addEventListener('click', refreshApp);
   $('acc-signout').addEventListener('click', function () { if (window.AudiAuth) window.AudiAuth.signOut(); });
   $('acc-export').addEventListener('click', function () {
     var copy = function (o) { return Object.assign({}, o); };
@@ -772,6 +817,6 @@
   buildChecks();
   route();
   renderAll();
-  loadVersion();
+  afterRefresh();
   if (window.__audiAuth) onAuth(window.__audiAuth);
 })();

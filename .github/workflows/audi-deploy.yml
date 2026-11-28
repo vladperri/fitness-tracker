@@ -66,6 +66,8 @@ jobs:
           printf '{"sha":"%s","short":"%s","time":"%s","run":%s}\n' \
             "$GITHUB_SHA" "${GITHUB_SHA::7}" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$GITHUB_RUN_NUMBER" \
             > audi/public/version.json
+          sed -i "s|<meta name=\"app-version\" content=\"dev\">|<meta name=\"app-version\" content=\"${GITHUB_SHA::7}\">|" audi/public/index.html
+          grep -q "app-version\" content=\"${GITHUB_SHA::7}\"" audi/public/index.html
           cat audi/public/version.json
       - name: Деплой на vlad-audi-a6.web.app
         if: steps.sa.outputs.ok == 'yes'

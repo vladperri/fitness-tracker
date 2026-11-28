@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#140708">
+<meta name="app-version" content="dev">
 <meta name="color-scheme" content="dark">
 <meta name="description" content="Журнал обслуговування, нагадування й каталог запчастин для Audi A6 C7 2.0 TFSI quattro.">
 <title>Моя Audi A6 C7</title>
@@ -223,7 +224,15 @@
       </div>
       <p class="status" id="acc-status" role="status"></p>
     </div>
-    <p class="prof-ver" id="prof-ver" hidden></p>
+    <div class="card">
+      <h3>Застосунок</h3>
+      <p class="prof-ver" id="prof-ver" hidden></p>
+      <p class="sub">Завантажує найновішу версію сайту замість збереженої в браузері. Записи й нагадування не зачіпає.</p>
+      <div class="stack-actions">
+        <button class="btn btn-ghost" type="button" id="app-refresh">Оновити застосунок</button>
+      </div>
+      <p class="status" id="app-status" role="status"></p>
+    </div>
   </div>
 </section>
 

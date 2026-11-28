@@ -25,7 +25,8 @@ class Spa(http.server.SimpleHTTPRequestHandler):
         if not os.path.isfile(path):
             self.path = '/index.html'
         return super().send_head()
-srv = socketserver.TCPServer(('127.0.0.1', 0), functools.partial(Spa, directory=PUBLIC))
+socketserver.ThreadingTCPServer.daemon_threads = True
+srv = socketserver.ThreadingTCPServer(('127.0.0.1', 0), functools.partial(Spa, directory=PUBLIC))
 PORT = srv.server_address[1]
 threading.Thread(target=srv.serve_forever, daemon=True).start()
 BASE = 'http://127.0.0.1:%d' % PORT
@@ -259,7 +260,39 @@ with sync_playwright() as p:
     page.goto(url('in', '/profile')); page.wait_for_timeout(400)
     v = page.locator('#prof-ver')
     check('version: shown in profile', v.is_visible() and v.inner_text() == 'Версія сайту: 0e72acf · 28.11.2026, 13:30', v.inner_text())
-    check('version: no errors', not errs, errs[:3])
+    check('refresh: button visible', page.locator('#app-refresh').is_visible() and 'btn-ghost' in page.locator('#app-refresh').get_attribute('class'))
+    # оновлення: свіжі копії файлів в обхід кешу, перезавантаження, повідомлення
+    # журнал fetch-ів у sessionStorage, щоб пережив перезавантаження
+    page.evaluate("""() => { const f = window.fetch; window.fetch = (u, o) => {
+        const log = JSON.parse(sessionStorage.getItem('fetchlog') || '[]'); log.push([String(u), (o && o.cache) || '']);
+        sessionStorage.setItem('fetchlog', JSON.stringify(log)); return f(u, o); }; }""")
+    with page.expect_navigation():
+        page.locator('#app-refresh').click()
+    page.wait_for_timeout(400)
+    reqs = json.loads(page.evaluate("sessionStorage.getItem('fetchlog') || '[]'"))
+    fresh = [u.replace(BASE, '') for u, c in reqs if c == 'reload']
+    check('refresh: assets refetched bypassing cache', all(any(x in u for u in fresh) for x in ('/js/app.js', '/js/fb.js', '/js/config.js', '/css/app.css', '/profile', '/index.html')) and not any('version.json' in u for u in fresh), fresh)
+    check('refresh: reloaded on profile with status', '/profile' in page.url and page.locator('#app-status').inner_text() == 'Застосунок оновлено.' and page.locator('#prof-name').inner_text() == 'Vlad', page.locator('#app-status').inner_text())
+    page.reload(); page.wait_for_timeout(300)
+    check('refresh: status not sticky', page.locator('#app-status').inner_text() == '')
+    vctx.set_offline(True)
+    page.locator('#app-refresh').click(); page.wait_for_timeout(200)
+    check('refresh: offline keeps page', 'Немає з’єднання' in page.locator('#app-status').inner_text() and not page.locator('#app-refresh').is_disabled())
+    vctx.set_offline(False)
+    check('version: no errors', not errs, [e for e in errs if 'ERR_INTERNET_DISCONNECTED' not in e][:3] if errs else errs)
+    page.close()
+
+    # --- відкрита стара версія, на сервері нова ---
+    page = vctx.new_page(); page.set_viewport_size({'width': 390, 'height': 844}); errs = setup(page)
+    page.route('**/version.json', lambda r: r.fulfill(status=200, content_type='application/json',
+        body='{"sha":"0e72acf1234567890","short":"0e72acf","time":"2026-11-28T11:30:00Z","run":3}'))
+    OLD = open(os.path.join(PUBLIC, 'index.html'), encoding='utf-8').read().replace('name="app-version" content="dev"', 'name="app-version" content="1111111"')
+    def old_html(r): r.fulfill(status=200, content_type='text/html; charset=utf-8', body=OLD)
+    page.route(lambda u: '/profile?' in u, old_html)
+    page.goto(url('in', '/profile')); page.wait_for_timeout(400)
+    v = page.locator('#prof-ver')
+    check('version: stale shows new one', v.inner_text() == 'Відкрита версія 1111111. Вийшла нова: 0e72acf · 28.11.2026, 13:30' and 'is-new' in v.get_attribute('class'), v.inner_text())
+    check('version: stale highlights button', 'btn-primary' in page.locator('#app-refresh').get_attribute('class'))
     page.close(); vctx.close()
 
     # --- імпорт у порожню базу ---
