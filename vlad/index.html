@@ -23,10 +23,17 @@
     --bg:#000000;
     /* Сірі зняті піксель-у-піксель з екранів референсу. Вони
        НЕЙТРАЛЬНІ (R=G=B) — системні сірі Apple з синім підтоном
-       поруч із жовтим акцентом віддають холодом. */
-    --card:#181818;      /* секція, hero, плитка показників */
-    --card2:#212121;     /* картка в картці: прийом їжі, плитка */
-    --raised:#323232;    /* чипи, кружечки іконок, треки */
+       поруч із жовтим акцентом віддають холодом.
+       Головне: вони ПРОЗОРІ. У референсі картки беруть колір
+       верхнього світіння — суцільна заливка пробиває в ньому діру.
+       Прозорий тільки ВЕРХНІЙ рівень — він і лежить на світінні.
+       Вкладені лишаються суцільними: три прозорі шари один на
+       одному множаться і вибілюють чип до #5D5D5D замість #3B3B3B.
+       .094 по чистому чорному дає рівно #181818, як у референсі;
+       виміряна альфа поверхні там — 0.118. */
+    --card:rgba(255,255,255,.094);  /* секція, hero, ротація, пігулки */
+    --card2:#2A2A2A;                /* картка в картці, плитка */
+    --raised:#3B3B3B;               /* чипи, кружечки, треки */
     /* Обведень у референсі немає ніде: поверхні розділяє заливка,
        а не лінія. Токен лишається прозорим, щоб не правити 24 місця. */
     --line:rgba(255,255,255,0);
@@ -123,8 +130,10 @@
   .cal-nav:active{background:var(--card2);color:var(--accent)}
   .cal-arrows{display:flex;gap:6px;flex:none}
   .cal-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:16px}
-  .cal-day{position:relative;border-radius:999px;padding:10px 0 11px;display:flex;flex-direction:column;
-    align-items:center;gap:3px;cursor:pointer;background:var(--card);border:0;transition:.16s;font-family:inherit}
+  /* Денні пігулки в референсі помітно вищі за ширину (приблизно 2:1):
+     це вертикальні пігулки, а не круглі кнопки. */
+  .cal-day{position:relative;border-radius:999px;padding:18px 0 19px;display:flex;flex-direction:column;
+    align-items:center;gap:5px;cursor:pointer;background:var(--card);border:0;transition:.16s;font-family:inherit}
   .cal-day:active{background:var(--card2)}
   .cal-day .lbl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;line-height:1}
   .cal-day .num{font-size:14px;font-weight:700;color:var(--ink2);line-height:1;font-variant-numeric:tabular-nums}
