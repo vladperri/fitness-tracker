@@ -28,12 +28,19 @@
     --line2:rgba(255,255,255,.12);
     --ink:#FFFFFF;
     --ink2:#C7C7CE;
-    --muted:#8E8E93;
-    --accent:#5FD3E6;
-    --accent-dim:rgba(95,211,230,.13);
-    --accent-deep:#2BB6CC;
-    --ok:#4ED6A1;
-    --rest:#FFC861;
+    --muted:#9A9AA0;
+    /* Палітра референсу: жовтий — усе активне й натискне,
+       зелений — усе завершене й відновлення. Третього немає. */
+    --accent:#FAE208;
+    --accent-dim:rgba(250,226,8,.14);
+    --accent-deep:#D6C200;
+    --ok:#03D964;
+    /* День відпочинку — не стан, а його відсутність: просто тихо.
+       Янтарний пішов: поруч із жовтим акцентом його не відрізнити. */
+    --rest:#A8A8AE;
+    /* Єдине, чого в RevoFit немає — він не рахує калорій і не має
+       станів помилки. Тільки перебір норми й нерозпізнаний продукт. */
+    --warn:#FF6B4A;
     /* Сітка референсу: бічні поля 20, проміжок 16 */
     --pad:20px;
     --gap:16px;
@@ -164,8 +171,10 @@
   /* ── секція-картка ── */
   section{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px 16px;margin-bottom:var(--gap)}
   .sec-head{display:flex;align-items:center;gap:11px;margin-bottom:16px}
-  .sec-ico{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;flex:none;
-    background:var(--accent-dim);color:var(--accent)}
+  /* Іконка секції нічого не позначає, тож і акценту не отримує:
+     жовтий лишається за тим, що активне або натискне. */
+  .sec-ico{width:38px;height:38px;border-radius:999px;display:grid;place-items:center;flex:none;
+    background:var(--card2);color:var(--ink2)}
   .sec-ico svg{width:20px;height:20px}
   .sec-title{font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);line-height:1.3}
   .sec-title b{display:block;font-size:18px;font-weight:800;color:var(--ink);letter-spacing:-.01em;
@@ -186,7 +195,7 @@
   .wk-ico{width:40px;height:40px;border-radius:13px;background:rgba(255,255,255,.05);flex:none;
     display:grid;place-items:center;color:var(--accent)}
   .wk-ico svg{width:21px;height:21px}
-  .wk.next .wk-ico{background:rgba(95,211,230,.16)}
+  .wk.next .wk-ico{background:rgba(250,226,8,.16)}
   .wk.done .wk-ico{color:var(--muted)}
   .wk-meta{flex:1;min-width:0}
   .wk-name{font-size:16.5px;font-weight:700;line-height:1.15;display:flex;align-items:center;gap:7px;flex-wrap:wrap;
@@ -276,7 +285,7 @@
   .tmr{position:fixed;inset:0;z-index:300;background:var(--bg);display:none;
     flex-direction:column;padding:calc(14px + env(safe-area-inset-top)) 18px calc(20px + env(safe-area-inset-bottom))}
   .tmr.open{display:flex}
-  .tmr.rest{background:#0A1416}
+  .tmr.rest{background:#06140D}
 
   .tmr-top{display:flex;align-items:center;gap:12px;flex:none}
   .tmr-x{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--card);
@@ -286,7 +295,7 @@
   .tmr-count{font-size:12px;font-weight:700;color:var(--muted);flex:none;
     font-variant-numeric:tabular-nums;text-align:right;line-height:1.15}
   .tmr-count u{display:none;text-decoration:none;color:var(--accent);font-size:15px;font-weight:800}
-  .tmr.rest .tmr-count u{color:#FFC861}
+  .tmr.rest .tmr-count u{color:var(--ok)}
   .tmr.away .tmr-count u{display:block}
 
   .tmr-list{flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
@@ -299,7 +308,7 @@
   .tl-card{background:var(--card);border:1px solid var(--line2);border-radius:22px;
     padding:18px 16px 16px;margin:4px 0 10px;display:flex;flex-direction:column;
     align-items:center;text-align:center;gap:4px;scroll-margin:14px}
-  .tmr.rest .tl-card{border-color:rgba(255,200,97,.28);background:#111A1C}
+  .tmr.rest .tl-card{border-color:rgba(3,217,100,.28);background:#0C1A11}
 
   .tl-sec{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
     color:var(--muted);margin:14px 2px 7px}
@@ -321,7 +330,7 @@
   .tl-dots i.on{background:var(--accent)}
   .tl-row.done .tl-dots i.on{background:var(--ok)}
   .tmr-phase{font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
-  .tmr.rest .tmr-phase{color:#FFC861}
+  .tmr.rest .tmr-phase{color:var(--ok)}
   .tmr-name{font-size:25px;font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-top:6px;
     max-width:320px}
   .tmr-meta{font-size:18px;color:var(--ink);font-weight:600;margin-top:6px;line-height:1.3;max-width:340px}
@@ -332,7 +341,7 @@
   .tmr-ring .trk{stroke:var(--card2)}
   .tmr-ring .bar{stroke:var(--accent);stroke-dasharray:691.15;stroke-dashoffset:0;
     transition:stroke-dashoffset .25s linear}
-  .tmr.rest .tmr-ring .bar{stroke:#FFC861}
+  .tmr.rest .tmr-ring .bar{stroke:var(--ok)}
   .tmr-time{position:absolute;inset:0;display:grid;place-items:center;font-size:35px;font-weight:800;
     letter-spacing:-.03em;font-variant-numeric:tabular-nums}
 
@@ -391,7 +400,7 @@
   .hw-hr .v{color:#FF6B81}
   .hw-steps .v{color:var(--accent)}
 
-  .hw-wk{margin-top:12px;background:var(--accent-dim);border:1px solid rgba(95,211,230,.3);
+  .hw-wk{margin-top:12px;background:var(--accent-dim);border:1px solid rgba(250,226,8,.3);
     border-radius:16px;padding:14px}
   .hw-wk-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px}
   .hw-wk-name{font-size:15.5px;font-weight:700;letter-spacing:-.01em}
@@ -406,7 +415,7 @@
   .ai-fab{position:fixed;z-index:90;right:max(16px,calc(50vw - 240px + 16px));
     bottom:calc(20px + env(safe-area-inset-bottom));width:56px;height:56px;border-radius:50%;
     border:0;cursor:pointer;display:grid;place-items:center;background:var(--accent);
-    color:var(--ai-on);box-shadow:0 6px 22px rgba(95,211,230,.32);transition:transform .18s}
+    color:var(--ai-on);box-shadow:0 6px 22px rgba(250,226,8,.32);transition:transform .18s}
   .ai-fab:active{transform:scale(.92)}
   .ai-fab svg{width:25px;height:25px}
   .ai-fab i{position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--accent);
@@ -540,14 +549,14 @@
 
   .tmr-mini-prog{position:absolute;top:0;left:0;height:3px;background:var(--accent);
     border-radius:0 3px 3px 0;transition:width .3s}
-  .tmr.rest .tmr-mini-prog{background:#FFC861}
+  .tmr.rest .tmr-mini-prog{background:var(--ok)}
   .tmr-mini-row{display:flex;align-items:center;gap:12px;height:62px;padding:0 14px 0 18px;cursor:pointer}
   .tmr-mini-txt{flex:1;min-width:0}
   .tmr-mini-txt b{display:block;font-size:14.5px;font-weight:700;letter-spacing:-.01em;
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .tmr-mini-txt span{display:block;font-size:11px;font-weight:700;letter-spacing:.1em;
     text-transform:uppercase;color:var(--accent);margin-top:2px}
-  .tmr.rest .tmr-mini-txt span{color:#FFC861}
+  .tmr.rest .tmr-mini-txt span{color:var(--ok)}
   .tmr-mini-time{font-size:20px;font-weight:800;letter-spacing:-.02em;flex:none;
     font-variant-numeric:tabular-nums}
   .tmr-mini-btn{width:38px;height:38px;border-radius:50%;border:0;background:var(--accent);
@@ -567,7 +576,7 @@
   .fd-ring circle{fill:none;stroke-width:8;stroke-linecap:round}
   .fd-ring .trk{stroke:var(--card2)}
   .fd-ring .bar{stroke:var(--accent);transition:stroke-dashoffset .4s}
-  .fd-ring.over .bar{stroke:var(--rest)}
+  .fd-ring.over .bar{stroke:var(--warn)}
   .fd-pc{position:absolute;inset:0;display:grid;place-items:center;font-size:17px;font-weight:800;
     letter-spacing:-.02em;font-variant-numeric:tabular-nums}
   .fd-n{flex:1;min-width:0}
@@ -575,18 +584,18 @@
     font-variant-numeric:tabular-nums}
   .fd-left{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-top:3px;
     font-variant-numeric:tabular-nums}
-  .fd-left.over{color:var(--rest)}
+  .fd-left.over{color:var(--warn)}
   .fd-mac{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}
   .fd-mac div{font-size:11.5px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
   .fd-mac u{text-decoration:none;color:var(--ink2)}
   .mn-day{font-family:inherit;font-size:12px;font-weight:700;color:var(--accent);
     background:var(--accent-dim);border:0;border-radius:999px;padding:14px 15px;cursor:pointer;
     margin-top:10px;line-height:1}
-  .mn-day.rest{color:var(--rest);background:rgba(255,200,97,.13)}
+  .mn-day.rest{color:var(--rest);background:rgba(255,255,255,.07)}
 
   /* ── наступний прийом і згорнута решта ── */
   .mn-slotlbl{font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;
-    color:var(--accent);margin-bottom:9px}
+    color:var(--ink2);margin-bottom:9px}
   .mn-more{display:flex;align-items:center;gap:10px;width:100%;padding:13px 15px;background:var(--card2);
     border:0;border-radius:16px;font-family:inherit;cursor:pointer;text-align:left;margin-bottom:10px}
   .mn-more:active{background:var(--raised)}
@@ -610,11 +619,12 @@
   .mn-tick{width:32px;height:32px;flex:none;border-radius:999px;border:1.5px solid var(--line2);
     background:transparent;color:rgba(255,255,255,.32);font-size:15px;cursor:pointer;display:grid;
     place-items:center;padding:0;font-family:inherit}
-  .mn-meal.eaten .mn-tick{border-color:var(--ok);color:var(--ok);background:rgba(78,214,161,.12)}
+  .mn-meal.eaten .mn-tick{border-color:var(--ok);color:var(--ok);background:rgba(3,217,100,.12)}
   .mn-ing{font-size:13px;color:var(--ink2);font-weight:600;line-height:1.5;margin-top:8px}
   .mn-how{font-size:12.5px;color:var(--muted);font-weight:500;line-height:1.45;margin-top:6px}
-  .mn-note{font-size:12.5px;color:#FFC861;font-weight:600;line-height:1.45;
-    padding:11px 13px;background:rgba(255,200,97,.09);border-radius:13px;margin-bottom:9px}
+  /* Нотатка до меню — пояснення, а не попередження: нейтральна. */
+  .mn-note{font-size:12.5px;color:var(--ink2);font-weight:600;line-height:1.45;
+    padding:11px 13px;background:var(--card2);border-radius:13px;margin-bottom:9px}
 
   .mn-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
   .mn-btn{flex:1 1 calc(50% - 4px);min-width:0;background:var(--card2);border:0;color:var(--ink2);
@@ -660,7 +670,7 @@
   .fr-item-t span{display:block;font-size:12px;color:var(--muted);font-weight:600;margin-top:2px;
     font-variant-numeric:tabular-nums}
   .fr-est{font-size:9.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
-    color:#FFC861;background:rgba(255,200,97,.12);padding:3px 6px;border-radius:6px;flex:none}
+    color:var(--warn);background:rgba(255,107,74,.13);padding:3px 6px;border-radius:6px;flex:none}
   .fr-del{width:28px;height:28px;flex:none;border-radius:50%;border:0;background:var(--card2);
     color:var(--muted);font-size:14px;cursor:pointer;padding:0;line-height:1;font-family:inherit}
 
@@ -669,7 +679,7 @@
     padding:15px;margin-bottom:9px}
   .fr-ask-n{font-size:16px;font-weight:800;letter-spacing:-.01em;margin-bottom:3px}
   .fr-ask-m{font-size:13px;color:var(--ink2);font-weight:600;font-variant-numeric:tabular-nums}
-  .fr-ask-w{font-size:12.5px;color:#FFC861;font-weight:600;line-height:1.4;margin-top:7px;
+  .fr-ask-w{font-size:12.5px;color:var(--warn);font-weight:600;line-height:1.4;margin-top:7px;
     white-space:pre-wrap;word-break:break-word}
   .fr-ask-b{display:flex;gap:8px;margin-top:12px}
   .fr-ask-b button{flex:1;font-family:inherit;font-size:13.5px;font-weight:700;padding:11px 8px;
@@ -724,7 +734,7 @@
 
   /* активна вправа в списку — у ландскейпі картка стоїть окремо,
      тож рядок лишається на місці й підсвічується */
-  .tl-row.now{background:var(--accent-dim);border:1px solid rgba(95,211,230,.35)}
+  .tl-row.now{background:var(--accent-dim);border:1px solid rgba(250,226,8,.35)}
   .tl-row.now b{color:var(--ink)}
 
   /* ── ландскейп на телефоні ─────────────────────────────────────
